@@ -1,0 +1,115 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font: 1rem/1.4 system-ui;
+}
+
+.sort-grid {
+    max-width: 70rem;
+    margin: 0 auto;
+    display: grid;
+    height: 100%;
+    padding: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
+    gap: 1rem;
+
+    & > * {
+        position: relative;
+        transition: opacity 0.3s, box-shadow 0.3s, scale 0.3s;
+        transition-timing-function: cubic-bezier(0.6, 0, 0.6, 1);
+        padding: 1em;
+        background: #ddd;
+        font-size: 2cqmin;
+
+        &:has(.sort-handle) {
+            padding-top: 3em;
+        }
+
+        .is-sort-active {
+            scale: 0.9;
+        }
+
+        &.sort-ghost {
+            box-shadow: 0 0.5rem 1rem #0005;
+            scale: 1.1;
+
+            @starting-style {
+                opacity: 1;
+                box-shadow: 0 0rem 0rem #000;
+            }
+        }
+    }
+
+    .sort-handler {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 0.5em 1em;
+        text-align: right;
+        margin-bottom: 1em;
+        cursor: move;
+        transition: background-color 0.3s;
+        background: #fff8;
+
+        &:hover {
+            background: #fffd;
+        }
+        &::after {
+            content: "✥";
+            margin-left: 1em;
+        }
+    }
+}
+
+.row {
+    max-width: 70rem;
+    margin: 0 auto;
+    display: flex;
+    padding: 1rem;
+    gap: 0.8rem;
+
+    & > * {
+        flex: 1;
+    }
+}
+
+ul {
+    padding: 0;
+}
+
+.sort-list {
+    list-style: none;
+    padding: 0;
+    outline: 1px solid #aaa;
+    padding-bottom: 1.5em;
+    background: #eee;
+
+    &:empty::after {
+        display: list-item;
+        content: "Empty list";
+        font-style: italic;
+        opacity: 0.5;
+        padding: 1em;
+    } 
+
+    li {
+        position: relative;
+        padding: 1em;
+        background: #ddd;
+        border: 2px solid #fff;
+    }
+}
+
+.is-sort-active {
+    opacity: 0.3;
+    user-select: none;
+}
+
+.is-sort-target {
+    outline: 0.15rem dashed #000;
+    z-index: 1;
+}
