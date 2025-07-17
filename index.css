@@ -8,13 +8,13 @@ body {
 }
 
 .sort-grid {
+    display: grid;
+    gap: 1rem;
     max-width: 70rem;
     margin: 0 auto;
-    display: grid;
     height: 100%;
     padding: 1rem;
     grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
-    gap: 1rem;
 
     & > * {
         position: relative;
@@ -112,4 +112,8 @@ ul {
 .is-sort-target {
     outline: 0.15rem dashed #000;
     z-index: 1;
+}
+
+.is-sort-invalid {
+    outline: 2px solid red;
 }

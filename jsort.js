@@ -29,11 +29,11 @@ class JSort {
         this.elParentGrab.append(this.elGhost);
     }
 
-    animateItem = ({ el, x, y }) => {
+    animateItem({ el, x, y }) {
         const { left, top } = el.getBoundingClientRect();
         if (x === left && y === top) return;
         el.classList.add("is-sort-animated");
-        
+
         const keyframes = el === this.elActive ?
             [
                 { zIndex: 1, translate: `${x - left}px ${y - top}px`, opacity: 0.9 },
@@ -61,27 +61,45 @@ class JSort {
         this.elActive.setPointerCapture(pointerId);
     }
 
+    checkValidity({ clientX, clientY }) {
+        const elFromPoint = document.elementFromPoint(clientX, clientY);
+        const elTarget = elFromPoint?.closest(".sort-item, .sortable");
+        const elParentDrop = elFromPoint?.closest(`.sortable`);
+        const isSameParent = elParentDrop === this.elParentGrab;
+        const groupDrop = elParentDrop?.dataset.sortGroup;
+        const isValidGroup = !isSameParent && Boolean(groupDrop && this.groupGrab === groupDrop);
+        const isValid =
+            elTarget &&
+            elParentDrop &&
+            isValidGroup || isSameParent;
+        return isValid;
+    }
+
     move = ({ pointerId, clientX, clientY }) => {
         if (!this.elActive?.hasPointerCapture(pointerId)) return;
         this.elActive.classList.add("is-sort-active");
         !this.isFirstMove && this.appendGhost({ clientX, clientY });
 
+        const isValid = this.checkValidity({ clientX, clientY });
+
         // Move ghost element
         this.elGhost.style.translate = `${clientX - this.pointerStart.clientX}px ${clientY - this.pointerStart.clientY}px`;
+        this.elGhost.classList.toggle("is-sort-invalid", !isValid);
 
-        const elFromPoint = document.elementFromPoint(clientX, clientY);
         this.elTarget?.classList.remove("is-sort-target");
-        this.elTarget = elFromPoint?.closest(".sort-item, .sortable");
-        this.elTarget?.classList.add("is-sort-target");
+        if (isValid) {
+            this.elTarget = document.elementFromPoint(clientX, clientY)?.closest(".sort-item, .sortable");
+            this.elTarget?.classList.add("is-sort-target");
+        }
     }
 
-    drop = (ev) => {
-        if (!this.elActive?.hasPointerCapture(ev.pointerId)) return;
+    drop = ({ pointerId, clientX, clientY }) => {
+        if (!this.elActive?.hasPointerCapture(pointerId)) return;
 
         this.elActive?.classList.remove("is-sort-active");
         this.elTarget?.classList.remove("is-sort-target");
 
-        const elFromPoint = document.elementFromPoint(ev.clientX, ev.clientY);
+        const elFromPoint = document.elementFromPoint(clientX, clientY);
         this.elTarget = elFromPoint?.closest(".sort-item, .sortable");
         this.elParentDrop = elFromPoint?.closest(`.sortable`);
         const isSameParent = this.elParentDrop === this.elParentGrab;
@@ -93,14 +111,7 @@ class JSort {
 
         const ghostRect = this.elGhost?.getBoundingClientRect();
 
-        const groupDrop = this.elParentDrop?.dataset.sortGroup;
-        const isValidGroup = !isSameParent && Boolean(groupDrop && this.groupGrab === groupDrop);
-        const isValidDrop =
-            this.elTarget &&
-            this.elParentDrop &&
-            isValidGroup || isSameParent;
-
-        if (isValidDrop) {
+        if (this.checkValidity({ clientX, clientY })) {
             let siblings = [];
 
             if (isSameParent) {
@@ -110,9 +121,7 @@ class JSort {
                 const indexMin = isDroppedOntoParent ? activeIndex : Math.min(targetIndex, activeIndex);
                 const indexMax = isDroppedOntoParent ? siblings.length - 1 : Math.max(targetIndex, activeIndex);
                 siblings = siblings.slice(indexMin, indexMax + 1);
-            }
-            // Not same parent
-            else {
+            } else {
                 const siblingsGrab = [...this.elParentGrab.children];
                 const siblingsDrop = [...this.elParentDrop.children];
                 activeIndex = siblingsGrab.indexOf(this.elActive);
@@ -141,7 +150,7 @@ class JSort {
         }
 
         // Animate other elements
-        rangeData.filter(({ el }) => el !== this.elActive).forEach(this.animateItem);
+        rangeData.filter(({ el }) => el !== this.elActive).forEach((data) => this.animateItem(data));
         // Animate active element
         ghostRect && this.animateItem({ el: this.elActive, x: ghostRect.left, y: ghostRect.top });
         // Cleanup
