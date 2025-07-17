@@ -1,6 +1,6 @@
 # JSort
 
-Super small but powerfulsortable library with touch support
+Super small yet powerful sortable library with touch support
 
 ## Installation
 
