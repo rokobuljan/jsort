@@ -103,7 +103,7 @@ class JSort {
     drop = (ev) => {
         const { pointerId, clientX, clientY } = ev;
         if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
-
+        this.elParentGrab.style.removeProperty("user-select");
         this.elGrabbed?.classList.remove("is-jsort-grabbed");
         this.elTarget?.classList.remove("is-jsort-target");
         const elFromPoint = document.elementFromPoint(clientX, clientY);
@@ -170,7 +170,6 @@ class JSort {
 
     reset() {
         // Cleanup
-        this.elParentGrab.style.removeProperty("user-select");
         this.elGrabbed?.style.removeProperty("touch-action");
         this.elGrabbed = null;
         this.elGhost?.remove();
@@ -187,12 +186,12 @@ class JSort {
     init(options) {
         this.destroy();
         Object.assign(this, options);
+        this.reset();
         this.elParentGrab.addEventListener("touchstart", this.handleTouchAction);
         this.elParentGrab.addEventListener("pointerdown", this.grab);
         this.elParentGrab.addEventListener("pointermove", this.move);
         this.elParentGrab.addEventListener("pointerup", this.drop);
         this.elParentGrab.addEventListener("pointercancel", this.drop);
-        this.reset();
     }
 
     destroy() {
@@ -201,7 +200,6 @@ class JSort {
         this.elParentGrab.removeEventListener("pointermove", this.move);
         this.elParentGrab.removeEventListener("pointerup", this.drop);
         this.elParentGrab.removeEventListener("pointercancel", this.drop);
-
     }
 }
 
