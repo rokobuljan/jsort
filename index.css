@@ -4,7 +4,7 @@
 }
 
 body {
-    font: 1rem/1.4 system-ui;
+    font: min(3cqmin, 1rem) / 1.4 system-ui;
 }
 
 .sort-grid {
@@ -22,14 +22,9 @@ body {
         transition-timing-function: cubic-bezier(0.6, 0, 0.6, 1);
         padding: 1em;
         background: #ddd;
-        font-size: 2cqmin;
 
         &:has(.sort-handle) {
             padding-top: 3em;
-        }
-
-        .is-sort-active {
-            scale: 0.9;
         }
 
         &.sort-ghost {
@@ -94,7 +89,7 @@ ul {
         font-style: italic;
         opacity: 0.5;
         padding: 1em;
-    } 
+    }
 
     li {
         position: relative;
@@ -104,16 +99,17 @@ ul {
     }
 }
 
-.is-sort-active {
+.is-jsort-grabbed {
     opacity: 0.3;
     user-select: none;
+    scale: 0.9;
 }
 
-.is-sort-target {
+.is-jsort-target {
     outline: 0.15rem dashed #000;
     z-index: 1;
 }
 
-.is-sort-invalid {
+.is-jsort-invalid {
     outline: 2px solid red;
 }

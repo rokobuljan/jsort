@@ -1,18 +1,18 @@
 class JSort {
     constructor(el, options) {
         this.elParentGrab = el;
-        this.handlerClass = this.elParentGrab.dataset.sortHandler ?? ".sort-handler";
-        this.duration = this.elParentGrab.dataset.sortDuration ?? 450;
-        this.easing = this.elParentGrab.dataset.sortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
-        this.groupGrab = this.elParentGrab.dataset.sortGroup;
-        this.zIndex = this.elParentGrab.dataset.zindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
+        this.groupGrab = this.elParentGrab.dataset.jsortGroup;
+        this.handlerClass = this.elParentGrab.dataset.jsortHandler ?? ".sort-handler";
+        this.duration = this.elParentGrab.dataset.jsortDuration ?? 450;
+        this.easing = this.elParentGrab.dataset.jsortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
+        this.zIndex = this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
         this.init(options);
     }
 
     appendGhost({ clientX, clientY }) {
         this.isFirstMove = true;
-        this.elGhost = this.elActive.cloneNode(true);
-        const { x, y, width, height } = this.elActive.getBoundingClientRect();
+        this.elGhost = this.elGrabbed.cloneNode(true);
+        const { x, y, width, height } = this.elGrabbed.getBoundingClientRect();
         Object.assign(this.pointerStart, { clientX, clientY });
         Object.assign(this.elGhost.style, {
             left: `${x}px`,
@@ -31,8 +31,8 @@ class JSort {
     animateItem({ el, x, y }) {
         const { left, top } = el.getBoundingClientRect();
         if (x === left && y === top) return;
-        el.classList.add("is-sort-animated");
-        const keyframes = el === this.elActive ?
+        el.classList.add("is-jsort-animated");
+        const keyframes = el === this.elGrabbed ?
             [
                 { zIndex: 1, translate: `${x - left}px ${y - top}px`, opacity: 0.9 },
                 { zIndex: 1, translate: "0", opacity: 1 },
@@ -42,30 +42,30 @@ class JSort {
                 { scale: 1.0, translate: "0" },
             ];
         el.animate(keyframes, { duration: this.duration, easing: this.easing })
-            .addEventListener("finish", (ev) => { ev.target.effect.target.classList.remove("is-sort-animated"); });
+            .addEventListener("finish", (ev) => { ev.target.effect.target.classList.remove("is-jsort-animated"); });
     }
 
     grab = (ev) => {
         const { pointerId, target } = ev;
-        if (this.elActive) return;
-        const elClosestItem = target.closest(".sort-item");
+        if (this.elGrabbed) return;
+        const elClosestItem = target.closest(".jsort-item");
         if (!elClosestItem) return;
         const hasHandler = Boolean(elClosestItem.querySelector(this.handlerClass));
         const elHandler = target.closest(this.handlerClass);
         if (hasHandler && !elHandler) return;
-        this.elActive = elClosestItem;
-        this.elActive.setPointerCapture(pointerId);
-        this.indexGrab = [...this.elParentGrab.children].indexOf(this.elActive);
+        this.elGrabbed = elClosestItem;
+        this.elGrabbed.setPointerCapture(pointerId);
+        this.indexGrab = [...this.elParentGrab.children].indexOf(this.elGrabbed);
         // Notify
         this.onGrab?.call(this, ev);
     }
 
     checkValidity({ clientX, clientY }) {
         const elFromPoint = document.elementFromPoint(clientX, clientY);
-        const elTarget = elFromPoint?.closest(".sort-item, .sortable");
-        const elParentDrop = elFromPoint?.closest(`.sortable`);
+        const elTarget = elFromPoint?.closest(".jsort-item, .jsort");
+        const elParentDrop = elFromPoint?.closest(`.jsort`);
         const isSameParent = elParentDrop === this.elParentGrab;
-        const groupDrop = elParentDrop?.dataset.sortGroup;
+        const groupDrop = elParentDrop?.dataset.jsortGroup;
         const isValidGroup = !isSameParent && Boolean(groupDrop && this.groupGrab === groupDrop);
         const isValid =
             elTarget &&
@@ -76,20 +76,20 @@ class JSort {
 
     move = (ev) => {
         const { pointerId, clientX, clientY } = ev;
-        if (!this.elActive?.hasPointerCapture(pointerId)) return;
-        this.elActive.classList.add("is-sort-active");
+        if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
+        this.elGrabbed.classList.add("is-jsort-grabbed");
         !this.isFirstMove && this.appendGhost({ clientX, clientY });
 
         const isValid = this.checkValidity({ clientX, clientY });
 
         // Move ghost element
         this.elGhost.style.translate = `${clientX - this.pointerStart.clientX}px ${clientY - this.pointerStart.clientY}px`;
-        this.elGhost.classList.toggle("is-sort-invalid", !isValid);
+        this.elGhost.classList.toggle("is-jsort-invalid", !isValid);
 
-        this.elTarget?.classList.remove("is-sort-target");
+        this.elTarget?.classList.remove("is-jsort-target");
         if (isValid) {
-            this.elTarget = document.elementFromPoint(clientX, clientY)?.closest(".sort-item, .sortable");
-            this.elTarget?.classList.add("is-sort-target");
+            this.elTarget = document.elementFromPoint(clientX, clientY)?.closest(".jsort-item, .jsort");
+            this.elTarget?.classList.add("is-jsort-target");
         }
 
         // Notify
@@ -98,13 +98,13 @@ class JSort {
 
     drop = (ev) => {
         const { pointerId, clientX, clientY } = ev;
-        if (!this.elActive?.hasPointerCapture(pointerId)) return;
+        if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
 
-        this.elActive?.classList.remove("is-sort-active");
-        this.elTarget?.classList.remove("is-sort-target");
+        this.elGrabbed?.classList.remove("is-jsort-grabbed");
+        this.elTarget?.classList.remove("is-jsort-target");
         const elFromPoint = document.elementFromPoint(clientX, clientY);
-        this.elTarget = elFromPoint?.closest(".sort-item, .sortable");
-        this.elParentDrop = elFromPoint?.closest(`.sortable`);
+        this.elTarget = elFromPoint?.closest(".jsort-item, .jsort");
+        this.elParentDrop = elFromPoint?.closest(`.jsort`);
         const isSameParent = this.elParentDrop === this.elParentGrab;
         const isDroppedOntoParent = Boolean(this.elTarget && this.elParentDrop && this.elTarget === this.elParentDrop);
 
@@ -113,7 +113,7 @@ class JSort {
 
         if (this.checkValidity({ clientX, clientY })) {
             const siblingsGrab = [...this.elParentGrab.children].filter(el => el !== this.elGhost);
-            this.indexGrab = siblingsGrab.indexOf(this.elActive);
+            this.indexGrab = siblingsGrab.indexOf(this.elGrabbed);
 
             if (isSameParent) {
                 this.indexDrop = isDroppedOntoParent ? Math.max(0, siblingsGrab.length - 1) : siblingsGrab.indexOf(this.elTarget);
@@ -134,22 +134,22 @@ class JSort {
 
             // 3. Append to DOM
             if (isDroppedOntoParent) {
-                this.elParentDrop.append(this.elActive);
+                this.elParentDrop.append(this.elGrabbed);
             } else if (isSameParent) {
-                this.elParentDrop.insertBefore(this.elActive, this.indexDrop < this.indexGrab ? this.elTarget : this.elTarget.nextSibling);
+                this.elParentDrop.insertBefore(this.elGrabbed, this.indexDrop < this.indexGrab ? this.elTarget : this.elTarget.nextSibling);
             } else {
-                this.elParentDrop.insertBefore(this.elActive, this.elTarget);
+                this.elParentDrop.insertBefore(this.elGrabbed, this.elTarget);
             }
 
             // 4. Animate other elements
             affectedItemsData.forEach((data) => {
-                if (data.el === this.elActive) return; // We'll animate the active element later
+                if (data.el === this.elGrabbed) return; // We'll animate the grabbed item later
                 this.animateItem(data);
             });
         }
 
-        // 5. Always animate active element
-        ghostRect && this.animateItem({ el: this.elActive, x: ghostRect.left, y: ghostRect.top });
+        // 5. Always animate grabbed element
+        ghostRect && this.animateItem({ el: this.elGrabbed, x: ghostRect.left, y: ghostRect.top });
         // Notify
         this.onDrop?.call(this, ev);
         // Cleanup
@@ -160,7 +160,7 @@ class JSort {
         // Cleanup
         this.elGhost?.remove();
         this.elGhost = null;
-        this.elActive = null;
+        this.elGrabbed = null;
         this.elTarget = null;
         this.isFirstMove = false;
         this.elParentDrop = null;
