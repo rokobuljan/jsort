@@ -1,8 +1,8 @@
 class JSort {
     constructor(el, options) {
         this.elParentGrab = el;
-        this.groupGrab = this.elParentGrab.dataset.jsortGroup;
-        this.handlerClass = this.elParentGrab.dataset.jsortHandler ?? ".sort-handler";
+        this.group = this.elParentGrab.dataset.jsortGroup;
+        this.classHandler = this.elParentGrab.dataset.jsortClassHandler ?? ".sort-handler";
         this.duration = this.elParentGrab.dataset.jsortDuration ?? 450;
         this.easing = this.elParentGrab.dataset.jsortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
         this.zIndex = this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
@@ -24,7 +24,7 @@ class JSort {
             zIndex: this.zIndex,
             opacity: 0.8,
         });
-        this.elGhost.classList.add("sort-ghost");
+        this.elGhost.classList.add("jsort-ghost");
         this.elParentGrab.append(this.elGhost);
     }
 
@@ -50,8 +50,8 @@ class JSort {
         if (this.elGrabbed) return;
         const elClosestItem = target.closest(".jsort-item");
         if (!elClosestItem) return;
-        const hasHandler = Boolean(elClosestItem.querySelector(this.handlerClass));
-        const elHandler = target.closest(this.handlerClass);
+        const hasHandler = Boolean(elClosestItem.querySelector(this.classHandler));
+        const elHandler = target.closest(this.classHandler);
         if (hasHandler && !elHandler) return;
         this.elGrabbed = elClosestItem;
         this.elGrabbed.setPointerCapture(pointerId);
@@ -66,7 +66,7 @@ class JSort {
         const elParentDrop = elFromPoint?.closest(`.jsort`);
         const isSameParent = elParentDrop === this.elParentGrab;
         const groupDrop = elParentDrop?.dataset.jsortGroup;
-        const isValidGroup = !isSameParent && Boolean(groupDrop && this.groupGrab === groupDrop);
+        const isValidGroup = !isSameParent && Boolean(groupDrop && this.group === groupDrop);
         const isValid =
             elTarget &&
             elParentDrop &&
@@ -162,15 +162,16 @@ class JSort {
         this.elGhost = null;
         this.elGrabbed = null;
         this.elTarget = null;
-        this.isFirstMove = false;
         this.elParentDrop = null;
         this.indexGrab = -1;
         this.indexDrop = -1;
         this.affectedItems = [];
         this.pointerStart = {};
+        this.isFirstMove = false;
     }
 
     init(options) {
+        this.destroy();
         Object.assign(this, options);
         this.elParentGrab.style.touchAction = "none";
         this.elParentGrab.addEventListener("pointerdown", this.grab);

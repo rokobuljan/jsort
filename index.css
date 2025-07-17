@@ -27,7 +27,7 @@ body {
             padding-top: 3em;
         }
 
-        &.sort-ghost {
+        &.jsort-ghost {
             box-shadow: 0 0.5rem 1rem #0005;
             scale: 1.1;
 
@@ -38,7 +38,7 @@ body {
         }
     }
 
-    .sort-handler {
+    .jsort-handler {
         position: absolute;
         top: 0;
         left: 0;
