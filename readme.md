@@ -63,7 +63,7 @@ For custom styling JSort provides several classes you could use in your CSS to f
 | .is-jsort-grabbed | Item that is currently grabbed (not to be confused with the ghost element) |
 | .is-jsort-target | Item that is targeted (hovered) while dragging the grabbed item over it. It can also be the parent Element `.jsort` |
 
-See the Example page for styling examples and inspiration.
+See the Example page for inspiration.
 
 ___
 
