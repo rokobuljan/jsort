@@ -5,24 +5,23 @@ class JSort {
         this.duration = this.elParentGrab.dataset.sortDuration ?? 450;
         this.easing = this.elParentGrab.dataset.sortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
         this.groupGrab = this.elParentGrab.dataset.sortGroup;
-        this.pointerStart = {};
-        this.MAX_ZINDEX = this.elParentGrab.dataset.sortMaxZIndex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
+        this.zIndex = this.elParentGrab.dataset.zindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
         this.init(options);
     }
 
     appendGhost({ clientX, clientY }) {
         this.isFirstMove = true;
         this.elGhost = this.elActive.cloneNode(true);
-        const { top, left, width, height } = this.elActive.getBoundingClientRect();
+        const { x, y, width, height } = this.elActive.getBoundingClientRect();
         Object.assign(this.pointerStart, { clientX, clientY });
         Object.assign(this.elGhost.style, {
-            top: `${top}px`,
-            left: `${left}px`,
+            left: `${x}px`,
+            top: `${y}px`,
             width: `${width}px`,
             height: `${height}px`,
             position: "fixed",
             pointerEvents: "none",
-            zIndex: this.MAX_ZINDEX,
+            zIndex: this.zIndex,
             opacity: 0.8,
         });
         this.elGhost.classList.add("sort-ghost");
@@ -168,6 +167,7 @@ class JSort {
         this.indexGrab = -1;
         this.indexDrop = -1;
         this.affectedItems = [];
+        this.pointerStart = {};
     }
 
     init(options) {
