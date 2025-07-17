@@ -113,7 +113,7 @@ class JSort {
         const isDroppedOntoParent = Boolean(this.elTarget && this.elParentDrop && this.elTarget === this.elParentDrop);
 
         // 1. Store the positions of ghost element
-        this.elGhost.animate([{ scale: 1.0 }], { duration: 0, fill: "forwards" });
+        this.elGhost?.animate([{ scale: 1.0 }], { duration: 0, fill: "forwards" });
         const ghostRect = this.elGhost?.getBoundingClientRect();
 
         if (this.checkValidity({ clientX, clientY })) {

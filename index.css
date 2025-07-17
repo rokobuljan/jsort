@@ -7,13 +7,31 @@ body {
     font: min(3cqmin, 1rem) / 1.4 system-ui;
 }
 
+ul {
+    padding: 0;
+}
+
+.col,
+.row {
+    max-width: 70rem;
+    margin: 0 auto;
+    display: flex;
+    padding: 1rem;
+    gap: 0.8rem;
+
+    & > * {
+        flex: 1;
+    }
+}
+
+.col {
+    flex-direction: column;
+}
+
 .sort-grid {
     display: grid;
     gap: 1rem;
-    max-width: 70rem;
     margin: 0 auto;
-    height: 100%;
-    padding: 1rem;
     grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
 
     & > * {
@@ -45,27 +63,6 @@ body {
             margin-left: 1em;
         }
     }
-}
-
-.col,
-.row {
-    max-width: 70rem;
-    margin: 0 auto;
-    display: flex;
-    padding: 1rem;
-    gap: 0.8rem;
-
-    & > * {
-        flex: 1;
-    }
-}
-
-.col {
-    flex-direction: column;
-}
-
-ul {
-    padding: 0;
 }
 
 .sort-list {

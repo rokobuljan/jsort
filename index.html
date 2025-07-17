@@ -17,26 +17,28 @@
     <div class="row">
         <h2>Grid</h2>
     </div>
-    <div class="jsort sort-grid rand-bg">
-        <div class="jsort-item">Sortable by @rokobuljan</div>
-        <div class="jsort-item">2</div>
-        <div class="jsort-item">3</div>
-        <div class="jsort-item">
-            <div class="jsort-handler">Handler</div>4
+    <div class="row">
+        <div class="jsort sort-grid rand-bg">
+            <div class="jsort-item">Sortable by @rokobuljan</div>
+            <div class="jsort-item">2</div>
+            <div class="jsort-item">3</div>
+            <div class="jsort-item">
+                <div class="jsort-handler">Handler</div>4
+            </div>
+            <div class="jsort-item">5</div>
+            <div class="jsort-item">6</div>
+            <div class="jsort-item">7</div>
+            <div class="jsort-item">8</div>
+            <div class="jsort-item">
+                <div class="jsort-handler">Handler</div>9
+            </div>
+            <div class="jsort-item">10</div>
+            <div class="jsort-item">11</div>
+            <div class="jsort-item">12</div>
+            <div class="jsort-item">13</div>
+            <div class="jsort-item">14</div>
+            <div class="jsort-item">15</div>
         </div>
-        <div class="jsort-item">5</div>
-        <div class="jsort-item">6</div>
-        <div class="jsort-item">7</div>
-        <div class="jsort-item">8</div>
-        <div class="jsort-item">
-            <div class="jsort-handler">Handler</div>9
-        </div>
-        <div class="jsort-item">10</div>
-        <div class="jsort-item">11</div>
-        <div class="jsort-item">12</div>
-        <div class="jsort-item">13</div>
-        <div class="jsort-item">14</div>
-        <div class="jsort-item">15</div>
     </div>
 
     <div class="row">
@@ -69,7 +71,7 @@
         new JSort(document.querySelector(".sort-grid"));
         document.querySelectorAll(".sort-list").forEach((el) => new JSort(el, {
             onDrop(data) {
-                console.log(this, data)
+                // console.log(this, data)
             }
         }));
     </script>
