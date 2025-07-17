@@ -2,9 +2,10 @@ class JSort {
     constructor(el, options) {
         this.elParentGrab = el;
         this.group = this.elParentGrab.dataset.jsortGroup;
-        this.classHandler = this.elParentGrab.dataset.jsortClassHandler ?? ".sort-handler";
+        this.classHandler = this.elParentGrab.dataset.jsortClassHandler ?? ".jsort-handler";
         this.duration = this.elParentGrab.dataset.jsortDuration ?? 450;
         this.easing = this.elParentGrab.dataset.jsortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
+        this.scale = this.elParentGrab.dataset.jsortScale ?? "1.1";
         this.zIndex = this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
         this.init(options);
     }
@@ -25,6 +26,8 @@ class JSort {
             opacity: 0.8,
         });
         this.elGhost.classList.add("jsort-ghost");
+        // Animate scale ghost
+        this.elGhost.animate([{ scale: 1.0 }, { scale: this.scale }], { duration: 250, easing: this.easing, fill: "forwards" });
         this.elParentGrab.append(this.elGhost);
     }
 
@@ -34,14 +37,14 @@ class JSort {
         el.classList.add("is-jsort-animated");
         const keyframes = el === this.elGrabbed ?
             [
-                { zIndex: 1, translate: `${x - left}px ${y - top}px`, opacity: 0.9 },
-                { zIndex: 1, translate: "0", opacity: 1 },
+                { zIndex: 1, translate: `${x - left}px ${y - top}px`, opacity: 0.9, scale: this.scale },
+                { zIndex: 1, translate: "0", opacity: 1, scale: 1 },
             ] : [
-                { scale: 1.0, translate: `${x - left}px ${y - top}px` },
-                { scale: 0.85 },
-                { scale: 1.0, translate: "0" },
+                { zIndex: 0, scale: 1.0, translate: `${x - left}px ${y - top}px` },
+                { zIndex: 0, scale: 2 - this.scale },
+                { zIndex: 0, scale: 1.0, translate: "0" },
             ];
-        el.animate(keyframes, { duration: this.duration, easing: this.easing })
+        el.animate(keyframes, { duration: this.duration, easing: this.easing, fill: "forwards" })
             .addEventListener("finish", (ev) => { ev.target.effect.target.classList.remove("is-jsort-animated"); });
     }
 
@@ -77,8 +80,8 @@ class JSort {
     move = (ev) => {
         const { pointerId, clientX, clientY } = ev;
         if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
-        this.elGrabbed.classList.add("is-jsort-grabbed");
         !this.isFirstMove && this.appendGhost({ clientX, clientY });
+        this.elGrabbed.classList.add("is-jsort-grabbed");
 
         const isValid = this.checkValidity({ clientX, clientY });
 
@@ -109,6 +112,7 @@ class JSort {
         const isDroppedOntoParent = Boolean(this.elTarget && this.elParentDrop && this.elTarget === this.elParentDrop);
 
         // 1. Store the positions of ghost element
+        this.elGhost.animate([{ scale: 1.0 }], { duration: 0, fill: "forwards" });
         const ghostRect = this.elGhost?.getBoundingClientRect();
 
         if (this.checkValidity({ clientX, clientY })) {

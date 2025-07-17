@@ -17,24 +17,11 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
 
     & > * {
-        position: relative;
-        transition: opacity 0.3s, box-shadow 0.3s, scale 0.3s;
-        transition-timing-function: cubic-bezier(0.6, 0, 0.6, 1);
         padding: 1em;
         background: #ddd;
 
-        &:has(.sort-handle) {
+        &:has(.jsort-handler) {
             padding-top: 3em;
-        }
-
-        &.jsort-ghost {
-            box-shadow: 0 0.5rem 1rem #0005;
-            scale: 1.1;
-
-            @starting-style {
-                opacity: 1;
-                box-shadow: 0 0rem 0rem #000;
-            }
         }
     }
 
@@ -60,6 +47,7 @@ body {
     }
 }
 
+.col,
 .row {
     max-width: 70rem;
     margin: 0 auto;
@@ -70,6 +58,10 @@ body {
     & > * {
         flex: 1;
     }
+}
+
+.col {
+    flex-direction: column;
 }
 
 ul {
@@ -99,15 +91,29 @@ ul {
     }
 }
 
+.jsort-item {
+    position: relative;
+    transition: opacity 0.3s, box-shadow 0.3s;
+    transition-timing-function: cubic-bezier(0.6, 0, 0.6, 1);
+}
+
+.jsort-ghost {
+    box-shadow: 0 0.5rem 1rem #0005;
+
+    @starting-style {
+        transition: box-shadow 0.3s, opacity 0.3s;
+        opacity: 1;
+        box-shadow: 0 0rem 0rem #000;
+    }
+}
+
 .is-jsort-grabbed {
     opacity: 0.3;
     user-select: none;
-    scale: 0.9;
 }
 
 .is-jsort-target {
     outline: 0.15rem dashed #000;
-    z-index: 1;
 }
 
 .is-jsort-invalid {

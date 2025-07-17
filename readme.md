@@ -69,9 +69,10 @@ JSort allows to drag &amp; drop into a linked group by adding a `data-jsort-grou
 
 | Option                 | Type / Default                   | Description                            |
 | ---------------------- | -------------------------------- | -------------------------------------- |
-| `handlerClass`         | `".jsort-handler"`               | Custom handler className               |
+| `classHandler`         | `".jsort-handler"`               | Custom handler className               |
 | `duration`             | `450`                            | Animation duration in milliseconds     |
 | `easing`               | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function              |
+| `scale`                | `"1.1"`                          | Scale factor of the ghost element      |
 | `zIndex`               | Integer                          | z-index  of the ghost element          |
 | `onGrab(PointerEvent)` | Function                         | Called when an item is grabbed         |
 | `onMove(PointerEvent)` | Function                         | Called when an item is moved           |
