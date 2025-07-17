@@ -56,6 +56,7 @@ class JSort {
         const hasHandler = Boolean(elClosestItem.querySelector(this.classHandler));
         const elHandler = target.closest(this.classHandler);
         if (hasHandler && !elHandler) return;
+        this.elParentGrab.style.userSelect = "none";
         this.elGrabbed = elClosestItem;
         this.elGrabbed.setPointerCapture(pointerId);
         this.indexGrab = [...this.elParentGrab.children].indexOf(this.elGrabbed);
@@ -169,6 +170,7 @@ class JSort {
 
     reset() {
         // Cleanup
+        this.elParentGrab.style.removeProperty("user-select");
         this.elGrabbed?.style.removeProperty("touch-action");
         this.elGrabbed = null;
         this.elGhost?.remove();

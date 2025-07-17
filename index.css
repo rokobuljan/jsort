@@ -102,14 +102,12 @@ ul {
 
     @starting-style {
         transition: box-shadow 0.3s, opacity 0.3s;
-        opacity: 1;
         box-shadow: 0 0rem 0rem #000;
     }
 }
 
 .is-jsort-grabbed {
     opacity: 0.3;
-    user-select: none;
 }
 
 .is-jsort-target {
