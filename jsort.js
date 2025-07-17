@@ -33,24 +33,21 @@ class JSort {
         const { left, top } = el.getBoundingClientRect();
         if (x === left && y === top) return;
         el.classList.add("is-sort-animated");
-
         const keyframes = el === this.elActive ?
             [
                 { zIndex: 1, translate: `${x - left}px ${y - top}px`, opacity: 0.9 },
                 { zIndex: 1, translate: "0", opacity: 1 },
-            ] :
-            [
+            ] : [
                 { scale: 1.0, translate: `${x - left}px ${y - top}px` },
                 { scale: 0.85 },
                 { scale: 1.0, translate: "0" },
             ];
         el.animate(keyframes, { duration: this.duration, easing: this.easing })
-            .addEventListener("finish", (ev) => {
-                ev.target.effect.target.classList.remove("is-sort-animated");
-            });
+            .addEventListener("finish", (ev) => { ev.target.effect.target.classList.remove("is-sort-animated"); });
     }
 
-    grab = ({ pointerId, target }) => {
+    grab = (ev) => {
+        const { pointerId, target } = ev;
         if (this.elActive) return;
         const elClosestItem = target.closest(".sort-item");
         if (!elClosestItem) return;
@@ -59,6 +56,9 @@ class JSort {
         if (hasHandler && !elHandler) return;
         this.elActive = elClosestItem;
         this.elActive.setPointerCapture(pointerId);
+        this.indexGrab = [...this.elParentGrab.children].indexOf(this.elActive);
+        // Notify
+        this.onGrab?.call(this, ev);
     }
 
     checkValidity({ clientX, clientY }) {
@@ -75,7 +75,8 @@ class JSort {
         return isValid;
     }
 
-    move = ({ pointerId, clientX, clientY }) => {
+    move = (ev) => {
+        const { pointerId, clientX, clientY } = ev;
         if (!this.elActive?.hasPointerCapture(pointerId)) return;
         this.elActive.classList.add("is-sort-active");
         !this.isFirstMove && this.appendGhost({ clientX, clientY });
@@ -91,68 +92,67 @@ class JSort {
             this.elTarget = document.elementFromPoint(clientX, clientY)?.closest(".sort-item, .sortable");
             this.elTarget?.classList.add("is-sort-target");
         }
+
+        // Notify
+        this.onMove?.call(this, ev);
     }
 
-    drop = ({ pointerId, clientX, clientY }) => {
+    drop = (ev) => {
+        const { pointerId, clientX, clientY } = ev;
         if (!this.elActive?.hasPointerCapture(pointerId)) return;
 
         this.elActive?.classList.remove("is-sort-active");
         this.elTarget?.classList.remove("is-sort-target");
-
         const elFromPoint = document.elementFromPoint(clientX, clientY);
         this.elTarget = elFromPoint?.closest(".sort-item, .sortable");
         this.elParentDrop = elFromPoint?.closest(`.sortable`);
         const isSameParent = this.elParentDrop === this.elParentGrab;
         const isDroppedOntoParent = Boolean(this.elTarget && this.elParentDrop && this.elTarget === this.elParentDrop);
-        let rangeData = [];
-        let targetIndex = 0;
-        let activeIndex = 0;
-        let isLowerIndex = false;
 
+        // 1. Store the positions of ghost element
         const ghostRect = this.elGhost?.getBoundingClientRect();
 
         if (this.checkValidity({ clientX, clientY })) {
-            let siblings = [];
+            const siblingsGrab = [...this.elParentGrab.children].filter(el => el !== this.elGhost);
+            this.indexGrab = siblingsGrab.indexOf(this.elActive);
 
             if (isSameParent) {
-                siblings = [...this.elParentDrop.children];
-                activeIndex = siblings.indexOf(this.elActive);
-                targetIndex = siblings.indexOf(this.elTarget);
-                const indexMin = isDroppedOntoParent ? activeIndex : Math.min(targetIndex, activeIndex);
-                const indexMax = isDroppedOntoParent ? siblings.length - 1 : Math.max(targetIndex, activeIndex);
-                siblings = siblings.slice(indexMin, indexMax + 1);
+                this.indexDrop = isDroppedOntoParent ? Math.max(0, siblingsGrab.length - 1) : siblingsGrab.indexOf(this.elTarget);
+                const indexMin = isDroppedOntoParent ? this.indexGrab : Math.min(this.indexDrop, this.indexGrab);
+                const indexMax = isDroppedOntoParent ? siblingsGrab.length - 1 : Math.max(this.indexDrop, this.indexGrab);
+                this.affectedItems = siblingsGrab.slice(indexMin, indexMax + 1);
             } else {
-                const siblingsGrab = [...this.elParentGrab.children];
                 const siblingsDrop = [...this.elParentDrop.children];
-                activeIndex = siblingsGrab.indexOf(this.elActive);
-                targetIndex = siblingsDrop.indexOf(this.elTarget);
-                siblings = [...siblingsGrab.slice(activeIndex)];
-                if (!isDroppedOntoParent) {
-                    siblings.push(...siblingsDrop.slice(targetIndex));
-                }
+                this.indexDrop = isDroppedOntoParent ? Math.max(0, siblingsDrop.length) : siblingsDrop.indexOf(this.elTarget);
+                this.affectedItems = [...siblingsGrab.slice(this.indexGrab), ...siblingsDrop.slice(this.indexDrop)];
             }
 
-            // 1. Remember positions before appending to DOM
-            rangeData = siblings.map((el) => {
+            // 2. Store initial positions of all affected elements (before DOM manipulation)
+            const affectedItemsData = this.affectedItems.map((el) => {
                 const { x, y } = el.getBoundingClientRect();
                 return { el, x, y };
             });
 
-            // 2. Append to DOM
+            // 3. Append to DOM
             if (isDroppedOntoParent) {
                 this.elParentDrop.append(this.elActive);
             } else if (isSameParent) {
-                isLowerIndex = targetIndex < activeIndex;
-                this.elParentDrop.insertBefore(this.elActive, isLowerIndex ? this.elTarget : this.elTarget.nextSibling);
+                this.elParentDrop.insertBefore(this.elActive, this.indexDrop < this.indexGrab ? this.elTarget : this.elTarget.nextSibling);
             } else {
                 this.elParentDrop.insertBefore(this.elActive, this.elTarget);
             }
+
+            // 4. Animate other elements
+            affectedItemsData.forEach((data) => {
+                if (data.el === this.elActive) return; // We'll animate the active element later
+                this.animateItem(data);
+            });
         }
 
-        // Animate other elements
-        rangeData.filter(({ el }) => el !== this.elActive).forEach((data) => this.animateItem(data));
-        // Animate active element
+        // 5. Always animate active element
         ghostRect && this.animateItem({ el: this.elActive, x: ghostRect.left, y: ghostRect.top });
+        // Notify
+        this.onDrop?.call(this, ev);
         // Cleanup
         this.reset();
     }
@@ -165,6 +165,9 @@ class JSort {
         this.elTarget = null;
         this.isFirstMove = false;
         this.elParentDrop = null;
+        this.indexGrab = -1;
+        this.indexDrop = -1;
+        this.affectedItems = [];
     }
 
     init(options) {

@@ -39,15 +39,23 @@
         <h2>Groups</h2>
     </div>
     <div class="row">
-        <ul class="sortable sort-list rand-bg" data-sort-group="group-1"><li class="sort-item">A 1</li><li class="sort-item">A 2</li><li class="sort-item">A 3</li><li class="sort-item">A 4</li></ul>
-        <ul class="sortable sort-list rand-bg" data-sort-group="group-1"><li class="sort-item">B 1</li><li class="sort-item">B 2</li><li class="sort-item">B 3</li><li class="sort-item">B 4</li><li class="sort-item">B 5</li></ul>
+        <ul class="sortable sort-list rand-bg" data-sort-group="group-1">
+            <li class="sort-item">A 1</li>
+            <li class="sort-item">A 2</li>
+            <li class="sort-item">A 3</li>
+            <li class="sort-item">A 4</li>
+        </ul>
+        <ul class="sortable sort-list rand-bg" data-sort-group="group-1">
+            <li class="sort-item">B 1</li>
+            <li class="sort-item">B 2</li>
+            <li class="sort-item">B 3</li>
+            <li class="sort-item">B 4</li>
+            <li class="sort-item">B 5</li>
+        </ul>
         <ul class="sortable sort-list rand-bg" data-sort-group="group-1"></ul>
     </div>
 
     <script type="module">
-        // document.querySelectorAll(".sort-grid").forEach(gridSort);
-        // document.querySelectorAll(".sort-list").forEach(gridSort);
-
         import JSort from './jsort.js';
 
         document.querySelectorAll(".rand-bg > *").forEach((el, i) => {
@@ -55,7 +63,11 @@
         });
 
         new JSort(document.querySelector(".sort-grid"));
-        document.querySelectorAll(".sort-list").forEach((el) => new JSort(el));
+        document.querySelectorAll(".sort-list").forEach((el) => new JSort(el, {
+            onDrop(data) {
+                //console.log(this, data)
+            }
+        }));
 
     </script>
 </body>
