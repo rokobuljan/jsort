@@ -33,7 +33,7 @@ body {
         padding: 0.5em 1em;
         text-align: right;
         margin-bottom: 1em;
-        cursor: move;
+        cursor: grab;
         transition: background-color 0.3s;
         background: #fff8;
 

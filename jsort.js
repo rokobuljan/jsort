@@ -160,11 +160,19 @@ class JSort {
         this.reset();
     }
 
+    handleTouchAction(ev) {
+        const elItem = ev.target.closest(".jsort-item");
+        if (!elItem) return;
+        ev.preventDefault();
+        elItem.style.touchAction = "none";
+    }
+
     reset() {
         // Cleanup
+        this.elGrabbed?.style.removeProperty("touch-action");
+        this.elGrabbed = null;
         this.elGhost?.remove();
         this.elGhost = null;
-        this.elGrabbed = null;
         this.elTarget = null;
         this.elParentDrop = null;
         this.indexGrab = -1;
@@ -177,7 +185,7 @@ class JSort {
     init(options) {
         this.destroy();
         Object.assign(this, options);
-        this.elParentGrab.style.touchAction = "none";
+        this.elParentGrab.addEventListener("touchstart", this.handleTouchAction);
         this.elParentGrab.addEventListener("pointerdown", this.grab);
         this.elParentGrab.addEventListener("pointermove", this.move);
         this.elParentGrab.addEventListener("pointerup", this.drop);
@@ -186,11 +194,12 @@ class JSort {
     }
 
     destroy() {
-        this.elParentGrab.style.removeProperty("touch-action");
+        this.elParentGrab.removeEventListener("touchstart", this.handleTouchAction);
         this.elParentGrab.removeEventListener("pointerdown", this.grab);
         this.elParentGrab.removeEventListener("pointermove", this.move);
         this.elParentGrab.removeEventListener("pointerup", this.drop);
         this.elParentGrab.removeEventListener("pointercancel", this.drop);
+
     }
 }
 
