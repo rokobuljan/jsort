@@ -5,6 +5,7 @@
 
 body {
     font: min(3cqmin, 1rem) / 1.4 system-ui;
+    padding-bottom: 10rem;
 }
 
 ul {
@@ -81,7 +82,6 @@ ul {
     }
 
     li {
-        position: relative;
         padding: 1em;
         background: #ddd;
         border: 2px solid #fff;
@@ -89,9 +89,9 @@ ul {
 }
 
 .jsort-item {
-    position: relative;
-    transition: opacity 0.3s, box-shadow 0.3s;
-    transition-timing-function: cubic-bezier(0.6, 0, 0.6, 1);
+    position: relative; /* Needed for z-index to work!!! */
+    /* transition: opacity 0.3s, box-shadow 0.3s;
+    transition-timing-function: cubic-bezier(0.6, 0, 0.6, 1); */
 }
 
 .jsort-ghost {

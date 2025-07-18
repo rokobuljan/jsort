@@ -9,10 +9,10 @@ Super small yet powerful sortable library with touch support, animations, and a 
 - [x] Customization options
 - [x] Drag &amp; drop into linked groups
 - [x] Drag handler
-- [x] Dynamic items (delegated events from parent)
-- [ ] Multiple select (*soon*)
+- [x] Dynamic items (delegated events)
+- [x] Nested sortables
 - [ ] Swap items (*soon*)
-- [ ] Nested sortables (*soon*)
+- [ ] Multiple select (*soon*)
 
 ## Installation
 
@@ -43,7 +43,7 @@ const JSortInstance  = new JSort(Element, {/*Options*/});
         onGrab(ev) {
             console.log(this, ev);
         }
-        onGrab(ev) {
+        onMove(ev) {
             console.log(this, ev);
         }
         onDrop(ev) {

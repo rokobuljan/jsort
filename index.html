@@ -61,6 +61,34 @@
         <ul class="jsort sort-list rand-bg" data-jsort-group="group-1"></ul>
     </div>
 
+    <div class="row">
+        <h2>Nested groups</h2>
+    </div>
+    <div class="row">
+        <ul class="jsort sort-list rand-bg" data-jsort-group="group-1">
+            <li class="jsort-item">
+                <div>A 1</div>
+            </li>
+            <li class="jsort-item">
+                <div>A 2</div>
+                <ul class="jsort sort-list rand-bg" data-jsort-group="group-1">
+                    <li class="jsort-item">A.b 1</li>
+                    <li class="jsort-item">A.b 2</li>
+                    <li class="jsort-item">A.b 3</li>
+                    <li class="jsort-item">A.b 4</li>
+                    <li class="jsort-item">A.b 5</li>
+                </ul>
+            </li>
+            <li class="jsort-item">
+                <div>A 3</div>
+            </li>
+            <li class="jsort-item">
+                <div>A 4</div>
+            </li>
+        </ul>
+    </div>
+
+
     <script type="module">
         import JSort from './jsort.js';
 

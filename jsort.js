@@ -10,11 +10,9 @@ class JSort {
         this.init(options);
     }
 
-    appendGhost({ clientX, clientY }) {
-        this.isFirstMove = true;
-        this.elGhost = this.elGrabbed.cloneNode(true);
+    appendGhost() {
         const { x, y, width, height } = this.elGrabbed.getBoundingClientRect();
-        Object.assign(this.pointerStart, { clientX, clientY });
+        this.elGhost = this.elGrabbed.cloneNode(true);
         Object.assign(this.elGhost.style, {
             position: "fixed",
             left: `${x}px`,
@@ -27,7 +25,14 @@ class JSort {
         });
         this.elGhost.classList.add("jsort-ghost");
         // Animate scale ghost
-        this.elGhost.animate([{ scale: 1.0 }, { scale: this.scale }], { duration: 250, easing: this.easing, fill: "forwards" });
+        this.elGhost.animate([
+            { scale: 1.0 },
+            { scale: this.scale }
+        ], {
+            duration: 250,
+            easing: this.easing,
+            fill: "forwards"
+        });
         this.elParentGrab.append(this.elGhost);
     }
 
@@ -44,24 +49,15 @@ class JSort {
                 { zIndex: 0, scale: 2 - this.scale },
                 { zIndex: 0, scale: 1.0, translate: "0" },
             ];
-        el.animate(keyframes, { duration: this.duration, easing: this.easing, fill: "forwards" })
-            .addEventListener("finish", (ev) => { ev.target.effect.target.classList.remove("is-jsort-animated"); });
-    }
-
-    grab = (ev) => {
-        const { pointerId, target } = ev;
-        if (this.elGrabbed) return;
-        const elClosestItem = target.closest(".jsort-item");
-        if (!elClosestItem) return;
-        const hasHandler = Boolean(elClosestItem.querySelector(this.classHandler));
-        const elHandler = target.closest(this.classHandler);
-        if (hasHandler && !elHandler) return;
-        this.elParentGrab.style.userSelect = "none";
-        this.elGrabbed = elClosestItem;
-        this.elGrabbed.setPointerCapture(pointerId);
-        this.indexGrab = [...this.elParentGrab.children].indexOf(this.elGrabbed);
-        // Notify
-        this.onGrab?.call(this, ev);
+        const anim = el.animate(keyframes, {
+            duration: this.duration,
+            easing: this.easing,
+            fill: "forwards"
+        });
+        anim.addEventListener("finish", (ev) => {
+            ev.target.effect.target.classList.remove("is-jsort-animated");
+            anim.cancel(); // Fixes nested sortable
+        });
     }
 
     checkValidity({ clientX, clientY }) {
@@ -78,22 +74,50 @@ class JSort {
         return isValid;
     }
 
+    grab = (ev) => {
+        if (this.elGrabbed) return;
+        const elClosestItem = ev.target.closest(".jsort-item");
+
+        if (!elClosestItem) return;
+        if (elClosestItem.parentElement !== this.elParentGrab) return; // Does not belongs to this sortable
+
+        const hasHandler = Boolean(elClosestItem.querySelector(this.classHandler));
+        const elHandler = ev.target.closest(this.classHandler);
+        if (hasHandler && !elHandler) return;
+        
+        const { clientX, clientY } = ev;
+        Object.assign(this.pointerStart, { clientX, clientY });
+        this.elParentGrab.style.userSelect = "none";
+        this.elGrabbed = elClosestItem;
+        this.elGrabbed.setPointerCapture(ev.pointerId);
+        this.indexGrab = [...this.elParentGrab.children].indexOf(this.elGrabbed);
+        // Notify
+        this.onGrab?.call(this, ev);
+    }
+
     move = (ev) => {
         const { pointerId, clientX, clientY } = ev;
         if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
-        !this.isFirstMove && this.appendGhost({ clientX, clientY });
-        this.elGrabbed.classList.add("is-jsort-grabbed");
+        
+        if (!this.isFirstMove) {
+            this.isFirstMove = true;
+            this.appendGhost({ clientX, clientY });
+            this.elGrabbed.classList.add("is-jsort-grabbed");
+        }
 
         const isValid = this.checkValidity({ clientX, clientY });
-
-        // Move ghost element
         this.elGhost.style.translate = `${clientX - this.pointerStart.clientX}px ${clientY - this.pointerStart.clientY}px`;
         this.elGhost.classList.toggle("is-jsort-invalid", !isValid);
 
-        this.elTarget?.classList.remove("is-jsort-target");
-        if (isValid) {
-            this.elTarget = document.elementFromPoint(clientX, clientY)?.closest(".jsort-item, .jsort");
-            this.elTarget?.classList.add("is-jsort-target");
+        const elFromPoint = document.elementFromPoint(clientX, clientY);
+        const elTarget = elFromPoint?.closest(".jsort-item, .jsort");
+
+        if (elTarget !== this.elTarget) {
+            this.elTarget?.classList.remove("is-jsort-target");
+            if (isValid) {
+                this.elTarget = elTarget;
+                this.elTarget?.classList.add("is-jsort-target");
+            }
         }
 
         // Notify
