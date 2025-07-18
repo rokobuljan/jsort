@@ -10,7 +10,7 @@ Super small yet powerful sortable library with touch support, animations, and a 
 - [x] Drag &amp; drop into linked groups
 - [x] Drag handler
 - [x] Dynamic items (delegated events)
-- [x] Nested sortables
+- [x] Nested groups
 - [ ] Swap items (*soon*)
 - [ ] Multiple select (*soon*)
 

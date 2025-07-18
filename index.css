@@ -40,6 +40,7 @@ ul {
         background: #ddd;
 
         &:has(.jsort-handler) {
+            position: relative;
             padding-top: 3em;
         }
     }
@@ -88,17 +89,11 @@ ul {
     }
 }
 
-.jsort-item {
-    position: relative; /* Needed for z-index to work!!! */
-    /* transition: opacity 0.3s, box-shadow 0.3s;
-    transition-timing-function: cubic-bezier(0.6, 0, 0.6, 1); */
-}
-
 .jsort-ghost {
+    transition: box-shadow 0.3s, opacity 0.3s;
     box-shadow: 0 0.5rem 1rem #0005;
 
     @starting-style {
-        transition: box-shadow 0.3s, opacity 0.3s;
         box-shadow: 0 0rem 0rem #000;
     }
 }
