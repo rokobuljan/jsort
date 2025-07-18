@@ -3,7 +3,20 @@
     box-sizing: border-box;
 }
 
+:root {
+    color-scheme: light dark;
+    --dark: #131517;
+    --light: #fff;
+    --bg: light-dark(var(--light), var(--dark));
+    --fg: light-dark(var(--dark), var(--light));
+    color: var(--fg);
+    background: var(--bg);
+}
+
 body {
+    color-scheme: light;
+    background: var(--bg);
+    color: var(--fg);
     font: min(3cqmin, 1rem) / 1.4 system-ui;
     padding-bottom: 10rem;
 }
@@ -29,10 +42,12 @@ ul {
     flex-direction: column;
 }
 
-.sort-grid {
+.grid {
+    color-scheme: dark;
     display: grid;
     gap: 1rem;
     margin: 0 auto;
+    color: var(--bg);
     grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
 
     & > * {
@@ -67,12 +82,17 @@ ul {
     }
 }
 
-.sort-list {
+ul {
+    list-style: none;
+}
+
+.list {
+    color-scheme: dark;
     list-style: none;
     padding: 0;
-    outline: 1px solid #aaa;
     padding-bottom: 1.5em;
-    background: #eee;
+    background: color-mix(in srgb, var(--bg), var(--fg) 90%);
+    color: var(--bg);
 
     &:not(:has(> *))::after {
         display: list-item;
@@ -84,8 +104,8 @@ ul {
 
     li {
         padding: 1em;
-        background: #ddd;
-        border: 2px solid #fff;
+        /* background: color-mix(in srgb, #fff 10%, var(--bg) 90%); */
+        border: 2px solid var(--fg);
     }
 }
 
@@ -103,7 +123,7 @@ ul {
 }
 
 .is-jsort-target {
-    outline: 0.15rem dashed #000;
+    outline: 0.15rem dashed currentColor;
 }
 
 .is-jsort-invalid {
