@@ -16,11 +16,11 @@ class JSort {
         const { x, y, width, height } = this.elGrabbed.getBoundingClientRect();
         Object.assign(this.pointerStart, { clientX, clientY });
         Object.assign(this.elGhost.style, {
+            position: "fixed",
             left: `${x}px`,
             top: `${y}px`,
             width: `${width}px`,
             height: `${height}px`,
-            position: "fixed",
             pointerEvents: "none",
             zIndex: this.zIndex,
             opacity: 0.8,
