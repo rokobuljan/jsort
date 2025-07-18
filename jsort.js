@@ -26,7 +26,6 @@ class JSort {
         this.elGhost.classList.add("jsort-ghost");
         // Animate scale ghost
         this.elGhost.animate([
-            { scale: 1.0 },
             { scale: this.scale }
         ], {
             duration: 250,
@@ -60,14 +59,21 @@ class JSort {
         });
     }
 
+    closestElement(el, elTarget) {
+        while (el && el !== elTarget) el = el.parentElement;
+        return el === elTarget ? el : null;
+    }
+
     checkValidity({ clientX, clientY }) {
         const elFromPoint = document.elementFromPoint(clientX, clientY);
         const elTarget = elFromPoint?.closest(".jsort-item, .jsort");
         const elParentDrop = elFromPoint?.closest(`.jsort`);
+        const isOntoSelf = elTarget && this.closestElement(elTarget, this.elGrabbed) === this.elGrabbed;
         const isSameParent = elParentDrop === this.elParentGrab;
         const groupDrop = elParentDrop?.dataset.jsortGroup;
         const isValidGroup = !isSameParent && Boolean(groupDrop && this.group === groupDrop);
         const isValid =
+            !isOntoSelf &&
             elTarget &&
             elParentDrop &&
             isValidGroup || isSameParent;
@@ -104,7 +110,7 @@ class JSort {
             this.appendGhost({ clientX, clientY });
             this.elGrabbed.classList.add("is-jsort-grabbed");
         }
-        
+
         const isValid = this.checkValidity({ clientX, clientY });
         this.elGhost.style.translate = `${clientX - this.pointerStart.clientX}px ${clientY - this.pointerStart.clientY}px`;
         this.elGhost.classList.toggle("is-jsort-invalid", !isValid);
