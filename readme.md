@@ -1,6 +1,18 @@
 # JSort
 
-Super small yet powerful sortable library with touch support
+Super small yet powerful sortable library with touch support, animations, and a great UX.
+
+## Features
+
+- [x] Smooth animations for a better UX
+- [x] Touch support (pointer events)
+- [x] Customization options
+- [x] Drag &amp; drop into linked groups
+- [x] Drag handler
+- [x] Dynamic items (delegated events from parent)
+- [ ] Multiple select (*soon*)
+- [ ] Swap items (*soon*)
+- [ ] Nested sortables (*soon*)
 
 ## Installation
 
@@ -130,7 +142,13 @@ For custom styling JSort provides several classes you could use in your CSS to f
 | .is-jsort-target   | Item that is targeted (hovered). It can also be the parent Element `.jsort` |
 | .is-jsort-invalid  | Added to the ghost element if the hovered target is invalid / not allowed   |
 
-See the Example page for inspiration.
+See the [Example page](index.html) for inspiration.
+
+## Motivation
+
+I needed a sortable library. After reviewing some popular ones like SortableJS, Dragula, jQueryUI, and others I found that many do not work the way I want, fast, smoothly, touch/mobile. An important factor was to minimize motion, only when necessary (on drop) and to animate all affected elements naturally and smoothly to support cognitive feedback and make the experience overall more natural and pleasant.  
+JSort was born to fill this necessity.
+
 
 ___
 
