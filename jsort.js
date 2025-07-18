@@ -2,6 +2,7 @@ class JSort {
     constructor(el, options) {
         this.elParentGrab = el;
         this.group = this.elParentGrab.dataset.jsortGroup;
+        this.classItems = this.elParentGrab.dataset.jsortClassItems ?? ".jsort-item";
         this.classHandler = this.elParentGrab.dataset.jsortClassHandler ?? ".jsort-handler";
         this.duration = this.elParentGrab.dataset.jsortDuration ?? 450;
         this.easing = this.elParentGrab.dataset.jsortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
@@ -66,7 +67,7 @@ class JSort {
 
     checkValidity({ clientX, clientY }) {
         const elFromPoint = document.elementFromPoint(clientX, clientY);
-        const elTarget = elFromPoint?.closest(".jsort-item, .jsort");
+        const elTarget = elFromPoint?.closest(`${this.classItems}, .jsort`);
         const elParentDrop = elFromPoint?.closest(`.jsort`);
         const isOntoSelf = elTarget && this.closestElement(elTarget, this.elGrabbed) === this.elGrabbed;
         const isSameParent = elParentDrop === this.elParentGrab;
@@ -82,7 +83,7 @@ class JSort {
 
     grab = (ev) => {
         if (this.elGrabbed) return;
-        const elClosestItem = ev.target.closest(".jsort-item");
+        const elClosestItem = ev.target.closest(`${this.classItems}`);
 
         if (!elClosestItem) return;
         if (elClosestItem.parentElement !== this.elParentGrab) return; // Does not belongs to this sortable
@@ -116,7 +117,7 @@ class JSort {
         this.elGhost.classList.toggle("is-jsort-invalid", !isValid);
         this.elGrabbed.style.cursor = isValid ? "grab" : "not-allowed";
         const elFromPoint = document.elementFromPoint(clientX, clientY);
-        const elTarget = elFromPoint?.closest(".jsort-item, .jsort");
+        const elTarget = elFromPoint?.closest(`${this.classItems}, .jsort`);
 
         if (elTarget !== this.elTarget) {
             this.elTarget?.classList.remove("is-jsort-target");
@@ -138,7 +139,7 @@ class JSort {
         this.elGrabbed?.classList.remove("is-jsort-grabbed");
         this.elTarget?.classList.remove("is-jsort-target");
         const elFromPoint = document.elementFromPoint(clientX, clientY);
-        this.elTarget = elFromPoint?.closest(".jsort-item, .jsort");
+        this.elTarget = elFromPoint?.closest(`${this.classItems}, .jsort`);
         this.elParentDrop = elFromPoint?.closest(`.jsort`);
         const isSameParent = this.elParentDrop === this.elParentGrab;
         const isDroppedOntoParent = Boolean(this.elTarget && this.elParentDrop && this.elTarget === this.elParentDrop);
@@ -192,8 +193,8 @@ class JSort {
         this.reset();
     }
 
-    handleTouchAction(ev) {
-        const elItem = ev.target.closest(".jsort-item");
+    handleTouchAction = (ev) => {
+        const elItem = ev.target.closest(`${this.classItems}`);
         if (!elItem) return;
         ev.preventDefault();
         elItem.style.touchAction = "none";
