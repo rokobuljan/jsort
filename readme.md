@@ -92,7 +92,7 @@ JSort allows to drag &amp; drop into a linked group by adding a `data-jsort-grou
 | `onDrop(PointerEvent)` | Function                         | Called when an item is dropped         |
 | `group`                | String                           | Group name. (`data-jsort-group` value) |
 
-PS: 
+**Tip:**  
 Some options can be assigned directly from your HTML using the `data-jsort-*` attributes, just like `data-jsort-group`:
 
 ```html
