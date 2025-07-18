@@ -5,6 +5,7 @@ class JSort {
         this.classItems = this.elParentGrab.dataset.jsortClassItems ?? ".jsort-item";
         this.classHandler = this.elParentGrab.dataset.jsortClassHandler ?? ".jsort-handler";
         this.duration = this.elParentGrab.dataset.jsortDuration ?? 450;
+        this.isSwap = true; // this.elParentGrab.dataset.jsortSwap;
         this.easing = this.elParentGrab.dataset.jsortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
         this.scale = this.elParentGrab.dataset.jsortScale ?? "1.1";
         this.zIndex = this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
@@ -163,19 +164,37 @@ class JSort {
                 this.affectedItems = [...siblingsGrab.slice(this.indexGrab), ...siblingsDrop.slice(this.indexDrop)];
             }
 
+            if (this.isSwap) {
+                this.affectedItems = this.affectedItems.filter((el) => el === this.elTarget);
+                console.log(this.affectedItems);
+            }
+
             // 2. Store initial positions of all affected elements (before DOM manipulation)
             const affectedItemsData = this.affectedItems.map((el) => {
-                const { x, y } = el.getBoundingClientRect();
+                const { x, y } = this.isSwap ? this.elGrabbed.getBoundingClientRect() : el.getBoundingClientRect();
                 return { el, x, y };
             });
 
             // 3. Append to DOM
-            if (isDroppedOntoParent) {
-                this.elParentDrop.append(this.elGrabbed);
-            } else if (isSameParent) {
-                this.elParentDrop.insertBefore(this.elGrabbed, this.indexDrop < this.indexGrab ? this.elTarget : this.elTarget.nextSibling);
+            if (this.isSwap) {
+                if (isDroppedOntoParent) {
+                    console.log("Dropped onto Parent");
+                } else {
+                    const elTargetClone = this.elTarget.cloneNode(true);
+                    const elGrabbedClone = this.elGrabbed.cloneNode(true);
+                    this.elParentGrab.insertBefore(this.elTarget, this.elGrabbed);
+                    this.elParentDrop.insertBefore(this.elGrabbed, elTargetClone);
+                    elTargetClone.remove();
+                    elGrabbedClone.remove();
+                }
             } else {
-                this.elParentDrop.insertBefore(this.elGrabbed, this.elTarget);
+                if (isDroppedOntoParent) {
+                    this.elParentDrop.append(this.elGrabbed);
+                } else if (isSameParent) {
+                    this.elParentDrop.insertBefore(this.elGrabbed, this.indexDrop < this.indexGrab ? this.elTarget : this.elTarget.nextSibling);
+                } else {
+                    this.elParentDrop.insertBefore(this.elGrabbed, this.elTarget);
+                }
             }
 
             // 4. Animate other elements
