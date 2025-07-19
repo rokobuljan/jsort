@@ -1,14 +1,14 @@
 class JSort {
     constructor(el, options) {
         this.elParentGrab = el;
-        this.group = this.elParentGrab.dataset.jsortGroup;
         this.classItems = this.elParentGrab.dataset.jsortClassItems ?? ".jsort-item";
         this.classHandler = this.elParentGrab.dataset.jsortClassHandler ?? ".jsort-handler";
         this.duration = this.elParentGrab.dataset.jsortDuration ?? 450;
-        this.isSwap = true; // this.elParentGrab.dataset.jsortSwap;
+        this.swap = this.elParentGrab.dataset.jsortSwap ?? false;
         this.easing = this.elParentGrab.dataset.jsortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
         this.scale = this.elParentGrab.dataset.jsortScale ?? "1.1";
         this.zIndex = this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
+        this.group = this.elParentGrab.dataset.jsortGroup;
         this.init(options);
     }
 
@@ -153,7 +153,10 @@ class JSort {
             const siblingsGrab = [...this.elParentGrab.children].filter(el => el !== this.elGhost);
             this.indexGrab = siblingsGrab.indexOf(this.elGrabbed);
 
-            if (isSameParent) {
+            if (this.swap) {
+                this.affectedItems = [this.elTarget];
+            }
+            else if (isSameParent) {
                 this.indexDrop = isDroppedOntoParent ? Math.max(0, siblingsGrab.length - 1) : siblingsGrab.indexOf(this.elTarget);
                 const indexMin = isDroppedOntoParent ? this.indexGrab : Math.min(this.indexDrop, this.indexGrab);
                 const indexMax = isDroppedOntoParent ? siblingsGrab.length - 1 : Math.max(this.indexDrop, this.indexGrab);
@@ -164,28 +167,18 @@ class JSort {
                 this.affectedItems = [...siblingsGrab.slice(this.indexGrab), ...siblingsDrop.slice(this.indexDrop)];
             }
 
-            if (this.isSwap) {
-                this.affectedItems = this.affectedItems.filter((el) => el === this.elTarget);
-                console.log(this.affectedItems);
-            }
-
             // 2. Store initial positions of all affected elements (before DOM manipulation)
             const affectedItemsData = this.affectedItems.map((el) => {
-                const { x, y } = this.isSwap ? this.elGrabbed.getBoundingClientRect() : el.getBoundingClientRect();
+                const { x, y } = el.getBoundingClientRect();
                 return { el, x, y };
             });
 
             // 3. Append to DOM
-            if (this.isSwap) {
-                if (isDroppedOntoParent) {
-                    console.log("Dropped onto Parent");
-                } else {
-                    const elTargetClone = this.elTarget.cloneNode(true);
-                    const elGrabbedClone = this.elGrabbed.cloneNode(true);
-                    this.elParentGrab.insertBefore(this.elTarget, this.elGrabbed);
-                    this.elParentDrop.insertBefore(this.elGrabbed, elTargetClone);
-                    elTargetClone.remove();
-                    elGrabbedClone.remove();
+            if (this.swap) {
+                if (!isDroppedOntoParent) {
+                    const elNext = this.elGrabbed.nextSibling;
+                    this.elParentDrop.insertBefore(this.elGrabbed, this.elTarget.nextSibling);
+                    this.elParentGrab.insertBefore(this.elTarget, elNext);
                 }
             } else {
                 if (isDroppedOntoParent) {

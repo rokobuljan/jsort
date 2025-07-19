@@ -11,7 +11,7 @@ Super small yet powerful sortable library with touch support, animations, and a 
 - [x] Drag handler
 - [x] Dynamic items (delegated events)
 - [x] Nested groups
-- [ ] Swap items (*soon*)
+- [x] Swap items
 - [ ] Multiple select (*soon*)
 
 ## Installation
@@ -86,10 +86,11 @@ JSort allows to drag &amp; drop into a linked group by adding a `data-jsort-grou
 | `duration`             | `450`                            | Animation duration in milliseconds     |
 | `easing`               | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function              |
 | `scale`                | `"1.1"`                          | Scale factor of the ghost element      |
-| `zIndex`               | Integer                          | z-index  of the ghost element          |
 | `onGrab(PointerEvent)` | Function                         | Called when an item is grabbed         |
 | `onMove(PointerEvent)` | Function                         | Called when an item is moved           |
 | `onDrop(PointerEvent)` | Function                         | Called when an item is dropped         |
+| `swap`                 | `false`                          | Swap elements on drop                  |
+| `zIndex`               | Integer                          | z-index  of the ghost element          |
 | `group`                | String                           | Group name. (`data-jsort-group` value) |
 
 **Tip:**  
@@ -99,6 +100,7 @@ Some options can be assigned directly from your HTML using the `data-jsort-*` at
 <ul class="jsort"
         data-jsort-group="group-a"
         data-jsort-class-handler=".my-handler"
+        data-jsort-swap
         data-jsort-duration="1000"
         data-jsort-easing="cubic-bezier(0.5, 0, 0.5, 1)"
         data-jsort-zindex="100"
