@@ -100,7 +100,7 @@ Some options can be assigned directly from your HTML using the `data-jsort-*` at
 <ul class="jsort"
         data-jsort-group="group-a"
         data-jsort-class-handler=".my-handler"
-        data-jsort-swap
+        data-jsort-swap="true"
         data-jsort-duration="1000"
         data-jsort-easing="cubic-bezier(0.5, 0, 0.5, 1)"
         data-jsort-zindex="100"

@@ -4,12 +4,12 @@ class JSort {
         this.classItems = this.elParentGrab.dataset.jsortClassItems ?? ".jsort-item";
         this.classHandler = this.elParentGrab.dataset.jsortClassHandler ?? ".jsort-handler";
         this.duration = this.elParentGrab.dataset.jsortDuration ?? 450;
-        this.swap = this.elParentGrab.dataset.jsortSwap ?? false;
+        this.swap = this.elParentGrab.dataset.jsortSwap === "true";
         this.easing = this.elParentGrab.dataset.jsortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
         this.scale = this.elParentGrab.dataset.jsortScale ?? "1.1";
         this.zIndex = this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
         this.group = this.elParentGrab.dataset.jsortGroup;
-        this.init(options);
+        this.init(options);        
     }
 
     appendGhost() {
