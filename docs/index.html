@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSort</title>
-    <link rel="shortcut icon" href="#!" type="image/x-icon">
-    <link rel="stylesheet" href="index.css?v=8">
+    <link rel="shortcut icon" href="#!" type="image/x-icon">
+  <script type="module" crossorigin src="./assets/index-C5LvVCDm.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-D3NRBIBK.css">
 </head>
 
 <body>
@@ -112,23 +113,7 @@
             </ul>
         </div>
     </div>
-
-    <script type="module">
-        import JSort from './jsort.js?v=8';
-
-        document.querySelectorAll(".jsort").forEach((el) => {
-            // Make sortable
-            new JSort(el, {
-                onDrop(ev) {
-                    console.log(this, ev);
-                }
-            });
-            // Random background colors
-            el.querySelectorAll(":scope > *").forEach((el, i) => {
-                el.style.backgroundColor = `hsl(${~~(Math.random() * 200 + 80)} 40% 77%)`;
-            });
-        });
-    </script>
+
 </body>
 
 </html>

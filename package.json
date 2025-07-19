@@ -1,0 +1,47 @@
+{
+  "name": "jsort",
+  "version": "1.0.0",
+  "author": {
+    "name": "Roko C. Buljan",
+    "url": "https://github.com/rokobuljan"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rokobuljan/jsort"
+  },
+  "type": "module",
+  "main": "dist/jsort.js",
+  "module": "dist/jsort.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite serve docs --port 3000",
+    "build": "npm run build:lib && npm run build:docs",
+    "build:lib": "vite build",
+    "build:docs": "vite build --config vite.config.docs.js",
+    "preview": "vite preview docs",
+    "prepublishOnly": "npm run build:lib"
+  },
+  "devDependencies": {
+    "postcss-nesting": "^13.0.2",
+    "terser": "^5.43.1",
+    "vite": "^7.0.4"
+  },
+  "license": "MIT",
+  "description": "A JavaScript library for sorting and reordering items in a list or grid.",
+  "keywords": [
+    "sortable",
+    "draggable",
+    "drag-and-drop",
+    "reorder",
+    "list",
+    "grid",
+    "sorting",
+    "sort",
+    "swap",
+    "javascript",
+    "jsort",
+    "sortjs"
+  ]
+}
