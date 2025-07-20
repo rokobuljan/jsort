@@ -99,7 +99,6 @@ class JSort {
         this.pointerStart.clientY = ev.clientY;
         this.elGrabbed = elClosestItem;
         this.elGrabbed.setPointerCapture(ev.pointerId);
-        this.elGrabbed.style.touchAction = "none";
         this.elParentGrab.style.userSelect = "none";
         this.indexGrab = [...this.elParentGrab.children].indexOf(this.elGrabbed);
         // Notify
@@ -215,7 +214,6 @@ class JSort {
 
     reset() {
         // Cleanup
-        this.elGrabbed?.style.removeProperty("touch-action");
         this.elGrabbed = null;
         this.elGhost?.remove();
         this.elGhost = null;
