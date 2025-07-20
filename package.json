@@ -16,11 +16,11 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite serve docs --port 3000",
+    "dev": "vite",
     "build": "npm run build:lib && npm run build:docs",
-    "build:lib": "vite build",
-    "build:docs": "vite build --config vite.config.docs.js",
-    "preview": "vite preview docs",
+    "build:docs": "vite build",
+    "build:lib": "vite build --config vite.config.lib.js",
+    "preview": "vite preview --outDir docs",
     "prepublishOnly": "npm run build:lib"
   },
   "devDependencies": {
