@@ -20,7 +20,7 @@ export default defineConfig({
     build: {
         minify: "terser",
         // sourcemap: false,
-        outDir: 'docs',
+        outDir: '../../docs',
         emptyOutDir: true,
     },
     css: {
