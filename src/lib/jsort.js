@@ -89,9 +89,11 @@ class JSort {
         if (!elClosestItem) return;
         if (elClosestItem.parentElement !== this.elParentGrab) return; // Does not belongs to this sortable
 
-        const hasHandler = Boolean(elClosestItem.querySelector(this.classHandler));
+        const foundHandler = elClosestItem.querySelector(this.classHandler);
+        const isHandlerVisible = foundHandler?.checkVisibility();
+        const hasHandler = Boolean(foundHandler);
         const elHandler = ev.target.closest(this.classHandler);
-        if (hasHandler && !elHandler) return;
+        if (hasHandler && isHandlerVisible && !elHandler) return;
 
         this.pointerStart.clientX = ev.clientX
         this.pointerStart.clientY = ev.clientY;
