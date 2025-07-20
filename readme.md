@@ -10,12 +10,13 @@ See examples on [JSort homepage](https://rokobuljan.github.io/jsort/)
 - [x] Touch support (pointer events)
 - [x] Customization options
 - [x] Drag &amp; drop into linked groups
-- [x] Drag handler
-- [x] Dynamic items (delegated events)
+- [x] Grab handler
 - [x] Nested groups
 - [x] Swap items
+- [x] Dynamic items (delegated events)
 - [ ] Multiple select (*soon*)
-- [ ] Scroll parent drag (*soon*)
+- [ ] Scroll parent on drag (*soon*)
+- [ ] Mobile grab delay (*soon* - Use a smaller handler instead of making the entire element draggable to prevent scroll issues on mobile. Use `display: none;` to hide the handler on desktop)
 
 ## Installation
 
