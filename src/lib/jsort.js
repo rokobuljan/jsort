@@ -9,7 +9,7 @@ class JSort {
         this.scale = this.elParentGrab.dataset.jsortScale ?? "1.1";
         this.zIndex = this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
         this.group = this.elParentGrab.dataset.jsortGroup;
-        this.init(options);        
+        this.init(options);
     }
 
     appendGhost() {
@@ -93,8 +93,8 @@ class JSort {
         const elHandler = ev.target.closest(this.classHandler);
         if (hasHandler && !elHandler) return;
 
-        const { clientX, clientY } = ev;
-        Object.assign(this.pointerStart, { clientX, clientY });
+        this.pointerStart.clientX = ev.clientX
+        this.pointerStart.clientY = ev.clientY;
         this.elParentGrab.style.userSelect = "none";
         this.elGrabbed = elClosestItem;
         this.elGrabbed.setPointerCapture(ev.pointerId);

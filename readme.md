@@ -2,6 +2,8 @@
 
 Super small yet powerful sortable library with touch support, animations, and a great UX.
 
+See examples on [JSort homepage](https://rokobuljan.github.io/jsort/)
+
 ## Features
 
 - [x] Smooth animations for a better UX
@@ -146,7 +148,7 @@ For custom styling JSort provides several classes you could use in your CSS to f
 | .is-jsort-target   | Item that is targeted (hovered). It can also be the parent Element `.jsort` |
 | .is-jsort-invalid  | Added to the ghost element if the hovered target is invalid / not allowed   |
 
-See the [Example page](index.html) for inspiration.
+See the [Example page](https://rokobuljan.github.io/jsort/) for inspiration.
 
 ## Motivation
 

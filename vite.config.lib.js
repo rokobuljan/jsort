@@ -12,6 +12,7 @@ export default defineConfig({
     
     build: {
         outDir: '../../dist',
+        emptyOutDir: true,
         lib: {
             entry: `${LIB_NAME}.js`,
         },
