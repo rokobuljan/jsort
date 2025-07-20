@@ -95,9 +95,10 @@ class JSort {
 
         this.pointerStart.clientX = ev.clientX
         this.pointerStart.clientY = ev.clientY;
-        this.elParentGrab.style.userSelect = "none";
         this.elGrabbed = elClosestItem;
         this.elGrabbed.setPointerCapture(ev.pointerId);
+        this.elGrabbed.style.touchAction = "none";
+        this.elParentGrab.style.userSelect = "none";
         this.indexGrab = [...this.elParentGrab.children].indexOf(this.elGrabbed);
         // Notify
         this.onGrab?.call(this, ev);
@@ -206,10 +207,8 @@ class JSort {
     }
 
     handleTouchAction = (ev) => {
-        const elItem = ev.target.closest(`${this.classItems}`);
-        if (!elItem) return;
+        if (!this.elGrabbed) return;
         ev.preventDefault();
-        elItem.style.touchAction = "none";
     }
 
     reset() {
