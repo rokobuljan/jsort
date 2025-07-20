@@ -24,8 +24,8 @@
     "prepublishOnly": "npm run build:lib"
   },
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
     "postcss-nesting": "^13.0.2",
-    "terser": "^5.43.1",
     "vite": "^7.0.4"
   },
   "license": "MIT",
