@@ -1,6 +1,6 @@
 {
   "name": "@rbuljan/jsort",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "author": {
     "name": "Roko C. Buljan",
     "url": "https://github.com/rokobuljan"
@@ -21,8 +21,7 @@
     "build:docs": "vite build",
     "build:lib": "vite build --config vite.config.lib.js",
     "preview": "vite preview --outDir ../../docs",
-    "prepublishOnly": "npm run build:lib",
-    "publish": "npm publish --access public"
+    "prepublishOnly": "npm run build:lib"
   },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",

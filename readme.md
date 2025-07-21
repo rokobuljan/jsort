@@ -1,8 +1,12 @@
+
+![JSort logo](/src/docs/public/jsort-logo.png)
+
 # JSort
 
-Super small yet powerful sortable library with touch support, animations, and a great UX.
+Super small yet powerful *sortable* library with touch support, smooth animations, for a great UX.
 
-NPM package: [@rbuljan/jsort](https://www.npmjs.com/package/@rbuljan/jsort)  
+[![NPM](https://img.shields.io/npm/v/@rbuljan/jsort)](https://www.npmjs.com/package/@rbuljan/jsort)<br>
+NPM: [@rbuljan/jsort](https://www.npmjs.com/package/@rbuljan/jsort)  
 Demo &amp; examples: [JSort homepage](https://rokobuljan.github.io/jsort/)  
 
 ## Features
