@@ -9,6 +9,7 @@
     --light: #fff;
     --bg: light-dark(var(--light), var(--dark));
     --fg: light-dark(var(--dark), var(--light));
+    --accent: #1f70d3;
     color: var(--fg);
     background: var(--bg);
 }
@@ -19,6 +20,21 @@ body {
     color: var(--fg);
     font: min(3cqmin, 1rem) / 1.5 system-ui;
     padding-bottom: 10rem;
+
+    /* Passepartout */
+    &::after {
+        content: "";
+        position: fixed;
+        inset: 1rem;
+        border-radius: 1rem;
+        box-shadow: 0 0 0 100vmax #000;
+        pointer-events: none;
+        z-index: 9999;
+    }
+}
+
+a {
+    color: var(--accent);
 }
 
 img {
@@ -26,7 +42,9 @@ img {
     max-width: 100%;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     font-weight: 300;
 }
 
@@ -38,6 +56,11 @@ h1 {
         max-width: 30cqw;
         min-width: 300px;
     }
+}
+
+h2 {
+    font-size: 3rem;
+    padding-top: 2rem;
 }
 
 ul {
@@ -53,7 +76,7 @@ ul {
 }
 
 .row {
-    padding: 1rem;
+    padding: 2rem;
     & > * {
         flex: 1;
     }
@@ -104,7 +127,7 @@ ul {
 }
 
 .padd {
-    padding: 1rem;
+    padding: 1rem 2rem 1rem;
 }
 
 ul {

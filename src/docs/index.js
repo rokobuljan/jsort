@@ -6,6 +6,6 @@ document.querySelectorAll(".jsort").forEach((el) => {
     new JSort(el);
     // Random background colors
     el.querySelectorAll(":scope > *").forEach((el, i) => {
-        el.style.backgroundColor = `hsl(${~~(Math.random() * 200 + 80)} 40% 77%)`;
+        el.style.backgroundColor = `hsl(${~~(Math.random() * 200 + 80)} 56% 65%)`;
     });
 });
