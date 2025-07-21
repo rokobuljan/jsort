@@ -17,12 +17,26 @@ body {
     color-scheme: light;
     background: var(--bg);
     color: var(--fg);
-    font: min(3cqmin, 1rem) / 1.4 system-ui;
+    font: min(3cqmin, 1rem) / 1.5 system-ui;
     padding-bottom: 10rem;
 }
 
+img {
+    display: inline-block;
+    max-width: 100%;
+}
+
+h1, h2, h3 {
+    font-weight: 300;
+}
+
 h1 {
-    padding: 1rem;
+    font-size: 3rem;
+
+    img {
+        max-width: 30cqw;
+        min-width: 300px;
+    }
 }
 
 ul {
@@ -86,6 +100,10 @@ ul {
             margin-left: 1em;
         }
     }
+}
+
+.padd {
+    padding: 1rem;
 }
 
 ul {

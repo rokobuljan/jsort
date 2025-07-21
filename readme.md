@@ -2,7 +2,8 @@
 
 Super small yet powerful sortable library with touch support, animations, and a great UX.
 
-See examples on [JSort homepage](https://rokobuljan.github.io/jsort/)
+NPM package: [@rbuljan/jsort](https://www.npmjs.com/package/@rbuljan/jsort)  
+Demo &amp; examples: [JSort homepage](https://rokobuljan.github.io/jsort/)  
 
 ## Features
 
@@ -87,7 +88,7 @@ JSort allows to drag &amp; drop into a linked group by adding a `data-jsort-grou
 | ---------------------- | -------------------------------- | -------------------------------------- |
 | `classItems`           | `".jsort-item"`                  | Custom items className / selector      |
 | `classHandler`         | `".jsort-handler"`               | Custom handler className / selector    |
-| `duration`             | `450`                            | Animation duration in milliseconds     |
+| `duration`             | `420`                            | Animation duration in milliseconds     |
 | `easing`               | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function              |
 | `scale`                | `"1.1"`                          | Scale factor of the ghost element      |
 | `onGrab(PointerEvent)` | Function                         | Called when an item is grabbed         |
@@ -150,6 +151,8 @@ For custom styling JSort provides several classes you could use in your CSS to f
 | .is-jsort-grabbed  | Item that is currently grabbed (not to be confused with the ghost element)  |
 | .is-jsort-target   | Item that is targeted (hovered). It can also be the parent Element `.jsort` |
 | .is-jsort-invalid  | Added to the ghost element if the hovered target is invalid / not allowed   |
+
+___
 
 See the [Example page](https://rokobuljan.github.io/jsort/) for inspiration.
 

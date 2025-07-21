@@ -3,14 +3,14 @@ class JSort {
         this.elParentGrab = el;
         this.classItems = this.elParentGrab.dataset.jsortClassItems ?? ".jsort-item";
         this.classHandler = this.elParentGrab.dataset.jsortClassHandler ?? ".jsort-handler";
-        this.duration = this.elParentGrab.dataset.jsortDuration ?? 450;
+        this.duration = this.elParentGrab.dataset.jsortDuration ?? 420;
         this.swap = this.elParentGrab.dataset.jsortSwap === "true";
         this.easing = this.elParentGrab.dataset.jsortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
         this.scale = this.elParentGrab.dataset.jsortScale ?? "1.1";
-        this.zIndex = this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
+        this.zIndex = Number(this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF); // Maximum 32-bit signed integer
+        this.scrollSpeed = Number(this.elParentGrab.dataset.jsortScrollSpeed ?? 10); // pixels per frame
+        this.edgeThreshold = Number(this.elParentGrab.dataset.jsortEdgeThreshold ?? 50); // pixels from edge
         this.group = this.elParentGrab.dataset.jsortGroup;
-        this.scrollSpeed = this.elParentGrab.dataset.jsortScrollSpeed ?? 10; // pixels per frame
-        this.edgeThreshold = this.elParentGrab.dataset.jsortEdgeThreshold ?? 50; // pixels from edge
         this.init(options);
     }
 
@@ -119,7 +119,6 @@ class JSort {
             }
             el = el.parentElement;
         }
-        // Return document.documentElement instead of window
         return document.documentElement;
     }
 
