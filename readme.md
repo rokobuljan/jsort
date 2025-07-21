@@ -14,7 +14,7 @@ See examples on [JSort homepage](https://rokobuljan.github.io/jsort/)
 - [x] Nested groups
 - [x] Swap items
 - [x] Dynamic items (delegated events)
-- [x] Scroll parent on drag (*soon*)
+- [x] Scroll parent on drag
 - [ ] Mobile grab delay (*soon* - Use a smaller handler instead of making the entire element draggable to prevent scroll issues on mobile. Use `display: none;` to hide the handler on desktop)
 - [ ] Multiple select (*soon*)
 
