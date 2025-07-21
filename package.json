@@ -21,7 +21,8 @@
     "build:docs": "vite build",
     "build:lib": "vite build --config vite.config.lib.js",
     "preview": "vite preview --outDir ../../docs",
-    "prepublishOnly": "npm run build:lib"
+    "prepublishOnly": "npm run build:lib",
+    "publish": "npm publish --access public"
   },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
