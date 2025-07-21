@@ -45,7 +45,7 @@ img {
 h1,
 h2,
 h3 {
-    font-weight: 300;
+    font-weight: 500;
 }
 
 h1 {
@@ -60,7 +60,6 @@ h1 {
 
 h2 {
     font-size: 3rem;
-    padding-top: 2rem;
 }
 
 ul {
@@ -76,7 +75,7 @@ ul {
 }
 
 .row {
-    padding: 2rem;
+    padding: 1rem 2rem;
     & > * {
         flex: 1;
     }
@@ -92,7 +91,7 @@ ul {
     gap: 1rem;
     margin: 0 auto;
     color: var(--bg);
-    grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(8rem, 100%), 1fr));
 
     & > * {
         padding: 1em;
