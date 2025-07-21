@@ -84,6 +84,103 @@ class JSort {
         return isValid;
     }
 
+    engine(cb, fps = 60) {
+        const msPerFrame = 1000 / fps;
+        let msPrev = 0;
+        let id = null;
+        const tick = () => {
+            id = requestAnimationFrame(tick);
+            const msNow = performance.now();
+            const msPassed = msNow - msPrev;
+            if (msPassed < msPerFrame) return;
+            const excessTime = msPassed % msPerFrame;
+            msPrev = msNow - excessTime;
+            cb();
+        };
+        const start = () => {
+            stop();
+            msPrev = performance.now();
+            id = requestAnimationFrame(tick);
+        };
+        const stop = () => {
+            cancelAnimationFrame(id);
+            id = null;
+            msPrev = 0;
+        };
+        return { start, stop, tick };
+    }
+
+    findScrollParent(el) {
+        while (el && el !== document.documentElement) {
+            const style = window.getComputedStyle(el);
+            if (el.scrollHeight > el.clientHeight &&
+                (style.overflowY === 'auto' || style.overflowY === 'scroll')) {
+                return el;
+            }
+            el = el.parentElement;
+        }
+        // Return document.documentElement instead of window
+        return document.documentElement;
+    }
+
+    scrollStep() {
+        if (!this.scrollDirection) return;
+        if (this.scrollDirection === "up") {
+            this.scrollParent.scrollTop -= this.scrollSpeed;
+        } else if (this.scrollDirection === "down") {
+            this.scrollParent.scrollTop += this.scrollSpeed;
+        } else if (this.scrollDirection === "left") {
+            this.scrollParent.scrollLeft -= this.scrollSpeed;
+        } else if (this.scrollDirection === "right") {
+            this.scrollParent.scrollLeft += this.scrollSpeed;
+        }
+    }
+
+    startEdgeScroll(direction) {
+        if (this.scrollDirection !== direction) {
+            this.scrollDirection = direction;
+            if (!this.scrollAnim) {
+                this.scrollAnim = this.engine(this.scrollStep.bind(this));
+                this.scrollAnim.start();
+            }
+        }
+    }
+
+    stopEdgeScroll() {
+        this.scrollDirection = null;
+        if (this.scrollAnim) {
+            this.scrollAnim.stop();
+            this.scrollAnim = null;
+        }
+    }
+
+    handleScrollParent(ev) {
+        if (!this.scrollParent) {
+            this.scrollParent = this.findScrollParent(this.elGrabbed);
+        }
+
+        const rect = this.scrollParent.getBoundingClientRect();
+        const doc = document.documentElement;
+        const isDOC = this.scrollParent === doc;
+        const topEdge = isDOC ? 0 : rect.top;
+        const bottomEdge = isDOC ? window.innerHeight : rect.bottom;
+        const leftEdge = isDOC ? 0 : rect.left;
+        const rightEdge = isDOC ? window.innerWidth : rect.left;
+
+        // Check edges with threshold
+        if (ev.clientY < topEdge + this.edgeThreshold) {
+            this.startEdgeScroll("up");
+        } else if (ev.clientY > bottomEdge - this.edgeThreshold) {
+            this.startEdgeScroll("down");
+        } else if (ev.clientX < leftEdge + this.edgeThreshold) {
+            this.startEdgeScroll("left");
+        } else if (ev.clientX > rightEdge - this.edgeThreshold) {
+            this.startEdgeScroll("right");
+        } else {
+            this.stopEdgeScroll();
+        }
+    }
+
     grab = (ev) => {
         if (this.elGrabbed) return;
         const elClosestItem = ev.target.closest(`${this.classItems}`);
@@ -105,77 +202,6 @@ class JSort {
         this.indexGrab = [...this.elParentGrab.children].indexOf(this.elGrabbed);
         // Notify
         this.onGrab?.call(this, ev);
-    }
-
-    findScrollParent(el) {
-        while (el && el !== document.documentElement) {
-            const style = window.getComputedStyle(el);
-            if (el.scrollHeight > el.clientHeight &&
-                (style.overflowY === 'auto' || style.overflowY === 'scroll')) {
-                return el;
-            }
-            el = el.parentElement;
-        }
-        // Return document.documentElement instead of window
-        return document.documentElement;
-    }
-
-    scrollStep() {
-        if (!this.scrollDirection) return;
-
-        if (this.scrollDirection === 'up') {
-            this.scrollParent.scrollTop -= this.scrollSpeed;
-        } else if (this.scrollDirection === 'down') {
-            this.scrollParent.scrollTop += this.scrollSpeed;
-        } else if (this.scrollDirection === 'left') {
-            this.scrollParent.scrollLeft -= this.scrollSpeed;
-        } else if (this.scrollDirection === 'right') {
-            this.scrollParent.scrollLeft += this.scrollSpeed;
-        }
-
-        this.scrollAnimationId = requestAnimationFrame(() => this.scrollStep());
-    }
-
-    startEdgeScroll(direction) {
-        if (this.scrollDirection !== direction) {
-            this.scrollDirection = direction;
-            if (!this.scrollAnimationId) {
-                this.scrollStep(); // Start the animation loop
-            }
-        }
-    }
-    stopEdgeScroll() {
-        this.scrollDirection = null;
-        if (this.scrollAnimationId) {
-            cancelAnimationFrame(this.scrollAnimationId);
-            this.scrollAnimationId = null;
-        }
-    }
-    handleScrollParent(ev) {
-        if (!this.scrollParent) {
-            this.scrollParent = this.findScrollParent(this.elGrabbed);
-        }
-
-        const rect = this.scrollParent.getBoundingClientRect();
-        const doc = document.documentElement;
-        const isDOC = this.scrollParent === doc;
-        const topEdge = isDOC ? 0 : rect.top;
-        const bottomEdge = isDOC ? window.innerHeight : rect.bottom;
-        const leftEdge = isDOC ? 0 : rect.left;
-        const rightEdge = isDOC ? window.innerWidth : rect.left;
-
-        // Check edges with threshold
-        if (ev.clientY < topEdge + this.edgeThreshold) {
-            this.startEdgeScroll('up');
-        } else if (ev.clientY > bottomEdge - this.edgeThreshold) {
-            this.startEdgeScroll('down');
-        } else if (ev.clientX < leftEdge + this.edgeThreshold) {
-            this.startEdgeScroll('left');
-        } else if (ev.clientX > rightEdge - this.edgeThreshold) {
-            this.startEdgeScroll('right');
-        } else {
-            this.stopEdgeScroll();
-        }
     }
 
     move = (ev) => {
@@ -290,9 +316,9 @@ class JSort {
 
     reset() {
         // Cleanup
-        this.elGrabbed = null;
         this.elGhost?.remove();
         this.elGhost = null;
+        this.elGrabbed = null;
         this.elTarget = null;
         this.elParentDrop = null;
         this.indexGrab = -1;
@@ -301,8 +327,11 @@ class JSort {
         this.pointerStart = {};
         this.isFirstMove = false;
         this.scrollParent = null;
-        this.scrollAnimationId = null;
         this.scrollDirection = null;
+        this.scrollAnim = null;
+        this.onGrab = () => {};
+        this.onMove = () => {};
+        this.onDrop = () => {};
     }
 
     init(options) {
