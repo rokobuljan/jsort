@@ -14,9 +14,9 @@ See examples on [JSort homepage](https://rokobuljan.github.io/jsort/)
 - [x] Nested groups
 - [x] Swap items
 - [x] Dynamic items (delegated events)
-- [ ] Multiple select (*soon*)
-- [ ] Scroll parent on drag (*soon*)
+- [x] Scroll parent on drag (*soon*)
 - [ ] Mobile grab delay (*soon* - Use a smaller handler instead of making the entire element draggable to prevent scroll issues on mobile. Use `display: none;` to hide the handler on desktop)
+- [ ] Multiple select (*soon*)
 
 ## Installation
 
@@ -94,6 +94,8 @@ JSort allows to drag &amp; drop into a linked group by adding a `data-jsort-grou
 | `onMove(PointerEvent)` | Function                         | Called when an item is moved           |
 | `onDrop(PointerEvent)` | Function                         | Called when an item is dropped         |
 | `swap`                 | `false`                          | Swap elements on drop                  |
+| `edgeThreshold`        | `10`                             | Px near edge to start scrolling        |
+| `scrollSpeed`          | `10`                             | Prent scroll px per step               |
 | `zIndex`               | Integer                          | z-index  of the ghost element          |
 | `group`                | String                           | Group name. (`data-jsort-group` value) |
 

@@ -9,6 +9,8 @@ class JSort {
         this.scale = this.elParentGrab.dataset.jsortScale ?? "1.1";
         this.zIndex = this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF; // Maximum 32-bit signed integer
         this.group = this.elParentGrab.dataset.jsortGroup;
+        this.scrollSpeed = this.elParentGrab.dataset.jsortScrollSpeed ?? 10; // pixels per frame
+        this.edgeThreshold = this.elParentGrab.dataset.jsortEdgeThreshold ?? 50; // pixels from edge
         this.init(options);
     }
 
@@ -105,6 +107,77 @@ class JSort {
         this.onGrab?.call(this, ev);
     }
 
+    findScrollParent(el) {
+        while (el && el !== document.documentElement) {
+            const style = window.getComputedStyle(el);
+            if (el.scrollHeight > el.clientHeight &&
+                (style.overflowY === 'auto' || style.overflowY === 'scroll')) {
+                return el;
+            }
+            el = el.parentElement;
+        }
+        // Return document.documentElement instead of window
+        return document.documentElement;
+    }
+
+    scrollStep() {
+        if (!this.scrollDirection) return;
+
+        if (this.scrollDirection === 'up') {
+            this.scrollParent.scrollTop -= this.scrollSpeed;
+        } else if (this.scrollDirection === 'down') {
+            this.scrollParent.scrollTop += this.scrollSpeed;
+        } else if (this.scrollDirection === 'left') {
+            this.scrollParent.scrollLeft -= this.scrollSpeed;
+        } else if (this.scrollDirection === 'right') {
+            this.scrollParent.scrollLeft += this.scrollSpeed;
+        }
+
+        this.scrollAnimationId = requestAnimationFrame(() => this.scrollStep());
+    }
+
+    startEdgeScroll(direction) {
+        if (this.scrollDirection !== direction) {
+            this.scrollDirection = direction;
+            if (!this.scrollAnimationId) {
+                this.scrollStep(); // Start the animation loop
+            }
+        }
+    }
+    stopEdgeScroll() {
+        this.scrollDirection = null;
+        if (this.scrollAnimationId) {
+            cancelAnimationFrame(this.scrollAnimationId);
+            this.scrollAnimationId = null;
+        }
+    }
+    handleScrollParent(ev) {
+        if (!this.scrollParent) {
+            this.scrollParent = this.findScrollParent(this.elGrabbed);
+        }
+
+        const rect = this.scrollParent.getBoundingClientRect();
+        const doc = document.documentElement;
+        const isDOC = this.scrollParent === doc;
+        const topEdge = isDOC ? 0 : rect.top;
+        const bottomEdge = isDOC ? window.innerHeight : rect.bottom;
+        const leftEdge = isDOC ? 0 : rect.left;
+        const rightEdge = isDOC ? window.innerWidth : rect.left;
+
+        // Check edges with threshold
+        if (ev.clientY < topEdge + this.edgeThreshold) {
+            this.startEdgeScroll('up');
+        } else if (ev.clientY > bottomEdge - this.edgeThreshold) {
+            this.startEdgeScroll('down');
+        } else if (ev.clientX < leftEdge + this.edgeThreshold) {
+            this.startEdgeScroll('left');
+        } else if (ev.clientX > rightEdge - this.edgeThreshold) {
+            this.startEdgeScroll('right');
+        } else {
+            this.stopEdgeScroll();
+        }
+    }
+
     move = (ev) => {
         const { pointerId, clientX, clientY } = ev;
         if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
@@ -130,11 +203,14 @@ class JSort {
             }
         }
 
+        this.handleScrollParent(ev);
+
         // Notify
         this.onMove?.call(this, ev);
     }
 
     drop = (ev) => {
+        this.stopEdgeScroll();
         const { pointerId, clientX, clientY } = ev;
         if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
         this.elParentGrab.style.removeProperty("user-select");
@@ -224,6 +300,9 @@ class JSort {
         this.affectedItems = [];
         this.pointerStart = {};
         this.isFirstMove = false;
+        this.scrollParent = null;
+        this.scrollAnimationId = null;
+        this.scrollDirection = null;
     }
 
     init(options) {
