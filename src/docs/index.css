@@ -1,6 +1,7 @@
 * {
     margin: 0;
     box-sizing: border-box;
+    /* outline: 1px solid #0007; */
 }
 
 :root {
@@ -8,18 +9,21 @@
     --dark: #131517;
     --light: #fff;
     --bg: light-dark(var(--light), var(--dark));
-    --fg: light-dark(var(--dark), var(--light));
+    --bg2: light-dark(var(--light), color-mix(in srgb, var(--dark), var(--light) 92%));
+    --fg: light-dark(var(--dark), color-mix(in srgb, var(--light), var(--dark) 20%));
     --accent: #1f70d3;
     color: var(--fg);
-    background: var(--bg);
+    background-color: var(--bg);
+    transition: color 0.3s, background-color 0.3s;
 }
 
 body {
     color-scheme: light;
-    background: var(--bg);
+    background-color: var(--bg);
     color: var(--fg);
-    font: min(3cqmin, 1rem) / 1.5 system-ui;
-    padding-bottom: 10rem;
+    font: min(3cqmin, 1.1rem) / 1.5 system-ui;
+    padding: 2.3rem;
+    padding-bottom: 8rem;
 
     /* Passepartout */
     &::after {
@@ -27,7 +31,7 @@ body {
         position: fixed;
         inset: 1rem;
         border-radius: 1rem;
-        box-shadow: 0 0 0 100vmax #000;
+        box-shadow: 0 0 0 100vmax var(--fg);
         pointer-events: none;
         z-index: 9999;
     }
@@ -54,7 +58,7 @@ h1 {
 
     img {
         max-width: 30cqw;
-        min-width: 300px;
+        min-width: 200px;
     }
 }
 
@@ -63,35 +67,50 @@ h2 {
 }
 
 ul {
+    list-style: none;
     padding: 0;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
 }
 
 .col,
 .row {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
     max-width: 70rem;
     margin: 0 auto;
-    display: flex;
-    gap: 0.8rem;
 }
 
 .row {
-    padding: 1rem 2rem;
+    flex-flow: row wrap;
+
     & > * {
         flex: 1;
+        min-width: 16rem;
     }
 }
 
 .col {
-    flex-direction: column;
+    flex-flow: column wrap;
+}
+
+.flex-2 {
+    flex: 2;
 }
 
 .grid {
     color-scheme: dark;
     display: grid;
+    width: 100%;
     gap: 1rem;
     margin: 0 auto;
     color: var(--bg);
-    grid-template-columns: repeat(auto-fill, minmax(min(8rem, 100%), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(7rem, 100%), 1fr));
 
     & > * {
         padding: 1em;
@@ -118,6 +137,7 @@ ul {
         &:hover {
             background: #fffd;
         }
+
         &::after {
             content: "✥";
             margin-left: 1em;
@@ -125,21 +145,17 @@ ul {
     }
 }
 
-.padd {
-    padding: 1rem 2rem 1rem;
-}
 
-ul {
-    list-style: none;
-}
 
 .list {
     color-scheme: dark;
     list-style: none;
     padding: 0;
     padding-bottom: 1.5em;
-    background: color-mix(in srgb, var(--bg), var(--fg) 90%);
+    background: var(--bg2);
     color: var(--bg);
+    gap: 0rem;
+    display: grid;
 
     &:not(:has(> *))::after {
         display: list-item;
@@ -151,8 +167,12 @@ ul {
 
     li {
         padding: 1em;
-        /* background: color-mix(in srgb, #fff 10%, var(--bg) 90%); */
-        border: 2px solid var(--fg);
+        border: 0.2rem solid var(--bg2);
+        color: var(--bg);
+    }
+
+    li li {
+        margin: 0.2rem;
     }
 }
 
@@ -162,7 +182,7 @@ ul {
 
 .jsort-ghost {
     transition: box-shadow 0.3s, opacity 0.3s;
-    box-shadow: 0 0.5rem 1rem #0005;
+    box-shadow: 0 0.5rem 1rem #000a;
 
     @starting-style {
         box-shadow: 0 0rem 0rem #000;
@@ -175,6 +195,7 @@ ul {
 
 .is-jsort-target {
     outline: 0.15rem dashed currentColor;
+    z-index: 1;
 }
 
 .is-jsort-invalid {

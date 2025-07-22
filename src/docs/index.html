@@ -11,128 +11,125 @@
 
 <body>
     <div id="app">
-
-
-    <div class="passepartout"></div>
-    <div class="col padd">
-        <h1><img src="./jsort-logo.png" alt="JSort logo"></h1>
-        <p>
-            <b>JSort</b>, your JavaScript library for sorting and reordering items in a list or grid.<br>
-        </p>
-        <p>
-            <a href="https://github.com/rokobuljan/jsort"><b>GitHub</b> rokobuljan/jsort</a><br>
-            <a href="https://www.npmjs.com/package/@rbuljan/jsort"><b>NPM</b> @rbuljan/jsort</a>
-        </p>
-    </div>
-    <div class="row">
-        <h2>Grid</h2>
-    </div>
-    <div class="row">
-        <div class="jsort grid">
-            <div class="jsort-item"><b>JSort</b> by @rokobuljan</div>
-            <div class="jsort-item">2</div>
-            <div class="jsort-item">3</div>
-            <div class="jsort-item">
-                <div class="jsort-handler">Handler</div>4
-            </div>
-            <div class="jsort-item">
-                <div class="jsort-handler" style="display: none;">Handler</div>Has handler but it's display: none;
-            </div>
-            <div class="jsort-item">6</div>
-            <div class="jsort-item">7</div>
-            <div class="jsort-item">8</div>
-            <div class="jsort-item">
-                <div class="jsort-handler">Handler</div>9
-            </div>
-            <div class="jsort-item">10</div>
-            <div class="jsort-item">11</div>
-            <div class="jsort-item">12</div>
-            <div class="jsort-item">13</div>
-            <div class="jsort-item">14</div>
-            <div class="jsort-item">15</div>
+        <div class="col">
+            <h1><img src="./jsort-logo.png" alt="JSort logo"></h1>
+            <p>
+                <b>JSort</b>, your JavaScript library for sorting and reordering items in a list or grid.<br>
+            </p>
+            <p>
+                <a href="https://github.com/rokobuljan/jsort"><b>GitHub</b> rokobuljan/jsort</a><br>
+                <a href="https://www.npmjs.com/package/@rbuljan/jsort"><b>NPM</b> @rbuljan/jsort</a>
+            </p>
         </div>
-    </div>
+        <div class="row">
+            <h2>Grid</h2>
+            <div class="col flex-2">
+                <div class="jsort grid">
+                    <div class="jsort-item"><b>JSort</b></div>
+                    <div class="jsort-item">2</div>
+                    <div class="jsort-item">3</div>
+                    <div class="jsort-item">
+                        <div class="jsort-handler">Handler</div>4
+                    </div>
+                    <div class="jsort-item">
+                        <div class="jsort-handler" style="display: none;">Handler</div>
+                        Handler is display: none;
+                    </div>
+                    <div class="jsort-item">6</div>
+                    <div class="jsort-item">7</div>
+                    <div class="jsort-item">8</div>
+                    <div class="jsort-item">
+                        <div class="jsort-handler">Handler</div>9
+                    </div>
+                    <div class="jsort-item">10</div>
+                    <div class="jsort-item">11</div>
+                </div>
+            </div>
+        </div>
 
-    <div class="row">
-        <h2>Groups</h2>
-    </div>
-    <div class="row">
-        <ul class="jsort list" data-jsort-group="group-a">
-            <li class="jsort-item">A 1</li>
-            <li class="jsort-item">A 2</li>
-            <li class="jsort-item">A 3</li>
-            <li class="jsort-item">A 4</li>
-        </ul>
-        <ul class="jsort list" data-jsort-group="group-a">
-            <li class="jsort-item">B 1</li>
-            <li class="jsort-item">B 2</li>
-            <li class="jsort-item">B 3</li>
-            <li class="jsort-item">B 4</li>
-            <li class="jsort-item">B 5</li>
-        </ul>
-        <ul class="jsort list" data-jsort-group="group-a"></ul>
-    </div>
-
-    <div class="row">
-        <h2>Nested groups</h2>
-    </div>
-    <div class="row">
-        <ul class="jsort list" data-jsort-group="group-a">
-            <li class="jsort-item">
-                <div>A 1</div>
-            </li>
-            <li class="jsort-item">
-                <div>B 1</div>
-            </li>
-            <li class="jsort-item">
-                <div>C 1</div>
+        <div class="row">
+            <h2>Groups</h2>
+            <div class="row flex-2">
                 <ul class="jsort list" data-jsort-group="group-a">
-                    <li class="jsort-item">C 1 a</li>
+                    <li class="jsort-item">A 1</li>
+                    <li class="jsort-item">A 2</li>
+                    <li class="jsort-item">A 3</li>
+                    <li class="jsort-item">A 4</li>
+                </ul>
+                <ul class="jsort list" data-jsort-group="group-a">
+                    <li class="jsort-item">B 1</li>
+                    <li class="jsort-item">B 2</li>
+                    <li class="jsort-item">B 3</li>
+                    <li class="jsort-item">B 4</li>
+                    <li class="jsort-item">B 5</li>
+                </ul>
+                <ul class="jsort list" data-jsort-group="group-a"></ul>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <h2>Nested</h2>
+            <div class="row flex-2">
+                <ul class="jsort list" data-jsort-group="group-a">
                     <li class="jsort-item">
-                        <div>C 1 a 1</div>
+                        <div>A 1</div>
+                    </li>
+                    <li class="jsort-item">
+                        <div>B 1</div>
+                    </li>
+                    <li class="jsort-item">
+                        <div>C 1</div>
                         <ul class="jsort list" data-jsort-group="group-a">
-                            <li class="jsort-item">D.a 1</li>
-                            <li class="jsort-item">D.a 2</li>
+                            <li class="jsort-item">C 1 a</li>
+                            <li class="jsort-item">
+                                <div>C 1 a 1</div>
+                                <ul class="jsort list" data-jsort-group="group-a">
+                                    <li class="jsort-item">D.a 1</li>
+                                    <li class="jsort-item">D.a 2</li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                 </ul>
-            </li>
-        </ul>
-    </div>
-
-    <div class="row">
-        <h2>Swap</h2>
-    </div>
-    <div class="row" id="swap">
-        <div class="col">
-            <h3>Subsitutions</h3>
-            <ul class="jsort list" data-jsort-swap="true" data-jsort-group="group-b">
-                <li class="jsort-item">Player 8</li>
-                <li class="jsort-item">Player 14</li>
-                <li class="jsort-item">Player 12</li>
-                <li class="jsort-item">Player 5</li>
-            </ul>
+            </div>
         </div>
-        <div class="col">
-            <h3>Players</h3>
-            <ul class="jsort list" data-jsort-swap="true" data-jsort-group="group-b">
-                <li class="jsort-item">Player 9</li>
-                <li class="jsort-item">Player 10</li>
-                <li class="jsort-item">Player 19</li>
-                <li class="jsort-item">Player 7</li>
-                <li class="jsort-item">Player 3</li>
-                <li class="jsort-item">Player 1</li>
-            </ul>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col">
-            <h2>Licence</h2>
-            <p>MIT<br>&copy; 2025 Roko C. Buljan</p>
-        </div>
-    </div>
+        <div class="row">
+            <h2>Swap</h2>
 
+            <div class="row flex-2" id="swap">
+                <div class="col">
+                    <h3>Subsitutions</h3>
+                    <ul class="jsort list" data-jsort-swap="true" data-jsort-group="group-b">
+                        <li class="jsort-item">Player 8</li>
+                        <li class="jsort-item">Player 14</li>
+                        <li class="jsort-item">Player 12</li>
+                        <li class="jsort-item">Player 5</li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>Players</h3>
+                    <ul class="jsort list" data-jsort-swap="true" data-jsort-group="group-b">
+                        <li class="jsort-item">Player 9</li>
+                        <li class="jsort-item">Player 10</li>
+                        <li class="jsort-item">Player 19</li>
+                        <li class="jsort-item">Player 7</li>
+                        <li class="jsort-item">Player 3</li>
+                        <li class="jsort-item">Player 1</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h2>Licence</h2>
+                <p>MIT<br>&copy; 2025 Roko C. Buljan</p>
+            </div>
+        </div>
+
+    </div>
     <script type="module" src="./index.js"></script>
 </body>
 

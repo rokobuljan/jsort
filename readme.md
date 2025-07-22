@@ -99,7 +99,7 @@ JSort allows to drag &amp; drop into a linked group by adding a `data-jsort-grou
 | `onMove(PointerEvent)` | Function                         | Called when an item is moved           |
 | `onDrop(PointerEvent)` | Function                         | Called when an item is dropped         |
 | `swap`                 | `false`                          | Swap elements on drop                  |
-| `edgeThreshold`        | `10`                             | Px near edge to start scrolling        |
+| `edgeThreshold`        | `50`                             | Px near edge to start scrolling        |
 | `scrollSpeed`          | `10`                             | Prent scroll px per step               |
 | `zIndex`               | Integer                          | z-index  of the ghost element          |
 | `group`                | String                           | Group name. (`data-jsort-group` value) |
