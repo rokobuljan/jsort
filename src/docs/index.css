@@ -9,8 +9,14 @@
     --dark: #131517;
     --light: #fff;
     --bg: light-dark(var(--light), var(--dark));
-    --bg2: light-dark(var(--light), color-mix(in srgb, var(--dark), var(--light) 92%));
-    --fg: light-dark(var(--dark), color-mix(in srgb, var(--light), var(--dark) 20%));
+    --bg2: light-dark(
+        var(--light),
+        color-mix(in srgb, var(--dark), var(--light) 92%)
+    );
+    --fg: light-dark(
+        var(--dark),
+        color-mix(in srgb, var(--light), var(--dark) 20%)
+    );
     --accent: #1f70d3;
     color: var(--fg);
     background-color: var(--bg);
@@ -80,10 +86,10 @@ ul {
 .col,
 .row {
     display: flex;
-    gap: 2rem;
     width: 100%;
     max-width: 70rem;
     margin: 0 auto;
+    gap: 1.5rem;
 }
 
 .row {
@@ -91,12 +97,22 @@ ul {
 
     & > * {
         flex: 1;
-        min-width: 16rem;
+        min-width: 8rem;
+    }
+
+    h2 {
+        @media screen and (width < 40rem) {
+            flex-basis: 100%;
+        }
     }
 }
 
 .col {
-    flex-flow: column wrap;
+    flex-direction: column;
+}
+
+.flex-1 {
+    flex: 1;
 }
 
 .flex-2 {
@@ -145,17 +161,14 @@ ul {
     }
 }
 
-
-
 .list {
     color-scheme: dark;
     list-style: none;
     padding: 0;
-    padding-bottom: 1.5em;
+    padding-bottom: 1.5rem;
     background: var(--bg2);
     color: var(--bg);
-    gap: 0rem;
-    display: grid;
+    gap: 0.3rem;
 
     &:not(:has(> *))::after {
         display: list-item;
@@ -166,13 +179,19 @@ ul {
     }
 
     li {
-        padding: 1em;
-        border: 0.2rem solid var(--bg2);
+        padding: 1rem;
         color: var(--bg);
     }
 
-    li li {
+    li {
+        position: relative;
+        top: 0.2rem;
         margin: 0.2rem;
+        margin-top: 0;
+
+        & > ul {
+            margin: 0.2rem;
+        }
     }
 }
 
