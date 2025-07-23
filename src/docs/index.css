@@ -131,11 +131,11 @@ details {
 
 pre {
     width: 100%;
-    overflow-x: scroll;
+    overflow: auto;
 }
 
 code {
-    font-size: 0.86rem;
+    font-size: 0.8rem;
 }
 
 #app {
