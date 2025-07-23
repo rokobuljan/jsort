@@ -22,7 +22,22 @@
             </p>
         </div>
         <div class="row">
-            <h2>Grid</h2>
+            <div class="sm-row">
+                <h2>Grid</h2>
+                <p>
+                    Sortable <b>CSS grid</b>.<br>
+                    Drop an item on another item, the order of all other items changes
+                    with animation once the drop finishes for improved cognitive load.
+                </p>
+                <p>
+                    <b>Drop onto parent</b> is also supported.
+                </p>
+                <p>
+                    Need a <b>grab handler</b>? Add a child element with the class <code>jsort-handler</code> to the
+                    item.
+                    You can change that class name from the instance Options
+                </p>
+            </div>
             <div class="col flex-2">
                 <div class="jsort grid">
                     <div class="jsort-item"><b>JSort</b></div>
@@ -48,7 +63,12 @@
         </div>
 
         <div class="row">
-            <h2>Groups</h2>
+            <div class="sm-row">
+                <h2>Groups</h2>
+                <p>
+                    Group multiple sortable containers using <code>data-jsort-group="name"</code> attribute.<br>
+                </p>
+            </div>
             <div class="row flex-2">
                 <ul class="jsort list" data-jsort-group="group-a">
                     <li class="jsort-item">A 1</li>
@@ -66,7 +86,15 @@
 
 
         <div class="row">
-            <h2>Nested</h2>
+            <div class="sm-row">
+                <h2>Nested</h2>
+                <p>
+                    Nested sortables are also supported.<br>
+                    Add a <code>data-jsort-group="name"</code> to your nested elements and
+                    assign a JSort instance to every one of them.  
+                    PS, you can also drag an item to the above Groups ;)
+                </p>
+            </div>
             <div class="row flex-2">
                 <ul class="jsort list" data-jsort-group="group-a">
                     <li class="jsort-item">
@@ -93,10 +121,16 @@
         </div>
 
         <div class="row">
-            <h2>Swap</h2>
+            <div class="sm-row">
+                <h2>Swap</h2>
+                <p>
+                    Swap items between two lists.<br>
+                    Add <code>data-jsort-swap="true"</code> attribute to your grouped lists.
+                </p>
+            </div>
             <div class="row flex-2" id="swap">
                 <div>
-                    <h3>Subsitutions</h3>
+                    <h3>Substitutes</h3>
                     <ul class="jsort list" data-jsort-swap="true" data-jsort-group="group-b">
                         <li class="jsort-item">Player 8</li>
                         <li class="jsort-item">Player 14</li>
@@ -105,11 +139,10 @@
                     </ul>
                 </div>
                 <div>
-                    <h3>Players</h3>
+                    <h3>Team</h3>
                     <ul class="jsort list" data-jsort-swap="true" data-jsort-group="group-b">
                         <li class="jsort-item">Player 9</li>
                         <li class="jsort-item">Player 10</li>
-                        <li class="jsort-item">Player 19</li>
                         <li class="jsort-item">Player 7</li>
                         <li class="jsort-item">Player 3</li>
                         <li class="jsort-item">Player 1</li>

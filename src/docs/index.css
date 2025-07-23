@@ -27,7 +27,7 @@ body {
     color-scheme: light;
     background-color: var(--bg);
     color: var(--fg);
-    font: min(3cqmin, 1.1rem) / 1.5 system-ui;
+    font: min(3cqmin, 1rem) / 1.5 system-ui;
     padding: 2.3rem;
     padding-bottom: 8rem;
 
@@ -70,6 +70,7 @@ h1 {
 
 h2 {
     font-size: 3rem;
+    padding-bottom: 0.5em;
 }
 
 ul {
@@ -99,11 +100,11 @@ ul {
         flex: 1;
         min-width: 8rem;
     }
+}
 
-    h2 {
-        @media screen and (width < 40rem) {
-            flex-basis: 100%;
-        }
+.sm-row {
+    @media screen and (width < 40rem) {
+        flex-basis: 100%;
     }
 }
 
