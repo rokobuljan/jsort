@@ -29,19 +29,19 @@
     "vite": "^7.0.4"
   },
   "license": "MIT",
-  "description": "A JavaScript library for sorting and reordering items in a list or grid.",
+  "description": "A JavaScript library for sorting and reordering grid or list items.",
   "keywords": [
+    "sort",
+    "sorting",
     "sortable",
     "draggable",
     "drag-and-drop",
     "reorder",
     "list",
     "grid",
-    "sorting",
-    "sort",
     "swap",
     "javascript",
     "jsort",
-    "sortjs"
+    "js"
   ]
 }
