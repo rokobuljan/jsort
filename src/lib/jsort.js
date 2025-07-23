@@ -90,7 +90,7 @@ class JSort {
         let id = null;
         const tick = () => {
             id = requestAnimationFrame(tick);
-            const msNow = performance.now();
+            const msNow = window.performance.now();
             const msPassed = msNow - msPrev;
             if (msPassed < msPerFrame) return;
             const excessTime = msPassed % msPerFrame;
@@ -112,7 +112,7 @@ class JSort {
 
     findScrollParent(el) {
         while (el && el !== document.documentElement) {
-            const style = window.getComputedStyle(el);
+            const style = getComputedStyle(el);
             if (el.scrollHeight > el.clientHeight &&
                 (style.overflowY === 'auto' || style.overflowY === 'scroll')) {
                 return el;
