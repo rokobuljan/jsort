@@ -114,7 +114,7 @@ class JSort {
         while (el && el !== document.documentElement) {
             const style = getComputedStyle(el);
             if (el.scrollHeight > el.clientHeight &&
-                (style.overflowY === 'auto' || style.overflowY === 'scroll')) {
+                /^(auto|scroll)$/.test(style.overflowY)) {
                 return el;
             }
             el = el.parentElement;
@@ -124,14 +124,15 @@ class JSort {
 
     scrollStep() {
         if (!this.scrollDirection) return;
+        const scrollSpeed = this.scrollSpeed * (this.edgePressure / Math.max(this.edgeThreshold, 1));
         if (this.scrollDirection === "up") {
-            this.scrollParent.scrollTop -= this.scrollSpeed;
+            this.scrollParent.scrollTop -= scrollSpeed;
         } else if (this.scrollDirection === "down") {
-            this.scrollParent.scrollTop += this.scrollSpeed;
+            this.scrollParent.scrollTop += scrollSpeed;
         } else if (this.scrollDirection === "left") {
-            this.scrollParent.scrollLeft -= this.scrollSpeed;
+            this.scrollParent.scrollLeft -= scrollSpeed;
         } else if (this.scrollDirection === "right") {
-            this.scrollParent.scrollLeft += this.scrollSpeed;
+            this.scrollParent.scrollLeft += scrollSpeed;
         }
     }
 
@@ -168,12 +169,16 @@ class JSort {
 
         // Check edges with threshold
         if (ev.clientY < topEdge + this.edgeThreshold) {
+            this.edgePressure = Math.min(this.edgeThreshold, this.edgeThreshold - (ev.clientY - topEdge));
             this.startEdgeScroll("up");
         } else if (ev.clientY > bottomEdge - this.edgeThreshold) {
+            this.edgePressure = Math.min(this.edgeThreshold, this.edgeThreshold - (bottomEdge - ev.clientY));
             this.startEdgeScroll("down");
         } else if (ev.clientX < leftEdge + this.edgeThreshold) {
+            this.edgePressure = Math.min(this.edgeThreshold, this.edgeThreshold - (ev.clientX - leftEdge));
             this.startEdgeScroll("left");
         } else if (ev.clientX > rightEdge - this.edgeThreshold) {
+            this.edgePressure = Math.min(this.edgeThreshold, this.edgeThreshold - (rightEdge - ev.clientX));
             this.startEdgeScroll("right");
         } else {
             this.stopEdgeScroll();
@@ -328,9 +333,11 @@ class JSort {
         this.scrollParent = null;
         this.scrollDirection = null;
         this.scrollAnim = null;
-        this.onGrab = () => {};
-        this.onMove = () => {};
-        this.onDrop = () => {};
+        this.edgePressure = 0;
+
+        this.onGrab = () => { };
+        this.onMove = () => { };
+        this.onDrop = () => { };
     }
 
     init(options) {
