@@ -98,6 +98,7 @@ JSort allows to drag &amp; drop into a linked group by adding a `data-jsort-grou
 | `onMove(PointerEvent)` | Function                         | Called when an item is moved           |
 | `onDrop(PointerEvent)` | Function                         | Called when an item is dropped         |
 | `swap`                 | `false`                          | Swap elements on drop                  |
+| `parentDrop`           | `true`                           | If item can be dropped onto parent     |
 | `edgeThreshold`        | `50`                             | Px near edge to start scrolling        |
 | `scrollSpeed`          | `10`                             | Prent scroll px per step               |
 | `zIndex`               | Integer                          | z-index  of the ghost element          |
@@ -114,6 +115,7 @@ Some options can be assigned directly from your HTML using the `data-jsort-*` at
         data-jsort-duration="1000"
         data-jsort-easing="cubic-bezier(0.5, 0, 0.5, 1)"
         data-jsort-zindex="100"
+        data-jsort-parent-drop="false"
     >
     <li class="jsort-item"><div class="my-handler">✥</div>Item 1</li>
     <li class="jsort-item"><div class="my-handler">✥</div>Item 2</li>

@@ -4,7 +4,8 @@ class JSort {
         this.classItems = this.elParentGrab.dataset.jsortClassItems ?? ".jsort-item";
         this.classHandler = this.elParentGrab.dataset.jsortClassHandler ?? ".jsort-handler";
         this.duration = this.elParentGrab.dataset.jsortDuration ?? 420;
-        this.swap = this.elParentGrab.dataset.jsortSwap === "true";
+        this.swap = this.elParentGrab.dataset.jsortSwap === "true"; // false by default
+        this.parentDrop = this.elParentGrab.dataset.jsortParentDrop !== "false"; // true by default
         this.easing = this.elParentGrab.dataset.jsortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
         this.scale = this.elParentGrab.dataset.jsortScale ?? "1.1";
         this.zIndex = Number(this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF); // Maximum 32-bit signed integer
@@ -28,7 +29,6 @@ class JSort {
             opacity: 0.8,
         });
         this.elGhost.classList.add("jsort-ghost");
-        // Animate scale ghost
         this.elGhost.animate([
             { scale: this.scale }
         ], {
@@ -72,15 +72,20 @@ class JSort {
         const elFromPoint = document.elementFromPoint(clientX, clientY);
         const elTarget = elFromPoint?.closest(`${this.classItems}, .jsort`);
         const elParentDrop = elFromPoint?.closest(`.jsort`);
+        const isParentDrop = elTarget === elParentDrop;
         const isOntoSelf = elTarget && this.closestElement(elTarget, this.elGrabbed) === this.elGrabbed;
         const isSameParent = elParentDrop === this.elParentGrab;
         const groupDrop = elParentDrop?.dataset.jsortGroup;
         const isValidGroup = !isSameParent && Boolean(groupDrop && this.group === groupDrop);
+
+        if (!this.parentDrop && isParentDrop) return false;
+
         const isValid =
             !isOntoSelf &&
             elTarget &&
             elParentDrop &&
             isValidGroup || isSameParent;
+
         return isValid;
     }
 
