@@ -1,18 +1,31 @@
 class JSort {
     constructor(el, options) {
         this.elParentGrab = el;
-        this.classItems = this.elParentGrab.dataset.jsortClassItems ?? ".jsort-item";
-        this.classHandler = this.elParentGrab.dataset.jsortClassHandler ?? ".jsort-handler";
-        this.duration = this.elParentGrab.dataset.jsortDuration ?? 420;
-        this.swap = this.elParentGrab.dataset.jsortSwap === "true"; // false by default
-        this.parentDrop = this.elParentGrab.dataset.jsortParentDrop !== "false"; // true by default
-        this.easing = this.elParentGrab.dataset.jsortEasing ?? "cubic-bezier(0.6, 0, 0.6, 1)";
-        this.scale = this.elParentGrab.dataset.jsortScale ?? "1.1";
-        this.zIndex = Number(this.elParentGrab.dataset.jsortZindex ?? 0x7FFFFFFF); // Maximum 32-bit signed integer
-        this.scrollSpeed = Number(this.elParentGrab.dataset.jsortScrollSpeed ?? 10); // pixels per frame
-        this.edgeThreshold = Number(this.elParentGrab.dataset.jsortEdgeThreshold ?? 50); // pixels from edge
-        this.group = this.elParentGrab.dataset.jsortGroup;
+        this.selectorParent = ".jsort";
+        this.selectorItems = ".jsort-item";
+        this.selectorHandler = ".jsort-handler";
+        this.classAnimated = "is-jsort-animated";
+        this.classGrabbed = "is-jsort-grabbed";
+        this.classTarget = "is-jsort-target";
+        this.classInvalid = "is-jsort-invalid";
+        this.duration = 420;
+        this.swap = false; 
+        this.parentDrop = true;
+        this.easing = "cubic-bezier(0.6, 0, 0.6, 1)";
+        this.scale = "1.1";
+        this.zIndex = 0x7FFFFFFF; // Maximum 32-bit signed integer
+        this.scrollSpeed = 10 // pixels per frame
+        this.edgeThreshold = 50; // pixels from edge
+        this.group = null;
         this.init(options);
+    }
+
+    parseDataAttribute(el) {
+        return el?.dataset.jsort?.replace(/\s/g, "").replace(/;$/, "").split(/;/).reduce((acc, str) => {
+            const [prop, val] = str.split(":");
+            acc[prop] = !isNaN(val) ? Number(val) : /^(true|false)$/.test(val) ? JSON.parse(val) : val;
+            return acc;
+        }, {}) ?? {};
     }
 
     appendGhost() {
@@ -42,7 +55,7 @@ class JSort {
     animateItem({ el, x, y }) {
         const { left, top } = el.getBoundingClientRect();
         if (x === left && y === top) return;
-        el.classList.add("is-jsort-animated");
+        el.classList.add(this.classAnimated);
         const keyframes = el === this.elGrabbed ?
             [
                 { position: "relative", zIndex: 1, translate: `${x - left}px ${y - top}px`, opacity: 0.9, scale: this.scale },
@@ -58,7 +71,7 @@ class JSort {
             fill: "forwards"
         });
         anim.addEventListener("finish", () => {
-            el.classList.remove("is-jsort-animated");
+            el.classList.remove(this.classAnimated);
             anim.cancel(); // Fixes nested sortable
         });
     }
@@ -70,8 +83,8 @@ class JSort {
 
     checkValidity({ clientX, clientY }) {
         const elFromPoint = document.elementFromPoint(clientX, clientY);
-        const elTarget = elFromPoint?.closest(`${this.classItems}, .jsort`);
-        const elParentDrop = elFromPoint?.closest(`.jsort`);
+        const elTarget = elFromPoint?.closest(`${this.selectorItems}, ${this.selectorParent}`);
+        const elParentDrop = elFromPoint?.closest(this.selectorParent);
         const isParentDrop = elTarget === elParentDrop;
         const isOntoSelf = elTarget && this.closestElement(elTarget, this.elGrabbed) === this.elGrabbed;
         const isSameParent = elParentDrop === this.elParentGrab;
@@ -192,15 +205,15 @@ class JSort {
 
     grab = (ev) => {
         if (this.elGrabbed) return;
-        const elClosestItem = ev.target.closest(`${this.classItems}`);
+        const elClosestItem = ev.target.closest(`${this.selectorItems}`);
 
         if (!elClosestItem) return;
         if (elClosestItem.parentElement !== this.elParentGrab) return; // Does not belongs to this sortable
 
-        const foundHandler = elClosestItem.querySelector(this.classHandler);
+        const foundHandler = elClosestItem.querySelector(this.selectorHandler);
         const isHandlerVisible = foundHandler?.checkVisibility();
         const hasHandler = Boolean(foundHandler);
-        const elHandler = ev.target.closest(this.classHandler);
+        const elHandler = ev.target.closest(this.selectorHandler);
         if (hasHandler && isHandlerVisible && !elHandler) return;
 
         this.pointerStart.clientX = ev.clientX
@@ -220,21 +233,21 @@ class JSort {
         if (!this.isFirstMove) {
             this.isFirstMove = true;
             this.appendGhost({ clientX, clientY });
-            this.elGrabbed.classList.add("is-jsort-grabbed");
+            this.elGrabbed.classList.add(this.classGrabbed);
         }
 
         const isValid = this.checkValidity({ clientX, clientY });
         this.elGhost.style.translate = `${clientX - this.pointerStart.clientX}px ${clientY - this.pointerStart.clientY}px`;
-        this.elGhost.classList.toggle("is-jsort-invalid", !isValid);
+        this.elGhost.classList.toggle(this.classInvalid, !isValid);
         this.elGrabbed.style.cursor = isValid ? "grab" : "not-allowed";
         const elFromPoint = document.elementFromPoint(clientX, clientY);
-        const elTarget = elFromPoint?.closest(`${this.classItems}, .jsort`);
+        const elTarget = elFromPoint?.closest(`${this.selectorItems}, ${this.selectorParent}`);
 
         if (elTarget !== this.elTarget) {
-            this.elTarget?.classList.remove("is-jsort-target");
+            this.elTarget?.classList.remove(this.classTarget);
             if (isValid) {
                 this.elTarget = elTarget;
-                this.elTarget?.classList.add("is-jsort-target");
+                this.elTarget?.classList.add(this.classTarget);
             }
         }
 
@@ -250,11 +263,11 @@ class JSort {
         if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
         this.elParentGrab.style.removeProperty("user-select");
         this.elGrabbed.style.removeProperty("cursor");
-        this.elGrabbed?.classList.remove("is-jsort-grabbed");
-        this.elTarget?.classList.remove("is-jsort-target");
+        this.elGrabbed?.classList.remove(this.classGrabbed);
+        this.elTarget?.classList.remove(this.classTarget);
         const elFromPoint = document.elementFromPoint(clientX, clientY);
-        this.elTarget = elFromPoint?.closest(`${this.classItems}, .jsort`);
-        this.elParentDrop = elFromPoint?.closest(`.jsort`);
+        this.elTarget = elFromPoint?.closest(`${this.selectorItems}, ${this.selectorParent}`);
+        this.elParentDrop = elFromPoint?.closest(this.selectorParent);
         const isSameParent = this.elParentDrop === this.elParentGrab;
         const isDroppedOntoParent = Boolean(this.elTarget && this.elParentDrop && this.elTarget === this.elParentDrop);
 
@@ -347,13 +360,15 @@ class JSort {
 
     init(options) {
         this.destroy();
-        Object.assign(this, options);
+        const data = this.parseDataAttribute(this.elParentGrab);        
+        Object.assign(this, options, data);
         this.reset();
         this.elParentGrab.addEventListener("touchstart", this.handleTouchAction);
         this.elParentGrab.addEventListener("pointerdown", this.grab);
         this.elParentGrab.addEventListener("pointermove", this.move);
         this.elParentGrab.addEventListener("pointerup", this.drop);
         this.elParentGrab.addEventListener("pointercancel", this.drop);
+        this.elParentGrab.dataset.jsortGroup = this.group;
     }
 
     destroy() {

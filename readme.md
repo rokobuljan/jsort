@@ -63,16 +63,16 @@ const JSortInstance  = new JSort(Element, { /* Options */ });
 
 ## Linked Groups
 
-JSort allows to drag &amp; drop into a linked group by adding a `data-jsort-group` attribute.
+JSort allows to drag &amp; drop into a linked group by adding a `group` property in the `data-jsort` attribute.
 
 ```html
-<div class="jsort" data-jsort-group="group-a">
+<div class="jsort" data-jsort="group:a">
     <div class="jsort-item">A 1</div>
     <div class="jsort-item">A 2</div>
     <div class="jsort-item">A 3</div>
 </div>
 
-<div class="jsort" data-jsort-group="group-a">
+<div class="jsort" data-jsort-group="group:a">
     <div class="jsort-item">B 1</div>
     <div class="jsort-item">B 2</div>
 </div>
@@ -87,36 +87,41 @@ JSort allows to drag &amp; drop into a linked group by adding a `data-jsort-grou
 
 `JSort(Element, options)`
 
-| Option                 | Type / Default                   | Description                            |
-| ---------------------- | -------------------------------- | -------------------------------------- |
-| `classItems`           | `".jsort-item"`                  | Custom items className / selector      |
-| `classHandler`         | `".jsort-handler"`               | Custom handler className / selector    |
-| `duration`             | `420`                            | Animation duration in milliseconds     |
-| `easing`               | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function              |
-| `scale`                | `"1.1"`                          | Scale factor of the ghost element      |
-| `onGrab(PointerEvent)` | Function                         | Called when an item is grabbed         |
-| `onMove(PointerEvent)` | Function                         | Called when an item is moved           |
-| `onDrop(PointerEvent)` | Function                         | Called when an item is dropped         |
-| `swap`                 | `false`                          | Swap elements on drop                  |
-| `parentDrop`           | `true`                           | If item can be dropped onto parent     |
-| `edgeThreshold`        | `50`                             | Px near edge to start scrolling        |
-| `scrollSpeed`          | `10`                             | Prent scroll px per step               |
-| `zIndex`               | Integer                          | z-index  of the ghost element          |
-| `group`                | String                           | Group name. (`data-jsort-group` value) |
+| Option                 | Type / `Default`                   | Description                        |
+| ---------------------- | -------------------------------- | ---------------------------------- |
+| `group`                | String                           | Group name                         |
+| `swap`                 | `false`                          | Swap elements on drop              |
+| `duration`             | `420`                            | Animation duration in milliseconds |
+| `easing`               | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function          |
+| `scale`                | `"1.1"`                          | Scale factor of the ghost element  |
+| `onGrab(PointerEvent)` | Function                         | Called when an item is grabbed     |
+| `onMove(PointerEvent)` | Function                         | Called when an item is moved       |
+| `onDrop(PointerEvent)` | Function                         | Called when an item is dropped     |
+| `parentDrop`           | `true`                           | If item can be dropped onto parent |
+| `edgeThreshold`        | `50`                             | Px near edge to start scrolling    |
+| `scrollSpeed`          | `10`                             | Prent scroll px per step           |
+| `zIndex`               | `2147483647`                     | Ghost element  z-index             |
+| `selectorParent`       | `".jsort"`                       | Custom selector                    |
+| `selectorItems`        | `".jsort-item"`                  | Custom items selector              |
+| `selectorHandler`      | `".jsort-handler"`               | Custom handler selector            |
+| `classAnimated`        | `"is-jsort-animated"`            | Custom animated class              |
+| `classGrabbed`         | `"is-jsort-grabbed"`             | Custom grabbed class               |
+| `classTarget`          | `"is-jsort-target"`              | Custom target class (hover, drop)  |
+| `classInvalid`         | `"is-jsort-invalid"`             | Custom invalid class               |
 
 **Tip:**  
-Some options can be assigned directly from your HTML using the `data-jsort-*` attributes, just like `data-jsort-group`:
+Options can be assigned directly from your HTML using the `data-jsort` attribute in this format `Option: Value;`
 
 ```html
-<ul class="jsort"
-        data-jsort-group="group-a"
-        data-jsort-class-handler=".my-handler"
-        data-jsort-swap="true"
-        data-jsort-duration="1000"
-        data-jsort-easing="cubic-bezier(0.5, 0, 0.5, 1)"
-        data-jsort-zindex="100"
-        data-jsort-parent-drop="false"
-    >
+<ul class="jsort" data-jsort="
+        group: a;
+        selectorHandler: .my-handler;
+        swap: true;
+        duration: 1000;
+        easing: cubic-bezier(0.5, 0, 0.5, 1);
+        zIndex: 9999;
+        parentDrop: false;
+    ">
     <li class="jsort-item"><div class="my-handler">✥</div>Item 1</li>
     <li class="jsort-item"><div class="my-handler">✥</div>Item 2</li>
 </ul>

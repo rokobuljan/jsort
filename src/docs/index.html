@@ -68,15 +68,15 @@ document.querySelectorAll(".grid").forEach((el) => new JSort(el));
             <div class="sm-row">
                 <h2>Groups</h2>
                 <p>
-                    Group multiple containers using <code>data-jsort-group="name"</code> attribute.<br>
+                    Group multiple containers using the <b>data-jsort</b> attribute: <code>data-jsort="group: name"</code> <br>
                 </p>
                 <details>
                     <summary>View code</summary>
-                    <pre><code>&lt;ul class="jsort list" data-jsort-group="group-a"&gt;
+                    <pre><code>&lt;ul class="jsort list" data-jsort="group:a"&gt;
   &lt;li class="jsort-item"&gt; A 1 &lt;/li&gt;
   &lt;li class="jsort-item"&gt; A 2 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;ul class="jsort list" data-jsort-group="group-a"&gt;
+&lt;ul class="jsort list" data-jsort="group:a"&gt;
   &lt;li class="jsort-item"&gt; B 1 &lt;/li&gt;
 &lt;/ul&gt;
 
@@ -89,14 +89,14 @@ document.querySelectorAll(".list").forEach((el) => new JSort(el));
                 </details>
             </div>
             <div class="row">
-                <ul class="jsort list" data-jsort-group="group-a">
+                <ul class="jsort list" data-jsort="group:a">
                     <li class="jsort-item">A 1</li>
                     <li class="jsort-item">A 2</li>
                     <li class="jsort-item">A 3</li>
                     <li class="jsort-item">A 4</li>
                     <li class="jsort-item">A 5</li>
                 </ul>
-                <ul class="jsort list" data-jsort-group="group-a">
+                <ul class="jsort list" data-jsort="group:a">
                     <li class="jsort-item">B 1</li>
                     <li class="jsort-item">B 2</li>
                 </ul>
@@ -108,14 +108,14 @@ document.querySelectorAll(".list").forEach((el) => new JSort(el));
             <div class="sm-row">
                 <h2>Nested</h2>
                 <p>
-                    Add a <code>data-jsort-group="name"</code> to your nested elements.
+                    Add a <code>data-jsort="group: name"</code> to your nested elements.
                     PS: try to drag an item to the above Groups ;)
                 </p>
                 <details>
                     <summary>View code</summary>
-                    <pre><code>&lt;ul class="jsort list" data-jsort-group="group-a"&gt;
+                    <pre><code>&lt;ul class="jsort list" data-jsort="group:a"&gt;
   &lt;li class="jsort-item"&gt; A
-    &lt;ul class="jsort list" data-jsort-group="group-a"&gt;
+    &lt;ul class="jsort list" data-jsort="group:a"&gt;
       &lt;li class="jsort-item"&gt; B &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
@@ -128,7 +128,7 @@ document.querySelectorAll(".list").forEach((el) => new JSort(el));
                 </details>
             </div>
             <div class="row">
-                <ul class="jsort list" data-jsort-group="group-a">
+                <ul class="jsort list" data-jsort="group:a">
                     <li class="jsort-item">
                         <div>A 1</div>
                     </li>
@@ -137,11 +137,11 @@ document.querySelectorAll(".list").forEach((el) => new JSort(el));
                     </li>
                     <li class="jsort-item">
                         <div>C 1</div>
-                        <ul class="jsort list" data-jsort-group="group-a">
+                        <ul class="jsort list" data-jsort="group:a">
                             <li class="jsort-item">C 1 a</li>
                             <li class="jsort-item">
                                 <div>C 1 a 1</div>
-                                <ul class="jsort list" data-jsort-group="group-a">
+                                <ul class="jsort list" data-jsort="group:a">
                                     <li class="jsort-item">D.a 1</li>
                                     <li class="jsort-item">D.a 2</li>
                                 </ul>
@@ -157,15 +157,15 @@ document.querySelectorAll(".list").forEach((el) => new JSort(el));
                 <h2>Swap</h2>
                 <p>
                     Swap items between elements.<br>
-                    Add <code>data-jsort-swap="true"</code> attribute to your grouped elements.
+                    Add <code>data-jsort="group: name; swap: true"</code> attribute to your grouped elements.
                 </p>
                 <details>
                     <summary>View code</summary>
-                    <pre><code>&lt;ul class="jsort list" data-jsort-swap="true" data-jsort-group="group-a"&gt;
+                    <pre><code>&lt;ul class="jsort list" data-jsort="group:a;swap:true;"&gt;
   &lt;li class="jsort-item"&gt; A 1 &lt;/li&gt;
   &lt;li class="jsort-item"&gt; A 2 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;ul class="jsort list" data-jsort-swap="true" data-jsort-group="group-a"&gt;
+&lt;ul class="jsort list" data-jsort="group:a;swap:true;"&gt;
   &lt;li class="jsort-item"&gt; B 1 &lt;/li&gt;
 &lt;/ul&gt;
 
@@ -180,7 +180,7 @@ document.querySelectorAll(".list").forEach((el) => new JSort(el));
             <div class="row" id="swap">
                 <div>
                     <h3>Substitutes</h3>
-                    <ul class="jsort list" data-jsort-swap="true" data-jsort-group="group-b">
+                    <ul class="jsort list" data-jsort="group:b;swap:true">
                         <li class="jsort-item">Player 8</li>
                         <li class="jsort-item">Player 14</li>
                         <li class="jsort-item">Player 12</li>
@@ -189,7 +189,7 @@ document.querySelectorAll(".list").forEach((el) => new JSort(el));
                 </div>
                 <div>
                     <h3>Team</h3>
-                    <ul class="jsort list" data-jsort-swap="true" data-jsort-group="group-b">
+                    <ul class="jsort list" data-jsort="group:b;swap:true">
                         <li class="jsort-item">Player 9</li>
                         <li class="jsort-item">Player 10</li>
                         <li class="jsort-item">Player 7</li>
