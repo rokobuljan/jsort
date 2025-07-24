@@ -1,5 +1,8 @@
 // import JSort from '@lib';
-import JSort from "../lib/jsort.js"
+import JSort from "../lib/jsort.js";
+import hljs from 'https://unpkg.com/@highlightjs/cdn-assets@11.9.0/es/highlight.min.js';
+import javascript from 'https://unpkg.com/@highlightjs/cdn-assets@11.9.0/es/languages/javascript.min.js';
+import "./hljs.css";
 
 document.querySelectorAll(".jsort").forEach((el) => {
     // Make sortable
@@ -9,3 +12,9 @@ document.querySelectorAll(".jsort").forEach((el) => {
         el.style.backgroundColor = `hsl(${~~(Math.random() * 200 + 80)} 56% 65%)`;
     });
 });
+
+
+document.querySelectorAll("pre").forEach((el) => {
+    hljs.highlightElement(el);
+});
+
