@@ -90,7 +90,7 @@ JSort allows to drag &amp; drop into a linked group by adding a `group` property
 
 ## Swap items
 
-By default JSort *reorders* the items on drop. If instead you want to **swap**, you can set the `swap` option to `true` to your group elements:
+By default JSort *reorders* the items on drop. If instead you want to **swap**, you can set the `swap` option to `true` to your element or group elements:
 
 ```html
 <div class="jsort swap" data-jsort="group:a; swap:true">
