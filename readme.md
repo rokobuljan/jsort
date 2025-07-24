@@ -31,7 +31,7 @@ npm install @rbuljan/jsort
 ## Syntax
 
 ```js
-const JSortInstance  = new JSort(Element, { /* Options */ });
+const JSortInstance = new JSort(Element, { /* Options */ });
 ```
 
 ## Usage
