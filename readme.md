@@ -39,7 +39,10 @@ const JSortInstance  = new JSort(Element, { /* Options */ });
 ```html
 <ul class="jsort" id="list">
     <li class="jsort-item">1</li>
-    <li class="jsort-item"><div class="jsort-handler">✥</div>2 Grab by the handler</li>
+    <li class="jsort-item">
+        <div class="jsort-handler">✥</div>
+        2 Grab by the handler
+    </li>
     <li class="jsort-item">3</li>
     <li class="jsort-item">4</li>
 </ul>
@@ -72,22 +75,73 @@ JSort allows to drag &amp; drop into a linked group by adding a `group` property
     <div class="jsort-item">A 3</div>
 </div>
 
-<div class="jsort" data-jsort-group="group:a">
+<div class="jsort" data-jsort="group:a">
     <div class="jsort-item">B 1</div>
     <div class="jsort-item">B 2</div>
 </div>
 
 <script type="module">
     import JSort from '@rbuljan/jsort';
-    document.querySelectorAll(".jsort").forEach((el) => new JSort(el, {/*Options*/}));
+    document.querySelectorAll(".jsort").forEach((el) => {
+        new JSort(el, {/*Options*/});
+    });
 </script>
 ```
+
+## Swap items
+
+By default JSort *reorders* the items on drop. If instead you want to **swap**, you can set the `swap` option to `true` to your group elements:
+
+```html
+<div class="jsort swap" data-jsort="group:a; swap:true">
+    <div class="jsort-item">A 1</div>
+    <div class="jsort-item">A 2</div>
+    <div class="jsort-item">A 3</div>
+</div>
+
+<div class="jsort swap" data-jsort="group:a; swap:true">
+    <div class="jsort-item">B 1</div>
+    <div class="jsort-item">B 2</div>
+</div>
+
+<script type="module">
+    import JSort from '@rbuljan/jsort';
+    document.querySelectorAll(".swap").forEach(el => new JSort(el));
+</script>
+```
+
+Instead of using data-jsort, you can set the options directly in the constructor:
+
+```html
+<div class="jsort list-swap">
+    <div class="jsort-item">A 1</div>
+    <div class="jsort-item">A 2</div>
+    <div class="jsort-item">A 3</div>
+</div>
+
+<div class="jsort list-swap">
+    <div class="jsort-item">B 1</div>
+    <div class="jsort-item">B 2</div>
+</div>
+
+<script type="module">
+    import JSort from '@rbuljan/jsort';
+    document.querySelectorAll(".list-swap").forEach(el => {
+        new JSort(el, {
+            group: "swap-group-1",
+            swap: true
+        })
+    });
+</script>
+```
+
+And, following, are all the available **options** you can use
 
 ## Options
 
 `JSort(Element, options)`
 
-| Option                 | Type / `Default`                   | Description                        |
+| Option                 | Type / `Default`                 | Description                        |
 | ---------------------- | -------------------------------- | ---------------------------------- |
 | `group`                | String                           | Group name                         |
 | `swap`                 | `false`                          | Swap elements on drop              |
@@ -109,8 +163,8 @@ JSort allows to drag &amp; drop into a linked group by adding a `group` property
 | `classTarget`          | `"is-jsort-target"`              | Custom target class (hover, drop)  |
 | `classInvalid`         | `"is-jsort-invalid"`             | Custom invalid class               |
 
-**Tip:**  
-Options can be assigned directly from your HTML using the `data-jsort` attribute in this format `Option: Value;`
+***Tip:***  
+Options can be assigned directly from your HTML using the `data-jsort` attribute in this format `option: value;`
 
 ```html
 <ul class="jsort" data-jsort="
@@ -126,6 +180,8 @@ Options can be assigned directly from your HTML using the `data-jsort` attribute
     <li class="jsort-item"><div class="my-handler">✥</div>Item 2</li>
 </ul>
 ```
+
+just remember that `data-jsort` options **will override** any instance options you passed to the constructor (analogue to stylesheet vs. `style=""` attribute). Having that in consideration, you can define some JSort global, shared options from JavaScript, and customize specific elements using the `data-jsort=""` attribute, if needed.
 
 ## Methods
 
