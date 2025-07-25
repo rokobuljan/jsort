@@ -122,16 +122,16 @@ details {
         &:hover {
             color: color-mix(in srgb, var(--accent), var(--bg) 40%);
         }
-
-        & + * {
-            margin-top: 1rem;
-        }
     }
 }
 
 pre {
     width: 100%;
     overflow: auto;
+
+    &:first-line {
+        line-height: 0;
+    }
 }
 
 code {

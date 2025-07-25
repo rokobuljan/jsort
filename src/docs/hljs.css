@@ -9,7 +9,7 @@
     color: #dddde1;
     background: transparent;
     overflow-x: auto;
-    padding: 1.5em;
+    padding: 0;
 }
 .hljs::selection,
 .hljs ::selection {
