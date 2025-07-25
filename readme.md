@@ -147,7 +147,8 @@ And, following, are all the available **options** you can use
 | `swap`                 | `false`                          | Swap elements on drop              |
 | `duration`             | `420`                            | Animation duration in milliseconds |
 | `easing`               | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function          |
-| `scale`                | `"1.1"`                          | Scale factor of the ghost element  |
+| `scale`                | `1.1`                            | Scale factor of the ghost element  |
+| `opacity`              | `0.8`                            | Opacity of the ghost element       |
 | `onGrab(PointerEvent)` | Function                         | Called when an item is grabbed     |
 | `onMove(PointerEvent)` | Function                         | Called when an item is moved       |
 | `onDrop(PointerEvent)` | Function                         | Called when an item is dropped     |

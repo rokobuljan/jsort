@@ -8,15 +8,16 @@ class JSort {
         this.classGrabbed = "is-jsort-grabbed";
         this.classTarget = "is-jsort-target";
         this.classInvalid = "is-jsort-invalid";
+        this.easing = "cubic-bezier(0.6, 0, 0.6, 1)";
+        this.zIndex = 0x7FFFFFFF; // Maximum 32-bit signed integer
         this.duration = 420;
+        this.opacity = 0.8;
+        this.scale = 1.1;
         this.swap = false; 
         this.parentDrop = true;
-        this.easing = "cubic-bezier(0.6, 0, 0.6, 1)";
-        this.scale = "1.1";
-        this.zIndex = 0x7FFFFFFF; // Maximum 32-bit signed integer
-        this.scrollSpeed = 10 // pixels per frame
-        this.edgeThreshold = 50; // pixels from edge
         this.group = null;
+        this.edgeThreshold = 50; // pixels from edge
+        this.scrollSpeed = 10 // pixels per frame
         this.init(options);
     }
 
@@ -39,7 +40,7 @@ class JSort {
             height: `${height}px`,
             pointerEvents: "none",
             zIndex: this.zIndex,
-            opacity: 0.8,
+            opacity: this.opacity,
         });
         this.elGhost.classList.add("jsort-ghost");
         this.elGhost.animate([
