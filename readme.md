@@ -149,6 +149,7 @@ And, following, are all the available **options** you can use
 | `easing`               | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function          |
 | `scale`                | `1.1`                            | Scale factor of the ghost element  |
 | `opacity`              | `0.8`                            | Opacity of the ghost element       |
+| `timeoutGrab`          | `250`                            | Grab timeout (Touch devices only)  |
 | `onGrab(PointerEvent)` | Function                         | Called when an item is grabbed     |
 | `onMove(PointerEvent)` | Function                         | Called when an item is moved       |
 | `onDrop(PointerEvent)` | Function                         | Called when an item is dropped     |
@@ -222,21 +223,6 @@ For custom styling JSort provides several classes you could use in your CSS to f
 ___
 
 See the [Example page](https://rokobuljan.github.io/jsort/) for inspiration.
-
-## FAQ
-
-<details>
-    <summary>How to differentiate scroll intent vs sort/drag on touch devices?</summary>
-    This is a pretty hard problem to solve. If we use CSS `touch-action: none;` the page will not scroll.  
-    If we use `touch-action: pan-y;` the page will scroll, but the items will be draggable initially only on the X axis.  
-    JSort uses instead `Event.preventDefault()` on the `"touchstart"` Event being the only *"touch"* Event in use.  
-    JS does not allows to set CSS `touch-action: none;` or `Event.preventDefault()` once the "pointerdown" Events started. Adding a delay to "touchstart" does not allows to async preventDefault(), since it must be synchronous.  
-    Instead of adding hundreds of lines of tricky hacks, I decided to rather wait for browsers to implement a sane, native *"intent"* solution. In the meantime my suggestion is to:  
-    <ul>
-      <li>leave some safe scroll zone between your sortable elements and the viewport</li>
-      <li>add a sort handler on mobile. Using CSS `@media` queries you can set that handler element to `display: none;` on smaller screens. On desktop your items will still be draggable out of the box.</li>
-    </ul>
-</details>
 
 ## Motivation
 

@@ -13,11 +13,12 @@ class JSort {
         this.duration = 420;
         this.opacity = 0.8;
         this.scale = 1.1;
-        this.swap = false; 
+        this.swap = false;
         this.parentDrop = true;
         this.group = null;
         this.edgeThreshold = 50; // pixels from edge
         this.scrollSpeed = 10 // pixels per frame
+        this.timeoutGrab = 250; // ms before grab is considered instead of scroll on touch devices (has no effect for mouse Event)
         this.init(options);
     }
 
@@ -206,6 +207,7 @@ class JSort {
 
     grab = (ev) => {
         if (this.elGrabbed) return;
+
         const elClosestItem = ev.target.closest(`${this.selectorItems}`);
 
         if (!elClosestItem) return;
@@ -215,11 +217,16 @@ class JSort {
         const isHandlerVisible = foundHandler?.checkVisibility();
         const hasHandler = Boolean(foundHandler);
         const elHandler = ev.target.closest(this.selectorHandler);
+
         if (hasHandler && isHandlerVisible && !elHandler) return;
 
-        this.pointerStart.clientX = ev.clientX
+        this.pointerStart.clientX = ev.clientX;
         this.pointerStart.clientY = ev.clientY;
         this.elGrabbed = elClosestItem;
+
+        if (ev.pointerType !== "mouse") return;
+        this.preventScroll = true;
+
         this.elGrabbed.setPointerCapture(ev.pointerId);
         this.elParentGrab.style.userSelect = "none";
         this.indexGrab = [...this.elParentGrab.children].indexOf(this.elGrabbed);
@@ -229,7 +236,8 @@ class JSort {
 
     move = (ev) => {
         const { pointerId, clientX, clientY } = ev;
-        if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
+
+        if (!this.preventScroll || !this.elGrabbed?.hasPointerCapture(pointerId)) return;
 
         if (!this.isFirstMove) {
             this.isFirstMove = true;
@@ -260,6 +268,7 @@ class JSort {
 
     drop = (ev) => {
         this.stopEdgeScroll();
+        this.preventScroll = false;
         const { pointerId, clientX, clientY } = ev;
         if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
         this.elParentGrab.style.removeProperty("user-select");
@@ -332,9 +341,22 @@ class JSort {
         this.reset();
     }
 
-    handleTouchAction = (ev) => {
+    handleTouchStart = () => {
+        this.moveTimeout = setTimeout(() => {
+            this.preventScroll = true;
+            this.elGrabbed?.classList.add(this.classGrabbed);
+        }, this.timeoutGrab);
+    }
+
+    handleTouchMove = (ev) => {
         if (!this.elGrabbed) return;
-        ev.preventDefault();
+        if (this.moveTimeout) {
+            clearTimeout(this.moveTimeout);
+            this.moveTimeout = null;
+        }
+        if (this.preventScroll) {
+            ev.preventDefault();
+        }
     }
 
     reset() {
@@ -353,6 +375,8 @@ class JSort {
         this.scrollDirection = null;
         this.scrollAnim = null;
         this.edgePressure = 0;
+        this.moveTimeout = null;
+        this.preventScroll = false;
 
         this.onGrab = () => { };
         this.onMove = () => { };
@@ -361,10 +385,11 @@ class JSort {
 
     init(options) {
         this.destroy();
-        const data = this.parseDataAttribute(this.elParentGrab);        
+        const data = this.parseDataAttribute(this.elParentGrab);
         Object.assign(this, options, data);
         this.reset();
-        this.elParentGrab.addEventListener("touchstart", this.handleTouchAction);
+        this.elParentGrab.addEventListener("touchstart", this.handleTouchStart);
+        this.elParentGrab.addEventListener("touchmove", this.handleTouchMove);
         this.elParentGrab.addEventListener("pointerdown", this.grab);
         this.elParentGrab.addEventListener("pointermove", this.move);
         this.elParentGrab.addEventListener("pointerup", this.drop);
@@ -373,7 +398,8 @@ class JSort {
     }
 
     destroy() {
-        this.elParentGrab.removeEventListener("touchstart", this.handleTouchAction);
+        this.elParentGrab.removeEventListener("touchstart", this.handleTouchStart);
+        this.elParentGrab.removeEventListener("touchmove", this.handleTouchMove);
         this.elParentGrab.removeEventListener("pointerdown", this.grab);
         this.elParentGrab.removeEventListener("pointermove", this.move);
         this.elParentGrab.removeEventListener("pointerup", this.drop);
