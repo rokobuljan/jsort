@@ -1,6 +1,5 @@
 /**
  * @class JSort
- * @version 1.5.1
  * @author Firstname Lastname. Buljan <https://github.com/rokobuljan>
  * @license MIT
  * @description JSort allows to drag &amp; drop into a linked group by adding a `group` property in the `data-jsort` attribute.
@@ -9,7 +8,7 @@
 class JSort {
     constructor(el, options) {
         this.elGrabParent = el;
-        this.group = null; // Link-group parents i.e: "group-a"
+        this.group = ""; // Link-group parents i.e: "group-a"
         this.swap = false; // Swap items mode (Swap elements on drop)
         this.duration = 420; // Ms items animation duration
         this.easing = "cubic-bezier(0.6, 0, 0.6, 1)"; // Items animation easing
