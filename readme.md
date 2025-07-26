@@ -141,33 +141,34 @@ And, following, are all the available **options** you can use
 
 `JSort(Element, options)`
 
-| Option                 | Type / `Default`                 | Description                              |
-| ---------------------- | -------------------------------- | ---------------------------------------- |
-| `group`                | String                           | Group name (Link-group parents)          |
-| `swap`                 | `false`                          | Swap elements on drop                    |
-| `duration`             | `420`                            | Animation duration in milliseconds       |
-| `easing`               | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function                |
-| `scale`                | `1.1`                            | Ghost scale                              |
-| `opacity`              | `0.8`                            | Ghost opacity                            |
-| `grabTimeout`          | `140`                            | Grab timeout (Touch devices only)        |
-| `onGrab(PointerEvent)` | Function                         | Callback on item grab                    |
-| `onMove(PointerEvent)` | Function                         | Callback on item move                    |
-| `onDrop(PointerEvent)` | Function                         | Callback on item drop                    |
-| `parentDrop`           | `true`                           | If item can be dropped onto parent       |
-| `edgeThreshold`        | `50`                             | Px near edge to start parent auto-scroll |
-| `scrollSpeed`          | `10`                             | Prent scroll px per step (near edge)     |
-| `zIndex`               | `2147483647`                     | Ghost element z-index                    |
-| `selectorParent`       | `".jsort"`                       | Custom parent selector                   |
-| `selectorItems`        | `".jsort-item"`                  | Custom items selector                    |
-| `selectorHandler`      | `".jsort-handler"`               | Custom handler selector                  |
-| `classGhost`           | `"is-jsort-ghost"`               | Custom class for ghost element           |
-| `classAnimated`        | `"is-jsort-animated"`            | Custom animated class                    |
-| `classGrabbed`         | `"is-jsort-grabbed"`             | Custom grabbed class                     |
-| `classTarget`          | `"is-jsort-target"`              | Custom target class (hover, drop)        |
-| `classInvalid`         | `"is-jsort-invalid"`             | Custom invalid class                     |
+| Option                       | Type / `Default`                 | Description                              |
+| ---------------------------- | -------------------------------- | ---------------------------------------- |
+| `group`                      | String                           | Group name (Link-group parents)          |
+| `swap`                       | `false`                          | Swap elements on drop                    |
+| `duration`                   | `420`                            | Animation duration in milliseconds       |
+| `easing`                     | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function                |
+| `scale`                      | `1.1`                            | Ghost scale                              |
+| `opacity`                    | `0.8`                            | Ghost opacity                            |
+| `grabTimeout`                | `140`                            | Grab timeout (Touch devices only)        |
+| `onGrab(PointerEvent)`       | Function                         | Callback on item grab                    |
+| `onMove(PointerEvent)`       | Function                         | Callback on item move                    |
+| `onBeforeDrop(PointerEvent)` | Function                         | Callback on before item drop             |
+| `onDrop(PointerEvent)`       | Function                         | Callback on item drop                    |
+| `parentDrop`                 | `true`                           | If item can be dropped onto parent       |
+| `edgeThreshold`              | `50`                             | Px near edge to start parent auto-scroll |
+| `scrollSpeed`                | `10`                             | Prent scroll px per step (near edge)     |
+| `zIndex`                     | `2147483647`                     | Ghost element z-index                    |
+| `selectorParent`             | `".jsort"`                       | Custom parent selector                   |
+| `selectorItems`              | `".jsort-item"`                  | Custom items selector                    |
+| `selectorHandler`            | `".jsort-handler"`               | Custom handler selector                  |
+| `classGhost`                 | `"is-jsort-ghost"`               | Custom class for ghost element           |
+| `classAnimated`              | `"is-jsort-animated"`            | Custom animated class                    |
+| `classGrabbed`               | `"is-jsort-grabbed"`             | Custom grabbed class                     |
+| `classTarget`                | `"is-jsort-target"`              | Custom target class (hover, drop)        |
+| `classInvalid`               | `"is-jsort-invalid"`             | Custom invalid class                     |
 
 ***Tip:***  
-Options can be assigned directly from your HTML using the `data-jsort` attribute in this format `option: value;`
+Options (that are not callbacks) can be assigned directly in your HTML markup using the `data-jsort` attribute in this format `option: value; option: value`
 
 ```html
 <ul class="jsort" data-jsort="
@@ -186,6 +187,43 @@ Options can be assigned directly from your HTML using the `data-jsort` attribute
 
 just remember that `data-jsort` options **will override** any instance options you passed to the constructor (analogue to stylesheet vs. `style=""` attribute). Having that in consideration, you can define some JSort global, shared options from JavaScript, and customize specific elements using the `data-jsort=""` attribute, if needed.
 
+## Custom validation
+
+To manually abort some actions depending on a condition, you can use the  `onBeforeGrab()` and `onBeforeDrop()` callbacks
+
+```js
+new JSort(myListElement, {
+    onBeforeGrab(event) {
+        if (this.indexGrab === 0) {
+            console.error("Cannot grab first item");
+            return false;
+        }
+        if (this.elGrabbed.closest(".no-grab")) {
+            console.error("Grabbed an invalid item");
+            return false;
+        }
+    },
+    onGrab() {
+        console.log(`Grabbed index ${this.indexGrab}`);
+    },
+    onBeforeDrop(event) {
+        if (this.indexDrop === 0) {
+            console.error("Cannot drop into first item");
+            return false;
+        }
+        if (this.elDrop.closest(".no-drop")) {
+            console.error("Cannot drop here");
+            return false;
+        }
+    },
+    onDrop() {
+        console.log(`Dropped index ${this.indexGrab} into ${this.indexDrop}`);
+    }
+})
+```
+
+If you returned `false` from one of the callbacks, the respective  `onGrab` or `onDrop` actions will not be called.
+
 ## Methods
 
 | Method      | Description                                           |
@@ -202,6 +240,7 @@ just remember that `data-jsort` options **will override** any instance options y
 | `elGrabbed`     | The grabbed item                                                          |
 | `elGhost`       | The auto-generated ghost element that follows the pointer                 |
 | `elTarget`      | The hovered target (item or parent)                                       |
+| `elDrop`        | Same as elTarget but after a drop                                         |
 | `indexGrab`     | The index of the grabbed item                                             |
 | `indexDrop`     | The index of the target item (or items length-1 if drop target is parent) |
 | `elParentDrop`  | The target item's parent (on drop)                                        |

@@ -5,7 +5,7 @@ import "./hljs.css";
 
 hljs.registerLanguage('javascript', javascript);
 
-document.querySelector("#version").textContent = `v${__APP_VERSION__}`;
+document.querySelector("#version").textContent = `${__APP_VERSION__}`;
 
 document.querySelectorAll(".jsort").forEach((el) => {
     // Make sortable
