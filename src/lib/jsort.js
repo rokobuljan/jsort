@@ -342,6 +342,8 @@ class JSort {
     }
 
     handleTouchStart = (ev) => {
+        if (!this.elGrabbed || this.initialTouch) return;
+
         const { clientX, clientY } = ev.touches[0];
         this.initialTouch = {
             clientX,
@@ -360,20 +362,21 @@ class JSort {
 
     handleTouchMove = (ev) => {
         if (!this.elGrabbed || !this.initialTouch) return;
+        // Handle drag
+        if (this.preventScroll) {
+            ev.preventDefault();
+            return
+        }
+        // Handle scroll
         const { clientX, clientY } = ev.touches[0];
         const deltaX = clientX - this.initialTouch.clientX;
         const deltaY = clientY - this.initialTouch.clientY;
         const touchMoveDistance = Math.hypot(deltaX, deltaY);
         const isSignificantMove = touchMoveDistance > this.dragThreshold && !this.hasMoved
-        // Is scroll intent
-        if (!this.preventScroll && !this.hasMoved && isSignificantMove) {
+        if (!this.hasMoved && isSignificantMove) {
             this.hasMoved = true;
             clearTimeout(this.moveTimeout);
             this.moveTimeout = null;
-        }
-        // Handle drag
-        else {
-            ev.preventDefault(); // Prevents browser scroll
         }
     }
 
@@ -409,7 +412,7 @@ class JSort {
         Object.assign(this, options, data);
         this.reset();
         this.elParentGrab.addEventListener("touchstart", this.handleTouchStart);
-        this.elParentGrab.addEventListener("touchmove", this.handleTouchMove);
+        this.elParentGrab.addEventListener("touchmove", this.handleTouchMove, { cancelable: true });
         this.elParentGrab.addEventListener("pointerdown", this.grab);
         this.elParentGrab.addEventListener("pointermove", this.move);
         this.elParentGrab.addEventListener("pointerup", this.drop);
@@ -419,7 +422,7 @@ class JSort {
 
     destroy() {
         this.elParentGrab.removeEventListener("touchstart", this.handleTouchStart);
-        this.elParentGrab.removeEventListener("touchmove", this.handleTouchMove);
+        this.elParentGrab.removeEventListener("touchmove", this.handleTouchMove, { cancelable: true });
         this.elParentGrab.removeEventListener("pointerdown", this.grab);
         this.elParentGrab.removeEventListener("pointermove", this.move);
         this.elParentGrab.removeEventListener("pointerup", this.drop);
