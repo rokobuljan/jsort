@@ -198,7 +198,7 @@ new JSort(myListElement, {
             console.error("Cannot grab first item");
             return false;
         }
-        if (this.elGrabbed.closest(".no-grab")) {
+        if (this.elGrab.closest(".no-grab")) {
             console.error("Grabbed an invalid item");
             return false;
         }
@@ -237,13 +237,14 @@ If you returned `false` from one of the callbacks, the respective  `onGrab` or `
 
 | Property        | Description                                                               |
 | --------------- | ------------------------------------------------------------------------- |
-| `elGrabbed`     | The grabbed item                                                          |
+| `elGrab`        | The grabbed item                                                          |
+| `elGrabParent`  | The grabbed item's parent                                                 |
 | `elGhost`       | The auto-generated ghost element that follows the pointer                 |
 | `elTarget`      | The hovered target (item or parent)                                       |
-| `elDrop`        | Same as elTarget but after a drop                                         |
+| `elDrop`        | Same as `elTarget` but on drop                                            |
+| `elDropParent`  | The drop (target) item's parent on drop                                   |
 | `indexGrab`     | The index of the grabbed item                                             |
 | `indexDrop`     | The index of the target item (or items length-1 if drop target is parent) |
-| `elParentDrop`  | The target item's parent (on drop)                                        |
 | `affectedItems` | An array of affected (animated) items on drop                             |
 
 ## Styling
