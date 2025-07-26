@@ -20,6 +20,7 @@
         color-mix(in srgb, var(--light), var(--dark) 20%)
     );
     --accent: hsl(216, 70%, 48%);
+    --accent2: hsl(162, 76%, 43%);
     color: var(--fg);
     background-color: var(--bg);
     transition: color 0.3s, background-color 0.3s;
@@ -61,6 +62,8 @@ h3 {
 }
 
 h1 {
+    display: flex;
+    align-items: end;
     padding-top: 2rem;
     font-size: 3rem;
 
@@ -68,7 +71,15 @@ h1 {
         max-width: 30cqw;
         min-width: 200px;
     }
+
+    /* version */
+    span {
+        font-size: 1rem;
+        color: var(--accent2);
+        margin-bottom: 0.2em;
+    }
 }
+
 
 h2 {
     font-size: 3rem;
@@ -128,6 +139,7 @@ details {
 pre {
     width: 100%;
     overflow: auto;
+    padding-bottom: 1.5rem;
 
     &:first-line {
         line-height: 0;

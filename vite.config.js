@@ -4,6 +4,8 @@ import { defineConfig } from "vite";
 import postcssNesting from "postcss-nesting";
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import packageJson from './package.json'
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -16,6 +18,9 @@ export default defineConfig({
         alias: {
             '@lib': path.resolve(__dirname, `./src/lib/${LIB_NAME}.js`)
         }
+    },
+    define: {
+        __APP_VERSION__: JSON.stringify(packageJson.version)
     },
     build: {
         minify: "terser",
