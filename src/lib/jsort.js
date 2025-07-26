@@ -4,6 +4,7 @@ class JSort {
         this.selectorParent = ".jsort";
         this.selectorItems = ".jsort-item";
         this.selectorHandler = ".jsort-handler";
+        this.classGhost = "is-jsort-ghost";
         this.classAnimated = "is-jsort-animated";
         this.classGrabbed = "is-jsort-grabbed";
         this.classTarget = "is-jsort-target";
@@ -43,7 +44,7 @@ class JSort {
             zIndex: this.zIndex,
             opacity: this.opacity,
         });
-        this.elGhost.classList.add("jsort-ghost");
+        this.elGhost.classList.add(this.classGhost);
         this.elGhost.animate([
             { scale: this.scale }
         ], {

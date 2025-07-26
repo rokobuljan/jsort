@@ -3,7 +3,7 @@
 
 # JSort
 
-Super small yet powerful *sortable* library with touch support, smooth animations, for a great UX.
+Small yet powerful *sortable* library with touch support, smooth animations, for a great UX.
 
 [![NPM](https://img.shields.io/npm/v/@rbuljan/jsort)](https://www.npmjs.com/package/@rbuljan/jsort)<br>
 NPM: [@rbuljan/jsort](https://www.npmjs.com/package/@rbuljan/jsort)  
@@ -156,10 +156,11 @@ And, following, are all the available **options** you can use
 | `parentDrop`           | `true`                           | If item can be dropped onto parent |
 | `edgeThreshold`        | `50`                             | Px near edge to start scrolling    |
 | `scrollSpeed`          | `10`                             | Prent scroll px per step           |
-| `zIndex`               | `2147483647`                     | Ghost element  z-index             |
-| `selectorParent`       | `".jsort"`                       | Custom selector                    |
+| `zIndex`               | `2147483647`                     | Ghost element z-index              |
+| `selectorParent`       | `".jsort"`                       | Custom parent selector             |
 | `selectorItems`        | `".jsort-item"`                  | Custom items selector              |
 | `selectorHandler`      | `".jsort-handler"`               | Custom handler selector            |
+| `classGhost`           | `"is-jsort-ghost"`               | Custom class for ghost element     |
 | `classAnimated`        | `"is-jsort-animated"`            | Custom animated class              |
 | `classGrabbed`         | `"is-jsort-grabbed"`             | Custom grabbed class               |
 | `classTarget`          | `"is-jsort-target"`              | Custom target class (hover, drop)  |

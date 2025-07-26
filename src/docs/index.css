@@ -270,7 +270,7 @@ code {
     padding-bottom: 0;
 }
 
-.jsort-ghost {
+.is-jsort-ghost {
     transition: box-shadow 0.3s, opacity 0.3s;
     box-shadow: 0 0.5rem 1rem #000a;
 
