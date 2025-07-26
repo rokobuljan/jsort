@@ -223,15 +223,13 @@ class JSort {
         this.pointerStart.clientX = ev.clientX;
         this.pointerStart.clientY = ev.clientY;
         this.elGrabbed = elClosestItem;
-
-        if (ev.pointerType !== "mouse") return;
-        this.preventScroll = true;
-
-        this.elGrabbed.setPointerCapture(ev.pointerId);
         this.elParentGrab.style.userSelect = "none";
         this.indexGrab = [...this.elParentGrab.children].indexOf(this.elGrabbed);
-        // Notify
+        this.elGrabbed.setPointerCapture(ev.pointerId);
         this.onGrab?.call(this, ev);
+        if (ev.pointerType === "mouse") {
+            this.preventScroll = true;
+        }
     }
 
     move = (ev) => {
