@@ -66,6 +66,7 @@ h1 {
     align-items: end;
     padding-top: 2rem;
     font-size: 3rem;
+    container-type: block-size;
 
     img {
         max-width: 30cqw;
@@ -74,9 +75,10 @@ h1 {
 
     /* version */
     span {
-        font-size: 1rem;
+        font-size: clamp(0.8rem, 1.75cqw, 1.7rem);
+        line-height: 0;
         color: var(--accent2);
-        margin-bottom: 0.2em;
+        margin-bottom: 0.8em;
     }
 }
 
