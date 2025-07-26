@@ -1,6 +1,18 @@
 class JSort {
     constructor(el, options) {
         this.elParentGrab = el;
+        this.group = null; // Link-group parents i.e: "group-a"
+        this.swap = false; // Swap items mode (Swap elements on drop)
+        this.duration = 420; // Ms items animation duration
+        this.easing = "cubic-bezier(0.6, 0, 0.6, 1)"; // Items animation easing
+        this.scale = 1.1; // Ghost scale
+        this.opacity = 0.8; // Ghost element opacity
+        this.grabTimeout = 140; // Ms before grab is considered instead of scroll on touch devices (has no effect for mouse Event)
+        this.parentDrop = true; // Can drop item onto parent
+        this.dragThreshold = 8; // Px before it's considered a scroll
+        this.edgeThreshold = 50; // Pixels from edge to start parent auto-scrolling
+        this.scrollSpeed = 10 // Scroll pixels per frame while ghost is near parent edge
+        this.zIndex = 0x7FFFFFFF; // Maximum 32-bit signed integer
         this.selectorParent = ".jsort";
         this.selectorItems = ".jsort-item";
         this.selectorHandler = ".jsort-handler";
@@ -9,17 +21,6 @@ class JSort {
         this.classGrabbed = "is-jsort-grabbed";
         this.classTarget = "is-jsort-target";
         this.classInvalid = "is-jsort-invalid";
-        this.easing = "cubic-bezier(0.6, 0, 0.6, 1)";
-        this.zIndex = 0x7FFFFFFF; // Maximum 32-bit signed integer
-        this.duration = 420;
-        this.opacity = 0.8;
-        this.scale = 1.1;
-        this.swap = false;
-        this.parentDrop = true;
-        this.group = null;
-        this.edgeThreshold = 50; // pixels from edge
-        this.scrollSpeed = 10 // pixels per frame
-        this.timeoutGrab = 250; // ms before grab is considered instead of scroll on touch devices (has no effect for mouse Event)
         this.init(options);
     }
 
@@ -340,26 +341,44 @@ class JSort {
         this.reset();
     }
 
-    handleTouchStart = () => {
+    handleTouchStart = (ev) => {
+        const { clientX, clientY } = ev.touches[0];
+        this.initialTouch = {
+            clientX,
+            clientY
+        };
+
+        clearTimeout(this.moveTimeout);
         this.moveTimeout = setTimeout(() => {
-            this.preventScroll = true;
-            this.elGrabbed?.classList.add(this.classGrabbed);
-        }, this.timeoutGrab);
+            // Only activate drag if we haven't moved beyond threshold
+            if (!this.hasMoved) {
+                this.preventScroll = true;
+                this.elGrabbed?.classList.add(this.classGrabbed);
+            }
+        }, this.grabTimeout);
     }
 
     handleTouchMove = (ev) => {
-        if (!this.elGrabbed) return;
-        if (this.moveTimeout) {
+        if (!this.elGrabbed || !this.initialTouch) return;
+        const { clientX, clientY } = ev.touches[0];
+        const deltaX = clientX - this.initialTouch.clientX;
+        const deltaY = clientY - this.initialTouch.clientY;
+        const touchMoveDistance = Math.hypot(deltaX, deltaY);
+        const isSignificantMove = touchMoveDistance > this.dragThreshold && !this.hasMoved
+        // Is scroll intent
+        if (!this.preventScroll && !this.hasMoved && isSignificantMove) {
+            this.hasMoved = true;
             clearTimeout(this.moveTimeout);
             this.moveTimeout = null;
         }
-        if (this.preventScroll) {
-            ev.preventDefault();
+        // Handle drag
+        else {
+            ev.preventDefault(); // Prevents browser scroll
         }
     }
 
     reset() {
-        // Cleanup
+        // Cleanup        
         this.elGhost?.remove();
         this.elGhost = null;
         this.elGrabbed = null;
@@ -376,6 +395,8 @@ class JSort {
         this.edgePressure = 0;
         this.moveTimeout = null;
         this.preventScroll = false;
+        this.hasMoved = false;
+        this.initialTouch = null;
 
         this.onGrab = () => { };
         this.onMove = () => { };

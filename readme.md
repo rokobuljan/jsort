@@ -141,30 +141,30 @@ And, following, are all the available **options** you can use
 
 `JSort(Element, options)`
 
-| Option                 | Type / `Default`                 | Description                        |
-| ---------------------- | -------------------------------- | ---------------------------------- |
-| `group`                | String                           | Group name                         |
-| `swap`                 | `false`                          | Swap elements on drop              |
-| `duration`             | `420`                            | Animation duration in milliseconds |
-| `easing`               | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function          |
-| `scale`                | `1.1`                            | Scale factor of the ghost element  |
-| `opacity`              | `0.8`                            | Opacity of the ghost element       |
-| `timeoutGrab`          | `250`                            | Grab timeout (Touch devices only)  |
-| `onGrab(PointerEvent)` | Function                         | Called when an item is grabbed     |
-| `onMove(PointerEvent)` | Function                         | Called when an item is moved       |
-| `onDrop(PointerEvent)` | Function                         | Called when an item is dropped     |
-| `parentDrop`           | `true`                           | If item can be dropped onto parent |
-| `edgeThreshold`        | `50`                             | Px near edge to start scrolling    |
-| `scrollSpeed`          | `10`                             | Prent scroll px per step           |
-| `zIndex`               | `2147483647`                     | Ghost element z-index              |
-| `selectorParent`       | `".jsort"`                       | Custom parent selector             |
-| `selectorItems`        | `".jsort-item"`                  | Custom items selector              |
-| `selectorHandler`      | `".jsort-handler"`               | Custom handler selector            |
-| `classGhost`           | `"is-jsort-ghost"`               | Custom class for ghost element     |
-| `classAnimated`        | `"is-jsort-animated"`            | Custom animated class              |
-| `classGrabbed`         | `"is-jsort-grabbed"`             | Custom grabbed class               |
-| `classTarget`          | `"is-jsort-target"`              | Custom target class (hover, drop)  |
-| `classInvalid`         | `"is-jsort-invalid"`             | Custom invalid class               |
+| Option                 | Type / `Default`                 | Description                              |
+| ---------------------- | -------------------------------- | ---------------------------------------- |
+| `group`                | String                           | Group name (Link-group parents)          |
+| `swap`                 | `false`                          | Swap elements on drop                    |
+| `duration`             | `420`                            | Animation duration in milliseconds       |
+| `easing`               | `"cubic-bezier(0.6, 0, 0.6, 1)"` | Animation easing function                |
+| `scale`                | `1.1`                            | Ghost scale                              |
+| `opacity`              | `0.8`                            | Ghost opacity                            |
+| `grabTimeout`          | `140`                            | Grab timeout (Touch devices only)        |
+| `onGrab(PointerEvent)` | Function                         | Callback on item grab                    |
+| `onMove(PointerEvent)` | Function                         | Callback on item move                    |
+| `onDrop(PointerEvent)` | Function                         | Callback on item drop                    |
+| `parentDrop`           | `true`                           | If item can be dropped onto parent       |
+| `edgeThreshold`        | `50`                             | Px near edge to start parent auto-scroll |
+| `scrollSpeed`          | `10`                             | Prent scroll px per step (near edge)     |
+| `zIndex`               | `2147483647`                     | Ghost element z-index                    |
+| `selectorParent`       | `".jsort"`                       | Custom parent selector                   |
+| `selectorItems`        | `".jsort-item"`                  | Custom items selector                    |
+| `selectorHandler`      | `".jsort-handler"`               | Custom handler selector                  |
+| `classGhost`           | `"is-jsort-ghost"`               | Custom class for ghost element           |
+| `classAnimated`        | `"is-jsort-animated"`            | Custom animated class                    |
+| `classGrabbed`         | `"is-jsort-grabbed"`             | Custom grabbed class                     |
+| `classTarget`          | `"is-jsort-target"`              | Custom target class (hover, drop)        |
+| `classInvalid`         | `"is-jsort-invalid"`             | Custom invalid class                     |
 
 ***Tip:***  
 Options can be assigned directly from your HTML using the `data-jsort` attribute in this format `option: value;`
@@ -227,8 +227,8 @@ See the [Example page](https://rokobuljan.github.io/jsort/) for inspiration.
 
 ## Motivation
 
-I needed a sortable library. After reviewing some popular ones like SortableJS, Dragula, jQueryUI, and others I found that many do not work the way I want, fast, smoothly, touch/mobile. An important factor was to minimize motion, only when necessary (on drop) and to animate all affected elements naturally and smoothly to support cognitive feedback and make the experience overall more natural and pleasant.  
-JSort was born to fill this necessity.
+I needed a sortable library. After reviewing some popular ones like SortableJS, Dragula, jQueryUI, and others I found that many do not work the way I want, fast, smoothly, touch/mobile. An important factor was to minimize motion, only when necessary (on drop) and to animate all affected elements naturally and smoothly to support visual cognitive feedback and make the experience overall more natural and pleasant.  
+**JSort** was born to fill this necessity.
 
 ___
 
