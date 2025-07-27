@@ -19,7 +19,7 @@ class JSort {
         this.parentDrop = true; // Can drop item onto parent
         this.dragThreshold = 8; // Px before it's considered a scroll
         this.edgeThreshold = 50; // Pixels from edge to start parent auto-scrolling
-        this.scrollSpeed = 10 // Scroll pixels per frame while ghost is near parent edge
+        this.scrollSpeed = 10; // Scroll pixels per frame while ghost is near parent edge
         this.zIndex = 0x7FFFFFFF; // Maximum 32-bit signed integer
         this.selectorParent = ".jsort";
         this.selectorItems = ".jsort-item";
