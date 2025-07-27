@@ -82,7 +82,6 @@ h1 {
     }
 }
 
-
 h2 {
     font-size: 3rem;
     padding-bottom: 0.5em;
@@ -277,6 +276,10 @@ code {
     @starting-style {
         box-shadow: 0 0rem 0rem #000;
     }
+}
+
+.is-jsort-active.is-jsort-touch {
+    outline: 2px solid currentColor;
 }
 
 .is-jsort-grabbed {

@@ -25,8 +25,10 @@ class JSort {
         this.selectorItems = ".jsort-item";
         this.selectorHandler = ".jsort-handler";
         this.classGhost = "is-jsort-ghost";
+        this.classActive = "is-jsort-active"; // Added to item on mousedown, pointerdown
+        this.classTouch = "is-jsort-touch"; // Added to item on touchstart event only
         this.classGrabbed = "is-jsort-grabbed";
-        this.classTarget = "is-jsort-target";
+        this.classTarget = "is-jsort-target"; // Hovered element (either item or Sort parent)
         this.classAnimated = "is-jsort-animated"; // Added to all animated elements (on drop)
         this.classAnimatedDrop = "is-jsort-animated-drop"; // Added to the animated grabbed element (on drop)
         this.classInvalid = "is-jsort-invalid";
@@ -69,6 +71,7 @@ class JSort {
             zIndex: this.zIndex,
             opacity: this.opacity,
         });
+        this.elGhost.classList.remove(this.classActive);
         this.elGhost.classList.add(this.classGhost);
         this.elGhost.animate([
             { scale: this.scale }
@@ -314,6 +317,8 @@ class JSort {
         this.pointerStart.clientY = ev.clientY;
         this.elGrabbed = elClosestItem;
         this.elGrabbed.setPointerCapture(ev.pointerId);
+        this.elGrabbed.classList.add(this.classActive);
+        this.elGrabbed.style.cursor = "move";
         this.elGrabParent.style.userSelect = "none";
         this.indexGrab = [...this.elGrabParent.children].indexOf(this.elGrabbed);
 
@@ -376,7 +381,7 @@ class JSort {
         if (!this.elGrabbed || !this.elGrabbed?.hasPointerCapture(pointerId)) return;
         this.elGrabParent.style.removeProperty("user-select");
         this.elGrabbed.style.removeProperty("cursor");
-        this.elGrabbed.classList.remove(this.classGrabbed);
+        this.elGrabbed.classList.remove(this.classActive, this.classGrabbed, this.classTouch);
         this.elTarget?.classList.remove(this.classTarget);
         const elFromPoint = document.elementFromPoint(clientX, clientY);
         this.elDrop = elFromPoint?.closest(`${this.selectorItems}, ${this.selectorParent}`);
@@ -449,10 +454,14 @@ class JSort {
             const elGrabbed = this.elGrabbed;
             elGrabbed.classList.add(`${this.classAnimatedDrop}`);
             const anim = this.animateItem({ el: elGrabbed, x: ghostRect.left, y: ghostRect.top });
-            anim?.addEventListener("finish", () => {
+            if (anim) {
+                anim.addEventListener("finish", () => {
+                    elGrabbed.classList.remove(`${this.classAnimatedDrop}`);
+                    this.onAnimationEnd?.call(this, ev);
+                });
+            } else {
                 elGrabbed.classList.remove(`${this.classAnimatedDrop}`);
-                this.onAnimationEnd?.call(this, ev);
-            });
+            }
         }
 
         // Cleanup
@@ -477,8 +486,8 @@ class JSort {
         this.moveTimeout = setTimeout(() => {
             // Only activate drag if we haven't moved beyond threshold
             if (!this.hasMoved) {
+                this.elGrabbed.classList.add(`${this.classTouch}`);
                 this.preventScroll = true;
-                // this.elGrabbed?.classList.add(this.classGrabbed);
             }
         }, this.grabTimeout);
     }

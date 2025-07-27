@@ -7,7 +7,7 @@ Small yet powerful drag and drop sortable library with touch support, smooth ani
 
 [![NPM](https://img.shields.io/npm/v/@rbuljan/jsort)](https://www.npmjs.com/package/@rbuljan/jsort)<br>
 NPM: [@rbuljan/jsort](https://www.npmjs.com/package/@rbuljan/jsort)  
-Demo &amp; examples: [JSort homepage](https://rokobuljan.github.io/jsort/)  
+Demo &amp; examples: [JSort — Homepage](https://rokobuljan.github.io/jsort/)  
 
 ## Features
 
@@ -263,6 +263,10 @@ Yes! This is the minimal CSS styling you might want to use to get the best from 
 ```css
 /* JSort — Minimal suggested styles */
 
+.is-jsort-active.is-jsort-touch {
+    outline: 0.15rem solid currentColor; /* Visual hint on touch devices */
+}
+
 .is-jsort-grabbed {
     opacity: 0; 
 }
@@ -281,21 +285,23 @@ The above was not hardcoded into the library since everyone wants to style their
 
 For custom styling JSort provides several classes you could use in your CSS to further style your UI:
 
-| className               | Description                                                              |
-| ----------------------- | ------------------------------------------------------------------------ |
-| .jsort                  | Parent container                                                         |
-| .jsort-item             | Sortable children elements                                               |
-| .jsort-handler          | Child of `.jsort-item` to be used as a grab handler                      |
-| .jsort-ghost            | Ghost element                                                            |
-| .is-jsort-grabbed       | Currently grabbed element (not ghost element)                            |
-| .is-jsort-target        | Hovered element or `.jsort` parent                                       |
-| .is-jsort-animated      | Any animating element (on drop)                                          |
-| .is-jsort-animated-drop | Grabbed animating element (on drop)                                      |
-| .is-jsort-invalid       | Added to the Ghost element if the target is *not allowed* (during hover) |
+| className               | Description                                                                           |
+| ----------------------- | ------------------------------------------------------------------------------------- |
+| .jsort                  | Parent container                                                                      |
+| .jsort-item             | Sortable children elements                                                            |
+| .jsort-handler          | Child of `.jsort-item` to be used as a grab handler                                   |
+| .jsort-ghost            | Ghost element                                                                         |
+| .is-jsort-active        | Active item (not yet grabbed/moved). Useful as a *"drag ready"* clue on touch devices |
+| .is-jsort-grabbed       | Currently grabbed item (PS: not the ghost element)                                    |
+| .is-jsort-target        | Hovered element item or `.jsort` parent                                               |
+| .is-jsort-animated      | All animating items (on drop)                                                         |
+| .is-jsort-animated-drop | Grabbed animating item (on drop)                                                      |
+| .is-jsort-invalid       | Added to the Ghost element if the target is *not allowed* (during hover)              |
+| .is-jsort-touch         | Added to active item only if eventType is `touchstart`                                |
 
 ___
 
-See the [Example page](https://rokobuljan.github.io/jsort/) for inspiration.
+See the [JSort Homepage](https://rokobuljan.github.io/jsort/) for inspiration.
 
 ## Motivation
 
