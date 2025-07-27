@@ -226,26 +226,32 @@ If you returned `false` from one of the callbacks, the respective  `onGrab` or `
 
 ## Methods
 
-| Method      | Description                                           |
-| ----------- | ----------------------------------------------------- |
-| `init({})`  | Re-initialize the instance with updated Options       |
-| `destroy()` | Destroys the instance and removes the event listeners |
+| Method                | Description                                           |
+| --------------------- | ----------------------------------------------------- |
+| `init({/*options*/})` | Re-initialize the instance with updated Options       |
+| `destroy()`           | Destroys the instance and removes the event listeners |
 
 ## Properties
 
 `JSortInstance`
 
-| Property        | Description                                                               |
-| --------------- | ------------------------------------------------------------------------- |
-| `elGrab`        | The grabbed item                                                          |
-| `elGrabParent`  | The grabbed item's parent                                                 |
-| `elGhost`       | The auto-generated ghost element that follows the pointer                 |
-| `elTarget`      | The hovered target (item or parent)                                       |
-| `elDrop`        | Same as `elTarget` but on drop                                            |
-| `elDropParent`  | The drop (target) item's parent on drop                                   |
-| `indexGrab`     | The index of the grabbed item                                             |
-| `indexDrop`     | The index of the target item (or items length-1 if drop target is parent) |
-| `affectedItems` | An array of affected (animated) items on drop                             |
+| Property        | Type        | Description                                   |
+| --------------- | ----------- | --------------------------------------------- |
+| `elGrab`        | `Element`   | The grabbed item                              |
+| `elGrabParent`  | `Element`   | The grabbed item's parent                     |
+| `elGhost`       | `Element`   | Element that follows the pointer              |
+| `elTarget`      | `Element`   | The hovered target (item or parent)           |
+| `elDrop`        | `Element`   | Same as `elTarget` but on drop                |
+| `elDropParent`  | `Element`   | The drop (target) item's parent on drop       |
+| `indexGrab`     | `number`    | The index of the grabbed item                 |
+| `indexDrop`     | `number`    | The new index on drop                         |
+| `affectedItems` | `Element[]` | Array of affected (animated) elements on drop |
+
+## Static Properties
+
+| Property  | Type     | Description             |
+| --------- | -------- | ----------------------- |
+| `version` | `string` | Current library version |
 
 ## Styling
 
