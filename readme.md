@@ -3,7 +3,7 @@
 
 # JSort
 
-Small yet powerful *sortable* library with touch support, smooth animations, for a great UX.
+Small yet powerful drag and drop sortable library with touch support, smooth animations, for a great UX.
 
 [![NPM](https://img.shields.io/npm/v/@rbuljan/jsort)](https://www.npmjs.com/package/@rbuljan/jsort)<br>
 NPM: [@rbuljan/jsort](https://www.npmjs.com/package/@rbuljan/jsort)  

@@ -1,8 +1,8 @@
 /**
  * @class JSort
- * @author Firstname Lastname. Buljan <https://github.com/rokobuljan>
+ * @author Roko C. Buljan <https://github.com/rokobuljan>
  * @license MIT
- * @description JSort allows to drag &amp; drop into a linked group by adding a `group` property in the `data-jsort` attribute.
+ * @description Small yet powerful drag and drop sortable library with touch support, smooth animations, for a great UX.
  * @see {@link https://github.com/rokobuljan/jsort}
  */
 class JSort {
