@@ -81,6 +81,16 @@ class JSort {
     }
 
     /**
+     * Remove ghost element
+     * @returns {void}
+     */
+    removeGhost() {
+        if (!this.elGhost) return;
+        this.elGhost.remove();
+        this.elGhost = null;
+    }
+
+    /**
      * Animate item to new position
      * @param {Object} data
      * @param {Element} data.el - the Element to animate
@@ -446,6 +456,7 @@ class JSort {
         }
 
         // Cleanup
+        this.removeGhost();
         this.reset();
     }
 
@@ -500,8 +511,7 @@ class JSort {
      * Reset state
      */
     reset() {
-        // Cleanup        
-        this.elGhost?.remove();
+        // Cleanup internal-use properties
         this.elGhost = null;
         this.elGrabbed = null;
         this.elTarget = null;
@@ -544,6 +554,7 @@ class JSort {
      * Destroy: remove event listeners
      */
     destroy() {
+        this.removeGhost();
         this.elGrabParent.removeEventListener("touchstart", this.handleTouchStart);
         this.elGrabParent.removeEventListener("touchmove", this.handleTouchMove, { cancelable: true });
         this.elGrabParent.removeEventListener("pointerdown", this.grab);

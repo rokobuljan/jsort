@@ -10,11 +10,7 @@ document.querySelector("#version").textContent = `${JSort.version}`;
 console.log(`Running JSort version: ${JSort.version}`);
 document.querySelectorAll(".jsort").forEach((el) => {
     // Make sortable
-    new JSort(el, {
-        onAnimationEnd() {
-            console.log("animation ended");
-        }
-    });
+    new JSort(el);
     // Random background colors
     el.querySelectorAll(":scope > *").forEach((el) => {
         el.style.backgroundColor = `hsl(${~~(Math.random() * 200 + 80)} 56% 65%)`;
