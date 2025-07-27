@@ -3,13 +3,16 @@
 import { defineConfig } from "vite";
 import postcssNesting from "postcss-nesting";
 import terser from '@rollup/plugin-terser';
+import packageJson from './package.json'
 
 const LIB_NAME = "jsort";
 
 export default defineConfig({
     root: "./src/lib",
     base: "./",
-    
+    define: {
+        __APP_VERSION__: JSON.stringify(packageJson.version)
+    },
     build: {
         outDir: '../../dist',
         emptyOutDir: true,
@@ -32,36 +35,6 @@ export default defineConfig({
                 }
             ]
         }
-
-
-        // lib: {
-        //     entry: `${LIB_NAME}.js`,
-        //     name: LIB_NAME,
-        //     formats: ['es'],
-        //     fileName: () => `${LIB_NAME}.js`
-        // },
-        // rollupOptions: {
-        //     output: [
-        //         {
-        //             format: 'es',
-        //             entryFileNames: `${LIB_NAME}.js`,
-        //             minify: false
-        //         },
-        //         {
-        //             format: 'es',
-        //             entryFileNames: `${LIB_NAME}.min.js`,
-        //             minify: 'terser'
-        //         }
-        //     ]
-        // }
-        // minify: "terser",
-        // lib: {
-        //     entry: `${LIB_NAME}.js`,
-        //     name: LIB_NAME,
-        //     fileName: LIB_NAME,
-        //     minify: true,
-        //     formats: ['es'],
-        // },
     },
     css: {
         postcss: {

@@ -6,7 +6,7 @@
  * @see {@link https://github.com/rokobuljan/jsort}
  */
 class JSort {
-    static version = `${__APP_VERSION__}`;
+    static version = __APP_VERSION__;
     constructor(el, options) {
         this.elGrabParent = el;
         this.group = ""; // Link-group parents i.e: "group-a"
