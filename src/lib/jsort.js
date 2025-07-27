@@ -25,15 +25,17 @@ class JSort {
         this.selectorItems = ".jsort-item";
         this.selectorHandler = ".jsort-handler";
         this.classGhost = "is-jsort-ghost";
-        this.classAnimated = "is-jsort-animated";
         this.classGrabbed = "is-jsort-grabbed";
         this.classTarget = "is-jsort-target";
+        this.classAnimated = "is-jsort-animated"; // Added to all animated elements (on drop)
+        this.classAnimatedDrop = "is-jsort-animated-drop"; // Added to the animated grabbed element (on drop)
         this.classInvalid = "is-jsort-invalid";
         this.onBeforeGrab = () => { };
         this.onGrab = () => { };
         this.onMove = () => { };
         this.onBeforeDrop = () => { };
         this.onDrop = () => { };
+        this.onAnimationEnd = () => { };
         this.init(options);
     }
 
@@ -80,8 +82,11 @@ class JSort {
 
     /**
      * Animate item to new position
-     * @param {Object} { el, x, y }
-     * @returns {void}
+     * @param {Object} data
+     * @param {Element} data.el - the Element to animate
+     * @param {number} data.x - the new X position
+     * @param {number} data.y - the new Y position
+     * @returns {Animation}
      */
     animateItem({ el, x, y }) {
         const { left, top } = el.getBoundingClientRect();
@@ -105,6 +110,7 @@ class JSort {
             el.classList.remove(this.classAnimated);
             anim.cancel(); // Fixes nested sortable
         });
+        return anim;
     }
 
     /**
@@ -112,7 +118,7 @@ class JSort {
      * If not found, returns null, meaning el was not a descendant of elTarget, or elTarget itself
      * @param {Element} el
      * @param {Element} elTarget
-     * @returns {Element}
+     * @returns {Element|null}
      */
     closestElement(el, elTarget) {
         while (el && el !== elTarget) el = el.parentElement;
@@ -120,9 +126,11 @@ class JSort {
     }
 
     /**
-     * Check if drop is valid
-     * @param {Object} { clientX: number, clientY: number }
-     * @returns {boolean}
+     * Check if drop is valid by the given coordinates
+     * @param {Object} coordinates
+     * @param {number} coordinates.clientX
+     * @param {number} coordinates.clientY
+     * @returns {boolean} true if can be dropped at coordinates
      */
     checkValidity({ clientX, clientY }) {
         const elFromPoint = document.elementFromPoint(clientX, clientY);
@@ -348,17 +356,17 @@ class JSort {
     }
 
     /**
-     * Drop an item
+     * Called when an item is dropped on pointerUp
      * @param {PointerEvent} ev
      */
     drop = (ev) => {
         this.stopEdgeScroll();
         this.preventScroll = false;
         const { pointerId, clientX, clientY } = ev;
-        if (!this.elGrabbed?.hasPointerCapture(pointerId)) return;
+        if (!this.elGrabbed || !this.elGrabbed?.hasPointerCapture(pointerId)) return;
         this.elGrabParent.style.removeProperty("user-select");
         this.elGrabbed.style.removeProperty("cursor");
-        this.elGrabbed?.classList.remove(this.classGrabbed);
+        this.elGrabbed.classList.remove(this.classGrabbed);
         this.elTarget?.classList.remove(this.classTarget);
         const elFromPoint = document.elementFromPoint(clientX, clientY);
         this.elDrop = elFromPoint?.closest(`${this.selectorItems}, ${this.selectorParent}`);
@@ -427,7 +435,15 @@ class JSort {
         }
 
         // 5. Always animate the grabbed item
-        ghostRect && this.animateItem({ el: this.elGrabbed, x: ghostRect.left, y: ghostRect.top });
+        if (ghostRect) {
+            const elGrabbed = this.elGrabbed;
+            elGrabbed.classList.add(`${this.classAnimatedDrop}`);
+            const anim = this.animateItem({ el: elGrabbed, x: ghostRect.left, y: ghostRect.top });
+            anim.addEventListener("finish", () => {
+                elGrabbed.classList.remove(`${this.classAnimatedDrop}`);
+                this.onAnimationEnd?.call(this, ev);
+            });
+        }
 
         // Cleanup
         this.reset();

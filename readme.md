@@ -154,6 +154,7 @@ And, following, are all the available **options** you can use
 | `onMove(PointerEvent)`       | Function                         | Callback on item move                    |
 | `onBeforeDrop(PointerEvent)` | Function                         | Callback on before item drop             |
 | `onDrop(PointerEvent)`       | Function                         | Callback on item drop                    |
+| `onAnimationEnd()`           | Function                         | Callback on drop animation end           |
 | `parentDrop`                 | `true`                           | If item can be dropped onto parent       |
 | `edgeThreshold`              | `50`                             | Px near edge to start parent auto-scroll |
 | `scrollSpeed`                | `10`                             | Prent scroll px per step (near edge)     |
@@ -255,17 +256,42 @@ If you returned `false` from one of the callbacks, the respective  `onGrab` or `
 
 ## Styling
 
+> *Is there a minimal CSS styling I might want to use to get started?*
+
+Yes! This is the minimal CSS styling you might want to use to get the best from JSort defaults:
+
+```css
+/* JSort — Minimal suggested styles */
+
+.is-jsort-grabbed {
+    opacity: 0; 
+}
+
+.is-jsort-target {
+    z-index: 1;
+    outline: 0.15rem dashed currentColor;
+}
+
+.is-jsort-invalid {
+    outline: 0.15rem solid red;
+}
+```
+
+The above was not hardcoded into the library since everyone wants to style their UI differently, i.e: set the grabbed element's opacity at a different value, change the targeted element styles, etc.
+
 For custom styling JSort provides several classes you could use in your CSS to further style your UI:
 
-| className          | Description                                                                 |
-| ------------------ | --------------------------------------------------------------------------- |
-| .jsort             | Parent container                                                            |
-| .jsort-item        | Item                                                                        |
-| .jsort-ghost       | Ghost item                                                                  |
-| .is-jsort-animated | Item that is currently being animated                                       |
-| .is-jsort-grabbed  | Item that is currently grabbed (not to be confused with the ghost element)  |
-| .is-jsort-target   | Item that is targeted (hovered). It can also be the parent Element `.jsort` |
-| .is-jsort-invalid  | Added to the ghost element if the hovered target is invalid / not allowed   |
+| className               | Description                                                              |
+| ----------------------- | ------------------------------------------------------------------------ |
+| .jsort                  | Parent container                                                         |
+| .jsort-item             | Sortable children elements                                               |
+| .jsort-handler          | Child of `.jsort-item` to be used as a grab handler                      |
+| .jsort-ghost            | Ghost element                                                            |
+| .is-jsort-grabbed       | Currently grabbed element (not ghost element)                            |
+| .is-jsort-target        | Hovered element or `.jsort` parent                                       |
+| .is-jsort-animated      | Any animating element (on drop)                                          |
+| .is-jsort-animated-drop | Grabbed animating element (on drop)                                      |
+| .is-jsort-invalid       | Added to the Ghost element if the target is *not allowed* (during hover) |
 
 ___
 
