@@ -449,7 +449,7 @@ class JSort {
             const elGrabbed = this.elGrabbed;
             elGrabbed.classList.add(`${this.classAnimatedDrop}`);
             const anim = this.animateItem({ el: elGrabbed, x: ghostRect.left, y: ghostRect.top });
-            anim.addEventListener("finish", () => {
+            anim?.addEventListener("finish", () => {
                 elGrabbed.classList.remove(`${this.classAnimatedDrop}`);
                 this.onAnimationEnd?.call(this, ev);
             });
@@ -478,7 +478,7 @@ class JSort {
             // Only activate drag if we haven't moved beyond threshold
             if (!this.hasMoved) {
                 this.preventScroll = true;
-                this.elGrabbed?.classList.add(this.classGrabbed);
+                // this.elGrabbed?.classList.add(this.classGrabbed);
             }
         }, this.grabTimeout);
     }
