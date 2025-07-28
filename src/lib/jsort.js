@@ -1,3 +1,7 @@
+// @ts-check
+
+import { version } from '../../package.json';
+
 /**
  * @class JSort
  * @author Roko C. Buljan <https://github.com/rokobuljan>
@@ -6,8 +10,13 @@
  * @see {@link https://github.com/rokobuljan/jsort}
  */
 class JSort {
-    static version = __APP_VERSION__;
-    constructor(el, options) {
+    static version = version;
+    /**
+     * 
+     * @param {Element} el
+     * @param {Object} [options]
+     */
+    constructor(el, options = {}) {
         this.elGrabParent = el;
         this.group = ""; // Link-group parents i.e: "group-a"
         this.swap = false; // Swap items mode (Swap elements on drop)
@@ -43,13 +52,13 @@ class JSort {
 
     /**
      * Parse `data-jsort` attribute
-     * @param {Element} el
+     * @param {HTMLElement} el
      * @returns {Object}
      */
     parseDataAttribute(el) {
         return el?.dataset.jsort?.replace(/\s/g, "").replace(/;$/, "").split(/;/).reduce((acc, str) => {
             const [prop, val] = str.split(":");
-            acc[prop] = !isNaN(val) ? Number(val) : /^(true|false)$/.test(val) ? JSON.parse(val) : val;
+            acc[prop] = !isNaN(Number(val)) ? Number(val) : /^(true|false)$/.test(val) ? JSON.parse(val) : val;
             return acc;
         }, {}) ?? {};
     }
@@ -99,7 +108,7 @@ class JSort {
      * @param {Element} data.el - the Element to animate
      * @param {number} data.x - the new X position
      * @param {number} data.y - the new Y position
-     * @returns {Animation}
+     * @returns {Animation|undefined}
      */
     animateItem({ el, x, y }) {
         const { left, top } = el.getBoundingClientRect();
@@ -129,7 +138,7 @@ class JSort {
     /**
      * Find closest element (similar to Element.closest() but without selector string)
      * If not found, returns null, meaning el was not a descendant of elTarget, or elTarget itself
-     * @param {Element} el
+     * @param {Element|null} el
      * @param {Element} elTarget
      * @returns {Element|null}
      */
@@ -148,7 +157,7 @@ class JSort {
     checkValidity({ clientX, clientY }) {
         const elFromPoint = document.elementFromPoint(clientX, clientY);
         const elTarget = elFromPoint?.closest(`${this.selectorItems}, ${this.selectorParent}`);
-        const elDropParent = elFromPoint?.closest(this.selectorParent);
+        const elDropParent = /** @type {HTMLElement} */ (elFromPoint?.closest(this.selectorParent));
         const isParentDrop = elTarget === elDropParent;
         const isOntoSelf = elTarget && this.closestElement(elTarget, this.elGrabbed) === this.elGrabbed;
         const isSameParent = elDropParent === this.elGrabParent;
@@ -301,7 +310,8 @@ class JSort {
     grab = (ev) => {
         if (this.elGrabbed) return;
 
-        const elClosestItem = ev.target.closest(`${this.selectorItems}`);
+        const evTarget = /** @type {Element} */ (ev.target);
+        const elClosestItem = evTarget.closest(`${this.selectorItems}`);
 
         if (!elClosestItem) return;
         if (elClosestItem.parentElement !== this.elGrabParent) return; // Does not belongs to this sortable
@@ -309,7 +319,7 @@ class JSort {
         const foundHandler = elClosestItem.querySelector(this.selectorHandler);
         const isHandlerVisible = foundHandler?.checkVisibility();
         const hasHandler = Boolean(foundHandler);
-        const elHandler = ev.target.closest(this.selectorHandler);
+        const elHandler = evTarget?.closest(this.selectorHandler);
 
         if (hasHandler && isHandlerVisible && !elHandler) return;
 
