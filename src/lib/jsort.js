@@ -10,11 +10,68 @@ import { version } from '../../package.json';
  * @see {@link https://github.com/rokobuljan/jsort}
  */
 class JSort {
+
+    /** @type {HTMLElement | null} */
+    elGhost;
+
+    /** @type {HTMLElement | null} */
+    elGrabbed;
+
+    /** @type {HTMLElement | null} */
+    elTarget;
+
+    /** @type {HTMLElement | null} */
+    elDrop;
+
+    /** @type {HTMLElement | null} */
+    elDropParent;
+
+    /** @type {number} */
+    indexGrab = -1;
+
+    /** @type {number} */
+    indexDrop = -1;
+
+    /** @type {HTMLElement[]} */
+    affectedItems = [];
+
+    /** @type {PointerEventInit | Object} */
+    pointerStart = {};
+
+    /** @type {boolean} */
+    isFirstMove = false;
+
+    /** @type {HTMLElement | null} */
+    scrollParent = null;
+
+    /** @type {string | null} */
+    scrollDirection = null;
+
+    /** @type {null | { start: Function, stop: Function, tick: Function }} */
+    scrollAnim = null;
+
+    /** @type {number} */
+    edgePressure = 0;
+
+    /** @type {number | null} */
+    moveTimeout = null;
+
+    /** @type {boolean} */
+    preventScroll = false;
+
+    /** @type {boolean} */
+    hasMoved = false;
+
+    /** @type {null | { clientX: number, clientY: number }} */
+    initialTouch = null;
+
     static version = version;
     /**
      * 
-     * @param {Element} el
+     * @param {HTMLElement} el
      * @param {Object} [options]
+     * @param {string} [options.group] Link-group parents i.e: "group-a"
+     * @param {boolean} [options.swap] Swap items mode (Swap elements on drop)
      */
     constructor(el, options = {}) {
         this.elGrabParent = el;
@@ -68,8 +125,9 @@ class JSort {
      * @returns {void}
      */
     appendGhost() {
+        if (!this.elGrabbed) return;
         const { x, y, width, height } = this.elGrabbed.getBoundingClientRect();
-        this.elGhost = this.elGrabbed.cloneNode(true);
+        this.elGhost = /** @type {HTMLElement} */ (this.elGrabbed.cloneNode(true));
         Object.assign(this.elGhost.style, {
             position: "fixed",
             left: `${x}px`,
@@ -139,7 +197,7 @@ class JSort {
      * Find closest element (similar to Element.closest() but without selector string)
      * If not found, returns null, meaning el was not a descendant of elTarget, or elTarget itself
      * @param {Element|null} el
-     * @param {Element} elTarget
+     * @param {Element|null} elTarget
      * @returns {Element|null}
      */
     closestElement(el, elTarget) {
@@ -209,7 +267,7 @@ class JSort {
 
     /**
      * Find closest scrollable element
-     * @param {Element} el Start element
+     * @param {Element|null|undefined} el Start element
      * @returns {Element} Scrollable element
      */
     findScrollParent(el) {
@@ -229,7 +287,7 @@ class JSort {
      * @returns {void}
      */
     scrollStep() {
-        if (!this.scrollDirection) return;
+        if (!this.scrollDirection || !this.scrollParent) return;
         const scrollSpeed = this.scrollSpeed * (this.edgePressure / Math.max(this.edgeThreshold, 1));
         if (this.scrollDirection === "up") {
             this.scrollParent.scrollTop -= scrollSpeed;
@@ -251,7 +309,7 @@ class JSort {
             this.scrollDirection = direction;
             if (!this.scrollAnim) {
                 this.scrollAnim = this.engine(this.scrollStep.bind(this));
-                this.scrollAnim.start();
+                this.scrollAnim?.start();
             }
         }
     }
@@ -274,7 +332,7 @@ class JSort {
      */
     handleScrollParent(ev) {
         if (!this.scrollParent) {
-            this.scrollParent = this.findScrollParent(this.elGrabbed);
+            this.scrollParent = /** @type {HTMLElement} */ (this.findScrollParent(this.elGrabbed));
         }
 
         const rect = this.scrollParent.getBoundingClientRect();
@@ -311,12 +369,12 @@ class JSort {
         if (this.elGrabbed) return;
 
         const evTarget = /** @type {Element} */ (ev.target);
-        const elClosestItem = evTarget.closest(`${this.selectorItems}`);
+        const elClosestItem = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItems}`));
 
         if (!elClosestItem) return;
         if (elClosestItem.parentElement !== this.elGrabParent) return; // Does not belongs to this sortable
 
-        const foundHandler = elClosestItem.querySelector(this.selectorHandler);
+        const foundHandler = /** @type {Element} */ (elClosestItem.querySelector(this.selectorHandler));
         const isHandlerVisible = foundHandler?.checkVisibility();
         const hasHandler = Boolean(foundHandler);
         const elHandler = evTarget?.closest(this.selectorHandler);
@@ -351,11 +409,14 @@ class JSort {
     move = (ev) => {
         const { pointerId, clientX, clientY } = ev;
 
-        if (!this.preventScroll || !this.elGrabbed?.hasPointerCapture(pointerId)) return;
+        if (
+            !this.preventScroll ||
+            !this.elGrabbed?.hasPointerCapture(pointerId)
+        ) return;
 
         if (!this.isFirstMove) {
             this.isFirstMove = true;
-            this.appendGhost({ clientX, clientY });
+            this.appendGhost();
             this.elGrabbed.classList.add(this.classGrabbed);
         }
 
@@ -393,7 +454,7 @@ class JSort {
         this.elGrabbed.style.removeProperty("cursor");
         this.elGrabbed.classList.remove(this.classActive, this.classGrabbed, this.classTouch);
         this.elTarget?.classList.remove(this.classTarget);
-        const elFromPoint = document.elementFromPoint(clientX, clientY);
+        const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
         this.elDrop = elFromPoint?.closest(`${this.selectorItems}, ${this.selectorParent}`);
         this.elDropParent = elFromPoint?.closest(this.selectorParent);
 
@@ -406,11 +467,11 @@ class JSort {
             const isSameParent = this.elDropParent === this.elGrabParent;
             const isDroppedOntoParent = Boolean(this.elDrop && this.elDropParent && this.elDrop === this.elDropParent);
 
-            const siblingsGrab = [...this.elGrabParent.children].filter(el => el !== this.elGhost);
+            const siblingsGrab = /** @type {HTMLElement[]} */ ([...this.elGrabParent.children].filter(el => el !== this.elGhost));
             this.indexGrab = siblingsGrab.indexOf(this.elGrabbed);
 
             if (this.swap) {
-                this.affectedItems = [this.elDrop];
+                this.affectedItems = this.elDrop ? [this.elDrop] : [];
             }
             else if (isSameParent) {
                 this.indexDrop = isDroppedOntoParent ? Math.max(0, siblingsGrab.length - 1) : siblingsGrab.indexOf(this.elDrop);
@@ -418,7 +479,8 @@ class JSort {
                 const indexMax = isDroppedOntoParent ? siblingsGrab.length - 1 : Math.max(this.indexDrop, this.indexGrab);
                 this.affectedItems = siblingsGrab.slice(indexMin, indexMax + 1);
             } else {
-                const siblingsDrop = [...this.elDropParent.children];
+                const parentChildren = this.elDropParent?.children
+                const siblingsDrop = /** @type {HTMLElement[]} */ (parentChildren ? [...parentChildren] : []);
                 this.indexDrop = isDroppedOntoParent ? Math.max(0, siblingsDrop.length) : siblingsDrop.indexOf(this.elDrop);
                 this.affectedItems = [...siblingsGrab.slice(this.indexGrab), ...siblingsDrop.slice(this.indexDrop)];
             }
@@ -492,7 +554,7 @@ class JSort {
             clientY
         };
 
-        clearTimeout(this.moveTimeout);
+        this.moveTimeout && clearTimeout(this.moveTimeout);
         this.moveTimeout = setTimeout(() => {
             // Only activate drag if we haven't moved beyond threshold
             if (!this.hasMoved) {
@@ -504,7 +566,7 @@ class JSort {
 
     /**
      * Handle touch move event - used for scroll-intent
-     * @param {TouchEvent} ev
+     * @param {EventListener} ev
      */
     handleTouchMove = (ev) => {
         if (!this.elGrabbed || !this.initialTouch) return;
@@ -527,7 +589,8 @@ class JSort {
     }
 
     /**
-     * Reset state
+     * Reset, cleanup internal-use properties
+     * @returns {void}
      */
     reset() {
         // Cleanup internal-use properties
