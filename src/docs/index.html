@@ -216,6 +216,68 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
         </div>
 
         <div class="row">
+            <div class="sm-row">
+                <h2>Sort <sup>Beta</sup></h2>
+                <p>
+                    What is an animated sortable library without a <code>.sort()</code> method?
+                </p>
+                <details>
+                    <summary>View code</summary>
+                    <pre><code>
+&lt;select id="list-sort"&gt;
+    &lt;option value="">Default&lt;/option&gt;
+    &lt;option value="inc">A-Z&lt;/option&gt;
+    &lt;option value="dec">Z-A&lt;/option&gt;
+&lt;/select&gt;
+&lt;ul id="list" class="jsort"&gt;
+  &lt;li class="jsort-item"&gt;Zeus&lt;/li&gt;
+  &lt;li class="jsort-item"&gt;Ares&lt;/li&gt;
+  &lt;li class="jsort-item"&gt;Hera&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type="module"&gt;
+import JSort from "@rbuljan/jsort";
+
+const elListSort = document.querySelectorAll("#list-sort");
+const elList = document.querySelectorAll("#list");
+const myJSort = new JSort(elList);
+elListSort.addEventListener("input", () => {
+  const isDec = elListSort.value === "dec";
+  myJSort.sort((a, b) => {
+    if (isDec) [a, b] = [b, a];
+    return a.textContent.localeCompare(b.textContent, "en", { numeric: true })
+  });
+});
+&lt;/script&gt;
+</code></pre>
+                </details>
+            </div>
+            <div class="row">
+                <label>
+                    <span>Sort</span>
+                    <select id="example-sort-input">
+                        <option value="">Default</option>
+                        <option value="inc">A-Z</option>
+                        <option value="dec">Z-A</option>
+                    </select>
+                </label>
+                <ul id="example-sort" class="jsort list">
+                    <li class="jsort-item">Zeus</li>
+                    <li class="jsort-item">Apollo</li>
+                    <li class="jsort-item">Aphrodite</li>
+                    <li class="jsort-item">Athena</li>
+                    <li class="jsort-item">Hermes</li>
+                    <li class="jsort-item">Poseidon</li>
+                    <li class="jsort-item">Artemis</li>
+                    <li class="jsort-item">Dionysus</li>
+                    <li class="jsort-item">Ares</li>
+                    <li class="jsort-item">Hera</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="row">
             <div class="col">
                 <h2>Licence</h2>
                 <p>MIT<br>&copy; 2025 Roko C. Buljan</p>

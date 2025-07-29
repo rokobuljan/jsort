@@ -92,6 +92,18 @@ ul {
     padding: 0;
 }
 
+sup {
+    font-size: 0.5em;
+}
+
+select {
+    padding: 0.6rem 1rem;
+    border-radius: 0.9rem;
+    border: 0.3rem solid var(--bg2);
+    background-clip: padding-box;
+    color: var(--fg);
+}
+
 /* Details tag animation */
 details {
     interpolate-size: allow-keywords;

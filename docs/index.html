@@ -16,9 +16,10 @@
     <meta property="og:url" content="https://rokobuljan.github.io/jsort/" />
     <meta property="og:image" content="wallpaper.png" />
     <link rel="author" href="https://github.com/rokobuljan" />
-    <link rel="shortcut icon" href="jsort-favicon.png" type="image/x-icon" />
-  <script type="module" crossorigin src="./assets/index-B9xLDyEV.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-wjMDkV0i.css">
+    <link rel="shortcut icon" href="jsort-favicon.png" type="image/x-icon" />
+
+    <script type="module" crossorigin src="./assets/index-B9xLDyEV.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-wjMDkV0i.css">
 </head>
 
 <body>
@@ -217,13 +218,74 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
         </div>
 
         <div class="row">
+            <div class="sm-row">
+                <h2>Groups</h2>
+                <p>
+                    Group multiple containers using the <b>data-jsort</b> attribute:
+                    <code>data-jsort="group: name"</code> <br>
+                </p>
+                <details>
+                    <summary>View code</summary>
+                    <pre><code>
+&lt;select data-sort="#list"&gt;
+    &lt;option>A-Z&lt;/option&gt;
+    &lt;option>Z-A&lt;/option&gt;
+&lt;/select&gt;
+&lt;ul id="list" class="jsort"&gt;
+  &lt;li class="jsort-item"&gt;Zeus&lt;/li&gt;
+  &lt;li class="jsort-item"&gt;Ares&lt;/li&gt;
+  &lt;li class="jsort-item"&gt;Hera&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type="module"&gt;
+import JSort from "@rbuljan/jsort";
+const myJSort = new JSort(document.querySelector("#list"));
+document.querySelectorAll("[data-sort]").forEach((elSelect) => {
+  elSelect.addEventListener("input", () => {
+    myJSort.sort((a, b) => {
+      
+      return a.textContent.localeCompare(b.textContent, "en", { numeric: true })
+    });
+  });
+});
+&lt;/script&gt;
+</code></pre>
+                </details>
+            </div>
+            <div class="row">
+                <label>
+                    <span>Sort</span>
+                    <select id="example-sort-input">
+                        <option value="inc">A-Z</option>
+                        <option value="dec">Z-A</option>
+                    </select>
+                </label>
+                <ul id="example-sort" class="jsort list" data-jsort="group:a">
+                    <li class="jsort-item">Zeus</li>
+                    <li class="jsort-item">Apollo</li>
+                    <li class="jsort-item">Aphrodite</li>
+                    <li class="jsort-item">Athena</li>
+                    <li class="jsort-item">Hermes</li>
+                    <li class="jsort-item">Demeter</li>
+                    <li class="jsort-item">Poseidon</li>
+                    <li class="jsort-item">Artemis</li>
+                    <li class="jsort-item">Dionysus</li>
+                    <li class="jsort-item">Ares</li>
+                    <li class="jsort-item">Hera</li>
+                    <li class="jsort-item">Hephaestus</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col">
                 <h2>Licence</h2>
                 <p>MIT<br>&copy; 2025 Roko C. Buljan</p>
             </div>
         </div>
 
-    </div>
+    </div>
+
 </body>
 
 </html>

@@ -109,8 +109,8 @@ class JSort {
         this.duration = 420;
         this.easing = "cubic-bezier(0.6, 0, 0.6, 1)";
         this.scale = 1.1;
-        this.opacity = 0.8; 
-        this.grabTimeout = 140; 
+        this.opacity = 0.8;
+        this.grabTimeout = 140;
         this.parentDrop = true;
         this.dragThreshold = 8;
         this.edgeThreshold = 50;
@@ -433,6 +433,26 @@ class JSort {
     }
 
     /**
+     * Just like Array.sort() but animated
+     * @param {(a: HTMLElement, b: HTMLElement) => number} compareFn
+     * @returns {HTMLElement[]} Sorted items
+     */
+    sort(compareFn) {
+        // Remember all children positions
+        const items = this.getChildren(this.elGrabParent);
+        const affectedItemsData = items.map((el) => {
+            const { x, y } = el.getBoundingClientRect();
+            return { el, x, y };
+        });
+        // Apply cb sort() logic to all items
+        const itemsSorted = [...items].sort(compareFn);
+        // Append and Animate all items to the respective new positions
+        this.elGrabParent.append(...itemsSorted);
+        affectedItemsData.forEach((data) => this.animateItem(data));
+        return itemsSorted;
+    }
+
+    /**
      * Move an item
      * @param {PointerEvent} ev
      */
@@ -471,6 +491,16 @@ class JSort {
 
         // Notify
         this.onMove?.call(this, ev);
+    }
+
+    /**
+     * get all child elements of a sortable parent (ignore elGhost, if present)
+     * @param {HTMLElement} elParent
+     * @returns {HTMLElement[]}
+     */
+    getChildren(elParent) {
+        const children = /** @type {HTMLElement[]} */ ([...elParent.children].filter(el => el !== this.elGhost));
+        return children;
     }
 
     /**
