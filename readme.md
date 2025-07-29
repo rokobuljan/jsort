@@ -19,7 +19,7 @@ Demo &amp; examples: [JSort — Homepage](https://rokobuljan.github.io/jsort/)
 - [x] Nested groups
 - [x] Swap items
 - [x] Dynamic items (delegated events)
-- [x] Scroll parent on drag
+- [x] Scroll parent on edge drag
 - [ ] Multiple select (*soon*)
 
 ## Installation
@@ -93,17 +93,18 @@ The second parameter accepts an options object to customize the sorting behavior
 | `selectorItems`       | `string`   | `".jsort-item"`               | CSS selector for sortable items           |
 | `selectorHandler`     | `string`   | `".jsort-handler"`            | CSS selector for drag handles             |
 | **CSS Classes**       |            |                               |                                           |
-| `classGhost`          | `string`   | `"is-jsort-ghost"`            | Class applied to ghost element            |
-| `classAnimated`       | `string`   | `"is-jsort-animated"`         | Class applied during animations           |
-| `classGrabbed`        | `string`   | `"is-jsort-grabbed"`          | Class applied to grabbed element          |
-| `classTarget`         | `string`   | `"is-jsort-target"`           | Class applied to drop target element      |
-| `classInvalid`        | `string`   | `"is-jsort-invalid"`          | Class applied to invalid drop zones       |
+| `classGhost`          | `string`   | `"is-jsort-ghost"`            | Applied to ghost element                  |
+| `classAnimated`       | `string`   | `"is-jsort-animated"`         | Applied during animations                 |
+| `classGrabbed`        | `string`   | `"is-jsort-grabbed"`          | Applied to grabbed element                |
+| `classTarget`         | `string`   | `"is-jsort-target"`           | Applied to drop target element            |
+| `classInvalid`        | `string`   | `"is-jsort-invalid"`          | Applied to ghost over invalid drop zones  |
 | **Event Callbacks**   |            |                               |                                           |
-| `onGrab(event)`       | `function` |                               | Called when an item is grabbed            |
-| `onMove(event)`       | `function` |                               | Called when an item is moved              |
-| `onBeforeDrop(event)` | `function` |                               | Called before an item is dropped          |
-| `onDrop(event)`       | `function` |                               | Called when an item is dropped            |
-| `onAnimationEnd()`    | `function` |                               | Called when drop animation completes      |
+| `onBeforeGrab(event)` | `function` |                               | Called before item grab                   |
+| `onGrab(event)`       | `function` |                               | Called on item grabb                      |
+| `onMove(event)`       | `function` |                               | Called on item move                       |
+| `onBeforeDrop(event)` | `function` |                               | Called before itme drop                   |
+| `onDrop(event)`       | `function` |                               | Called on drop                            |
+| `onAnimationEnd()`    | `function` |                               | Called on drop animation end              |
 
 ### Example
 
