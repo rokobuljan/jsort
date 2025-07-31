@@ -227,25 +227,10 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
                 <details>
                     <summary>View code</summary>
                     <pre><code>
-&lt;select data-sort="#list"&gt;
-    &lt;option>A-Z&lt;/option&gt;
-    &lt;option>Z-A&lt;/option&gt;
-&lt;/select&gt;
-&lt;ul id="list" class="jsort"&gt;
-  &lt;li class="jsort-item"&gt;Zeus&lt;/li&gt;
-  &lt;li class="jsort-item"&gt;Ares&lt;/li&gt;
-  &lt;li class="jsort-item"&gt;Hera&lt;/li&gt;
-&lt;/ul&gt;
-
 &lt;script type="module"&gt;
-import JSort from "@rbuljan/jsort";
-const myJSort = new JSort(document.querySelector("#list"));
-document.querySelectorAll("[data-sort]").forEach((elSelect) => {
-  elSelect.addEventListener("input", () => {
-    myJSort.sort((a, b) => {
-      
-      return a.textContent.localeCompare(b.textContent, "en", { numeric: true })
-    });
+myJSort.sort((a, b) => {
+  return a.textContent.localeCompare(b.textContent, "en", {
+    numeric: true
   });
 });
 &lt;/script&gt;
@@ -261,18 +246,17 @@ document.querySelectorAll("[data-sort]").forEach((elSelect) => {
                     </select>
                 </label>
                 <ul id="example-sort" class="jsort list" data-jsort="group:a">
-                    <li class="jsort-item">Zeus</li>
-                    <li class="jsort-item">Apollo</li>
-                    <li class="jsort-item">Aphrodite</li>
-                    <li class="jsort-item">Athena</li>
-                    <li class="jsort-item">Hermes</li>
-                    <li class="jsort-item">Demeter</li>
-                    <li class="jsort-item">Poseidon</li>
-                    <li class="jsort-item">Artemis</li>
-                    <li class="jsort-item">Dionysus</li>
-                    <li class="jsort-item">Ares</li>
-                    <li class="jsort-item">Hera</li>
-                    <li class="jsort-item">Hephaestus</li>
+                    <li class="jsort-item" data-name="Zeus">1 Zeus</li>
+                    <li class="jsort-item" data-name="Apollo">2 Apollo</li>
+                    <li class="jsort-item" data-name="Aphrodite">3 Aphrodite</li>
+                    <li class="jsort-item" data-name="Athena">4 Athena</li>
+                    <li class="jsort-item" data-name="Hermes">5 Hermes</li>
+                    <li class="jsort-item" data-name="Demeter">6 Demeter</li>
+                    <li class="jsort-item" data-name="Poseidon">7 Poseidon</li>
+                    <li class="jsort-item" data-name="ionysus">8 ionysus</li>
+                    <li class="jsort-item" data-name="Ares">9 Ares</li>
+                    <li class="jsort-item" data-name="Hera">10 Hera</li>
+                    <li class="jsort-item" data-name="Hephaestus">11 Hephaestus</li>
                 </ul>
             </div>
         </div>

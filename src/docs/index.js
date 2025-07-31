@@ -14,15 +14,22 @@ document.querySelectorAll(".jsort:not([id^=example])").forEach((el) => {
     new JSort(el);
 });
 
+const elExampleSortSelect = document.querySelector("#example-sort-select");
 const elExampleSortInput = document.querySelector("#example-sort-input");
 const elExampleSort = document.querySelector("#example-sort");
 const jsortExampleSort = new JSort(elExampleSort);
-elExampleSortInput.addEventListener("input", () => {
-    const isDec = elExampleSortInput.value === "dec";
+elExampleSort.querySelectorAll("li").forEach((el, i) => el.dataset.index = i);
+elExampleSortSelect.addEventListener("input", () => {
+    const isDec = elExampleSortSelect.value === "dec";
+    const prop = elExampleSortSelect.value === "" ? "index" : "name";
     jsortExampleSort.sort((a, b) => {
         if (isDec) [a, b] = [b, a];
-        return a.textContent.localeCompare(b.textContent, "en", { numeric: true });
+        return a.dataset[prop].localeCompare(b.dataset[prop], "en", { numeric: true });
     });
+});
+
+elExampleSortInput.addEventListener("input", () => {
+    jsortExampleSort.filter((el) => el.textContent.toLowerCase().includes(elExampleSortInput.value.toLowerCase()));
 });
 
 document.querySelectorAll("pre > code").forEach((el) => {

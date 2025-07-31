@@ -65,7 +65,7 @@ document.querySelectorAll(".grid").forEach((el) =&gt; new JSort(el));
                     </div>
                     <div class="jsort-item">
                         <div class="jsort-handler" style="display: none;">Handler</div>
-                        Handler is display: none;
+                        <div>Handler is display: none;</div>
                     </div>
                     <div class="jsort-item">6</div>
                     <div class="jsort-item">7</div>
@@ -217,61 +217,44 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
 
         <div class="row">
             <div class="sm-row">
-                <h2>Sort <sup>Beta</sup></h2>
+                <h2>Sort</h2>
                 <p>
                     What is an animated sortable library without a <code>.sort()</code> method?
                 </p>
                 <details>
                     <summary>View code</summary>
                     <pre><code>
-&lt;select id="list-sort"&gt;
-    &lt;option value="">Default&lt;/option&gt;
-    &lt;option value="inc">A-Z&lt;/option&gt;
-    &lt;option value="dec">Z-A&lt;/option&gt;
-&lt;/select&gt;
-&lt;ul id="list" class="jsort"&gt;
-  &lt;li class="jsort-item"&gt;Zeus&lt;/li&gt;
-  &lt;li class="jsort-item"&gt;Ares&lt;/li&gt;
-  &lt;li class="jsort-item"&gt;Hera&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;script type="module"&gt;
-import JSort from "@rbuljan/jsort";
-
-const elListSort = document.querySelectorAll("#list-sort");
-const elList = document.querySelectorAll("#list");
-const myJSort = new JSort(elList);
-elListSort.addEventListener("input", () => {
-  const isDec = elListSort.value === "dec";
-  myJSort.sort((a, b) => {
-    if (isDec) [a, b] = [b, a];
-    return a.textContent.localeCompare(b.textContent, "en", { numeric: true })
+myJSort.sort((a, b) => {
+  return a.textContent.localeCompare(b.textContent, "en", {
+    numeric: true
   });
-});
-&lt;/script&gt;
-</code></pre>
+});</code></pre>
                 </details>
             </div>
-            <div class="row">
-                <label>
-                    <span>Sort</span>
-                    <select id="example-sort-input">
-                        <option value="">Default</option>
-                        <option value="inc">A-Z</option>
-                        <option value="dec">Z-A</option>
-                    </select>
-                </label>
+            <div class="col">
+                <div class="row">
+                    <label>
+                        <span>Sort</span>
+                        <select id="example-sort-select">
+                            <option value="">Default</option>
+                            <option value="inc">A-Z</option>
+                            <option value="dec">Z-A</option>
+                        </select>
+                    </label>
+                    <label>
+                        <span>Filter</span>
+                        <input id="example-sort-input" type="text">
+                    </label>
+                </div>
                 <ul id="example-sort" class="jsort list">
-                    <li class="jsort-item">Zeus</li>
-                    <li class="jsort-item">Apollo</li>
-                    <li class="jsort-item">Aphrodite</li>
-                    <li class="jsort-item">Athena</li>
-                    <li class="jsort-item">Hermes</li>
-                    <li class="jsort-item">Poseidon</li>
-                    <li class="jsort-item">Artemis</li>
-                    <li class="jsort-item">Dionysus</li>
-                    <li class="jsort-item">Ares</li>
-                    <li class="jsort-item">Hera</li>
+                    <li class="jsort-item" data-name="Zeus">Zeus</li>
+                    <li class="jsort-item" data-name="Apollo">Apollo</li>
+                    <li class="jsort-item" data-name="Aphrodite">Aphrodite</li>
+                    <li class="jsort-item" data-name="Athena">Athena</li>
+                    <li class="jsort-item" data-name="Hermes">Hermes</li>
+                    <li class="jsort-item" data-name="Poseidon">Poseidon</li>
+                    <li class="jsort-item" data-name="Ares">Ares</li>
+                    <li class="jsort-item" data-name="Hera">Hera</li>
                 </ul>
             </div>
         </div>

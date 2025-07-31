@@ -33,6 +33,7 @@ body {
     font: min(3cqmin, 1rem) / 1.5 system-ui;
     padding: 2.3rem;
     padding-bottom: 8rem;
+    overflow-x: clip;
 
     /* Passepartout */
     &::after {
@@ -96,12 +97,24 @@ sup {
     font-size: 0.5em;
 }
 
+label {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+    white-space: nowrap;
+
+    input {
+        width: 100%;
+    }
+}
+
+input:not([type="checkbox"], [type="radio"]),
 select {
     padding: 0.6rem 1rem;
-    border-radius: 0.9rem;
     border: 0.3rem solid var(--bg2);
-    background-clip: padding-box;
-    color: var(--fg);
+    background: var(--fg);
+    color: var(--bg);
+    border-radius: 1.5em;
 }
 
 /* Details tag animation */
