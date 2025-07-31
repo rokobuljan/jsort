@@ -113,8 +113,8 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
                     <li class="jsort-item">A 5</li>
                 </ul>
                 <ul class="jsort list" data-jsort="group:a">
-                    <li class="jsort-item">B 1</li>
-                    <li class="jsort-item">B 2</li>
+                    <!-- <li class="jsort-item">B 1</li>
+                    <li class="jsort-item">B 2</li> -->
                 </ul>
             </div>
         </div>
@@ -217,7 +217,7 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
 
         <div class="row">
             <div class="sm-row">
-                <h2>Sort</h2>
+                <h2>Sort <sup><i>beta</i></sup></h2>
                 <p>
                     What is an animated sortable library without a <code>.sort()</code> method?
                 </p>
@@ -240,10 +240,6 @@ myJSort.sort((a, b) => {
                             <option value="inc">A-Z</option>
                             <option value="dec">Z-A</option>
                         </select>
-                    </label>
-                    <label>
-                        <span>Filter</span>
-                        <input id="example-sort-input" type="text">
                     </label>
                 </div>
                 <ul id="example-sort" class="jsort list">

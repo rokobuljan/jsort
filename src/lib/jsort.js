@@ -36,7 +36,7 @@ class JSort {
     indexDrop = -1;
 
     /** @type {HTMLElement[]} */
-    affectedItems = [];
+    affectedElements = [];
 
     /** @type {PointerEventInit | Object} */
     pointerStart = {};
@@ -418,7 +418,7 @@ class JSort {
         this.elGrabbed.setPointerCapture(ev.pointerId);
         this.elGrabbed.classList.add(this.classActive);
         this.elGrabbed.style.cursor = "move";
-        this.elGrabParent.style.userSelect = "none";
+        this.elGrabbed.style.userSelect = "none";
         this.indexGrab = [...this.elGrabParent.children].indexOf(this.elGrabbed);
 
         const isUserValidated = this.onBeforeGrab?.call(this, ev) ?? true;
@@ -440,32 +440,14 @@ class JSort {
      */
     sort(fn) {
         const items = this.getChildren(this.elGrabParent);
-        const affectedItemsData = items.map((el) => {
+        const affectedElementsData = items.map((el) => {
             const { x, y } = el.getBoundingClientRect();
             return { el, x, y };
         });
         const itemsSorted = [...items].sort(fn);
         this.elGrabParent.append(...itemsSorted);
-        affectedItemsData.forEach((data) => this.animateItem(data));
+        affectedElementsData.forEach((data) => this.animateItem(data));
         return itemsSorted;
-    }
-
-    /**
-     * Just like Array.filter() but animated
-     */
-    filter(fn) {
-        const items = this.getChildren(this.elGrabParent);
-        const affectedItemsData = items.map((el) => {
-            const { x, y } = el.getBoundingClientRect();
-            return { el, x, y };
-        });
-        const itemsFiltered = [...items].filter(fn);
-        const itemsRemaining = items.filter((el) => !itemsFiltered.includes(el));
-        this.elGrabParent.prepend(...itemsFiltered);
-        // this.elGrabParent.append(...itemsRemaining);
-        affectedItemsData.forEach((data) => this.animateItem(data));
-        itemsRemaining.forEach(el => el.remove());
-        return itemsFiltered;
     }
 
     /**
@@ -523,49 +505,56 @@ class JSort {
      * Insert elItem into this JSort parent
      * @param {HTMLElement} elGrabbed
      * @param {HTMLElement} elTarget
-     * @param {Object} [options]
      * @returns {boolean} True if insertion was successful
      */
-    insert(elGrabbed, elTarget, options = { isValid: true }) {
+    insert(elGrabbed, elTarget) {
+        if (!elTarget) {
+            console.error("JSort: no parent element found");
+            return false;
+        }
         // Fallback to instance parent
         const elGrabParent = elGrabbed.closest(this.selectorParent);
         const grabChildren = elGrabParent ? [...elGrabParent.children] : [];
         this.indexGrab = grabChildren.indexOf(elGrabbed);
-        const siblingsGrab = grabChildren.filter((el) => el !== elGrabbed && !el.matches(`.${this.classGhost}`));
+        const grabSiblings = grabChildren.filter((el) => el !== elGrabbed && !el.matches(`.${this.classGhost}`));
         this.elDrop = /** @type {HTMLElement} */ (elTarget?.closest(`${this.selectorItems}, ${this.selectorParent}`));
         const isDroppedOntoParent = this.elDrop?.matches(this.selectorParent);
         this.elDropParent = /** @type {HTMLElement} */ (this.elDrop?.closest(this.selectorParent));
         const dropChildren = this.elDropParent ? [...this.elDropParent.children] : [];
         const isSameParent = elGrabParent === this.elDropParent;
-        this.indexDrop = dropChildren.indexOf(this.elDrop) ?? dropChildren.length - 1;
+
+        this.indexDrop = isDroppedOntoParent ?
+            Math.max(0, isSameParent ? grabSiblings.length : dropChildren.length) :
+            dropChildren.indexOf(this.elDrop);
 
         // 1. Retract ghost scaling and store its position
         // (The order of execution of the two following lines is important!)
         this.elGhost?.animate([{ scale: 1.0 }], { duration: 0, fill: "forwards" });
         const ghostRect = this.elGhost?.getBoundingClientRect();
 
-        let affectedItems = [];
+        this.affectedElements = [];
 
         if (this.swap) {
-            affectedItems = this.elDrop ? [this.elDrop] : [];
+            this.affectedElements = this.elDrop ? [this.elDrop] : [];
         }
         else if (isSameParent) {
             const indexMin = isDroppedOntoParent ? this.indexGrab : Math.min(this.indexDrop, this.indexGrab);
-            const indexMax = isDroppedOntoParent ? siblingsGrab.length - 1 : Math.max(this.indexDrop, this.indexGrab);
-            affectedItems = siblingsGrab.slice(indexMin, indexMax + 1);
+            const indexMax = isDroppedOntoParent ? grabSiblings.length - 1 : Math.max(this.indexDrop, this.indexGrab);
+            this.affectedElements = /** @type {HTMLElement[]} */ (grabSiblings.slice(indexMin, indexMax + 1));
         }
         else {
-            affectedItems = [...siblingsGrab.slice(this.indexGrab), ...dropChildren.slice(this.indexDrop)];
+            this.affectedElements = /** @type {HTMLElement[]} */ ([...grabSiblings.slice(this.indexGrab), ...dropChildren.slice(this.indexDrop)]);
         }
 
         // 2. Store initial positions of all affected elements (before DOM manipulation)
-        const affectedItemsData = affectedItems.map((el) => {
+        const affectedElementsData = this.affectedElements.map((el) => {
             const { x, y } = el.getBoundingClientRect();
             return { el, x, y };
         });
 
         const isValidDrop = this.checkValidity({ el: elTarget });
-        const isValid = Boolean(this.elDrop) && isValidDrop && options.isValid;
+        const isValidByUser = this.onBeforeDrop?.call(this, this._currentEvent) ?? true;
+        const isValid = Boolean(this.elDrop) && isValidDrop && isValidByUser;
 
         if (isValid) {
             // 3. Insert into DOM
@@ -584,7 +573,7 @@ class JSort {
             }
 
             // 4. Animate other elements
-            affectedItemsData.forEach((data) => {
+            affectedElementsData.forEach((data) => {
                 if (data.el === elGrabbed) return; // We'll animate the grabbed item later
                 this.animateItem(data);
             });
@@ -606,8 +595,6 @@ class JSort {
         }
 
         this.removeGhost();
-        this.reset();
-
         return isValid;
     }
 
@@ -620,14 +607,16 @@ class JSort {
         this.isScrollPrevented = false;
         const { pointerId, clientX, clientY } = ev;
         if (!this.elGrabbed || !this.elGrabbed?.hasPointerCapture(pointerId)) return;
-        this.elGrabParent.style.removeProperty("user-select");
+        this.elGrabbed.style.removeProperty("user-select");
         this.elGrabbed.style.removeProperty("cursor");
         this.elGrabbed.classList.remove(this.classActive, this.classGrabbed, this.classTouch);
         this.elTarget?.classList.remove(this.classTarget);
         const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
-        const isValid = this.onBeforeDrop?.call(this, ev) ?? true;
-        const isValidInsertion = this.insert(this.elGrabbed, elFromPoint, { isValid });
-        if (isValidInsertion) this.onDrop?.call(this, ev);
+        // INSERT
+        this._currentEvent = ev;
+        const isInserted = this.insert(this.elGrabbed, elFromPoint);
+        if (isInserted) this.onDrop?.call(this, ev);
+        this.reset();
     }
 
     /**
@@ -685,7 +674,7 @@ class JSort {
         this.elDropParent = null;
         this.indexGrab = -1;
         this.indexDrop = -1;
-        this.affectedItems = [];
+        this.affectedElements = [];
         this.pointerStart = {};
         this.isFirstMove = false;
         this.scrollParent = null;

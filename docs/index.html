@@ -16,10 +16,9 @@
     <meta property="og:url" content="https://rokobuljan.github.io/jsort/" />
     <meta property="og:image" content="wallpaper.png" />
     <link rel="author" href="https://github.com/rokobuljan" />
-    <link rel="shortcut icon" href="jsort-favicon.png" type="image/x-icon" />
-
-    <script type="module" crossorigin src="./assets/index-B9xLDyEV.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-wjMDkV0i.css">
+    <link rel="shortcut icon" href="jsort-favicon.png" type="image/x-icon" />
+  <script type="module" crossorigin src="./assets/index-B0tB_PE7.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CvR2gApT.css">
 </head>
 
 <body>
@@ -67,7 +66,7 @@ document.querySelectorAll(".grid").forEach((el) =&gt; new JSort(el));
                     </div>
                     <div class="jsort-item">
                         <div class="jsort-handler" style="display: none;">Handler</div>
-                        Handler is display: none;
+                        <div>Handler is display: none;</div>
                     </div>
                     <div class="jsort-item">6</div>
                     <div class="jsort-item">7</div>
@@ -115,8 +114,8 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
                     <li class="jsort-item">A 5</li>
                 </ul>
                 <ul class="jsort list" data-jsort="group:a">
-                    <li class="jsort-item">B 1</li>
-                    <li class="jsort-item">B 2</li>
+                    <!-- <li class="jsort-item">B 1</li>
+                    <li class="jsort-item">B 2</li> -->
                 </ul>
             </div>
         </div>
@@ -219,47 +218,44 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
 
         <div class="row">
             <div class="sm-row">
-                <h2>Groups</h2>
+                <h2>Sort <sup><i>beta</i></sup></h2>
                 <p>
-                    Group multiple containers using the <b>data-jsort</b> attribute:
-                    <code>data-jsort="group: name"</code> <br>
+                    What is an animated sortable library without a <code>.sort()</code> method?
                 </p>
                 <details>
                     <summary>View code</summary>
                     <pre><code>
-&lt;script type="module"&gt;
 myJSort.sort((a, b) => {
   return a.textContent.localeCompare(b.textContent, "en", {
     numeric: true
   });
-});
-&lt;/script&gt;
-</code></pre>
+});</code></pre>
                 </details>
             </div>
-            <div class="row">
-                <label>
-                    <span>Sort</span>
-                    <select id="example-sort-input">
-                        <option value="inc">A-Z</option>
-                        <option value="dec">Z-A</option>
-                    </select>
-                </label>
-                <ul id="example-sort" class="jsort list" data-jsort="group:a">
-                    <li class="jsort-item" data-name="Zeus">1 Zeus</li>
-                    <li class="jsort-item" data-name="Apollo">2 Apollo</li>
-                    <li class="jsort-item" data-name="Aphrodite">3 Aphrodite</li>
-                    <li class="jsort-item" data-name="Athena">4 Athena</li>
-                    <li class="jsort-item" data-name="Hermes">5 Hermes</li>
-                    <li class="jsort-item" data-name="Demeter">6 Demeter</li>
-                    <li class="jsort-item" data-name="Poseidon">7 Poseidon</li>
-                    <li class="jsort-item" data-name="ionysus">8 ionysus</li>
-                    <li class="jsort-item" data-name="Ares">9 Ares</li>
-                    <li class="jsort-item" data-name="Hera">10 Hera</li>
-                    <li class="jsort-item" data-name="Hephaestus">11 Hephaestus</li>
+            <div class="col">
+                <div class="row">
+                    <label>
+                        <span>Sort</span>
+                        <select id="example-sort-select">
+                            <option value="">Default</option>
+                            <option value="inc">A-Z</option>
+                            <option value="dec">Z-A</option>
+                        </select>
+                    </label>
+                </div>
+                <ul id="example-sort" class="jsort list">
+                    <li class="jsort-item" data-name="Zeus">Zeus</li>
+                    <li class="jsort-item" data-name="Apollo">Apollo</li>
+                    <li class="jsort-item" data-name="Aphrodite">Aphrodite</li>
+                    <li class="jsort-item" data-name="Athena">Athena</li>
+                    <li class="jsort-item" data-name="Hermes">Hermes</li>
+                    <li class="jsort-item" data-name="Poseidon">Poseidon</li>
+                    <li class="jsort-item" data-name="Ares">Ares</li>
+                    <li class="jsort-item" data-name="Hera">Hera</li>
                 </ul>
             </div>
         </div>
+
 
         <div class="row">
             <div class="col">
@@ -268,8 +264,7 @@ myJSort.sort((a, b) => {
             </div>
         </div>
 
-    </div>
-
+    </div>
 </body>
 
 </html>

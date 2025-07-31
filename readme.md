@@ -70,7 +70,6 @@ const JSortInstance = new JSort(HTMLElement, { /* Options */ });
 
 The second parameter accepts an options object to customize the sorting behavior and appearance.
 
-
 | Option                | Type       | Default                       | Description                               |
 | --------------------- | ---------- | ----------------------------- | ----------------------------------------- |
 | **Behavior**          |            |                               |                                           |
@@ -178,26 +177,28 @@ If you returned `false` from one of the callbacks, the respective  `onGrab` or `
 
 ## Methods
 
-| Method                | Description                                           |
-| --------------------- | ----------------------------------------------------- |
-| `init({/*options*/})` | Re-initialize the instance with updated Options       |
-| `destroy()`           | Destroys the instance and removes the event listeners |
+| Method                    | Description                                           |
+| ------------------------- | ----------------------------------------------------- |
+| `init({/*options*/})`     | Re-initialize the instance with updated Options       |
+| `destroy()`               | Destroys the instance and removes the event listeners |
+| `insert(Element, Target)` | Insert item at Target (parent or item)                |
+| `sort(fn)`                | (*Beta*) In-place sort parent items (with animation)  |
 
 ## Properties
 
 `JSortInstance`
 
-| Property        | Type            | Default | Description                                   |
-| --------------- | --------------- | ------- | --------------------------------------------- |
-| `indexGrab`     | `number`        | `-1`    | The index of the grabbed item                 |
-| `indexDrop`     | `number`        | `-1`    | The new index on drop                         |
-| `elGrab`        | `HTMLElement`   | `null`  | The grabbed item                              |
-| `elGrabParent`  | `HTMLElement`   | `null`  | The grabbed item's parent                     |
-| `elGhost`       | `HTMLElement`   | `null`  | Element that follows the pointer              |
-| `elTarget`      | `HTMLElement`   | `null`  | The hovered target (item or parent)           |
-| `elDrop`        | `HTMLElement`   | `null`  | Same as `elTarget` but on drop                |
-| `elDropParent`  | `HTMLElement`   | `null`  | The drop (target) item's parent on drop       |
-| `affectedItems` | `HTMLElement[]` | `[]`    | Array of affected (animated) elements on drop |
+| Property        | Type            | Default | Description                                |
+| --------------- | --------------- | ------- | ------------------------------------------ |
+| `indexGrab`     | `number`        | `-1`    | The index of the grabbed item              |
+| `indexDrop`     | `number`        | `-1`    | The new index on drop                      |
+| `elGrab`        | `HTMLElement`   | `null`  | The grabbed item                           |
+| `elGrabParent`  | `HTMLElement`   | `null`  | The grabbed item's parent                  |
+| `elGhost`       | `HTMLElement`   | `null`  | Element that follows the pointer           |
+| `elTarget`      | `HTMLElement`   | `null`  | The hovered target (item or parent)        |
+| `elDrop`        | `HTMLElement`   | `null`  | Same as `elTarget` but on drop             |
+| `elDropParent`  | `HTMLElement`   | `null`  | The drop (target) item's parent on drop    |
+| `affectedElements` | `HTMLElement[]` | `[]`    | Array of drop-affected (animated) elements |
 
 ## Static Properties
 

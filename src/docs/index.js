@@ -11,14 +11,18 @@ console.log(`Running JSort version: ${JSort.version}`);
 
 document.querySelectorAll(".jsort:not([id^=example])").forEach((el) => {
     // Make sortable
-    new JSort(el);
+    new JSort(el, {
+        onDrop() {
+            console.log(`Dropped "${this.elGrabbed.textContent}" from index ${this.indexGrab} into index ${this.indexDrop} Parents:`, this.elGrabParent, this.elDropParent);
+        }
+    });
 });
 
 const elExampleSortSelect = document.querySelector("#example-sort-select");
-const elExampleSortInput = document.querySelector("#example-sort-input");
 const elExampleSort = document.querySelector("#example-sort");
 const jsortExampleSort = new JSort(elExampleSort);
-elExampleSort.querySelectorAll("li").forEach((el, i) => el.dataset.index = i);
+const elsLI = elExampleSort.querySelectorAll("li");
+elsLI.forEach((el, i) => el.dataset.index = i);
 elExampleSortSelect.addEventListener("input", () => {
     const isDec = elExampleSortSelect.value === "dec";
     const prop = elExampleSortSelect.value === "" ? "index" : "name";
@@ -26,10 +30,6 @@ elExampleSortSelect.addEventListener("input", () => {
         if (isDec) [a, b] = [b, a];
         return a.dataset[prop].localeCompare(b.dataset[prop], "en", { numeric: true });
     });
-});
-
-elExampleSortInput.addEventListener("input", () => {
-    jsortExampleSort.filter((el) => el.textContent.toLowerCase().includes(elExampleSortInput.value.toLowerCase()));
 });
 
 document.querySelectorAll("pre > code").forEach((el) => {
