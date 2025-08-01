@@ -508,10 +508,6 @@ class JSort {
      * @returns {boolean} True if insertion was successful
      */
     insert(elGrabbed, elTarget) {
-        if (!elTarget) {
-            console.error("JSort: no parent element found");
-            return false;
-        }
         // Fallback to instance parent
         const elGrabParent = elGrabbed.closest(this.selectorParent);
         const grabChildren = elGrabParent ? [...elGrabParent.children] : [];
