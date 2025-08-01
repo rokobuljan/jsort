@@ -13,7 +13,7 @@ document.querySelectorAll(".jsort:not([id^=example])").forEach((el) => {
     // Make sortable
     new JSort(el, {
         onDrop() {
-            console.log(`Dropped "${this.elGrabbed.textContent}" from index ${this.indexGrab} into index ${this.indexDrop} Parents:`, this.elGrabParent, this.elDropParent);
+            // console.log(`Dropped "${this.elGrabbed.textContent}" from index ${this.indexGrab} into index ${this.indexDrop} Parents:`, this.elGrabParent, this.elDropParent);
         }
     });
 });

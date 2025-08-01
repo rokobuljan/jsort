@@ -41,9 +41,6 @@ class JSort {
     /** @type {PointerEventInit | Object} */
     pointerStart = {};
 
-    /** @type {boolean} */
-    isFirstMove = false;
-
     /** @type {HTMLElement | null} */
     scrollParent = null;
 
@@ -63,6 +60,9 @@ class JSort {
     isScrollPrevented = false;
 
     /** @type {boolean} */
+    hasPointerMoved = false;
+
+    /** @type {boolean} */
     hasMoved = false;
 
     /** @type {null | { clientX: number, clientY: number }} */
@@ -80,7 +80,8 @@ class JSort {
      * @param {number} [options.opacity] Ghost element opacity
      * @param {number} [options.grabTimeout] Ms before grab is considered instead of scroll on touch devices (has no effect for mouse Event)
      * @param {boolean} [options.parentDrop] Can drop item onto parent
-     * @param {number} [options.dragThreshold] Px before it's considered a scroll
+     * @param {number} [options.dragThreshold] Px before it's considered a pointer drag (Allows to click inner links, buttons, inputs, etc)
+     * @param {number} [options.scrollThreshold] Px before it's considered a scroll
      * @param {number} [options.edgeThreshold] Pixels from edge to start parent auto-scrolling
      * @param {number} [options.scrollSpeed] Scroll pixels per frame while ghost is near parent edge
      * @param {number} [options.zIndex] Maximum 32-bit signed integer
@@ -112,7 +113,8 @@ class JSort {
         this.opacity = 0.8;
         this.grabTimeout = 140;
         this.parentDrop = true;
-        this.dragThreshold = 8;
+        this.dragThreshold = 2;
+        this.scrollThreshold = 8;
         this.edgeThreshold = 50;
         this.scrollSpeed = 10;
         this.zIndex = 0x7FFFFFFF;
@@ -138,6 +140,16 @@ class JSort {
     }
 
     /**
+     * get all child elements of a sortable parent (ignore elGhost, if present)
+     * @param {HTMLElement} elParent
+     * @returns {HTMLElement[]}
+     */
+    getChildren(elParent) {
+        const children = /** @type {HTMLElement[]} */ ([...elParent.children].filter(el => el !== this.elGhost));
+        return children;
+    }
+
+    /**
      * Parse `data-jsort` attribute
      * @param {HTMLElement} el
      * @returns {Object}
@@ -148,6 +160,22 @@ class JSort {
             acc[prop] = !isNaN(Number(val)) ? Number(val) : /^(true|false)$/.test(val) ? JSON.parse(val) : val;
             return acc;
         }, {}) ?? {};
+    }
+
+    /**
+     * Check if touch or pointer move distance is significant
+     * @param {Object} startXY {clientX, clientY} start
+     * @param {Object} currentXY {clientX, clientY} current
+     * @param {number} distance Distance in px
+     * @returns {boolean}
+     */
+    isSignificantMove(startXY, currentXY, distance) {
+        const { clientX, clientY } = currentXY;
+        const deltaX = clientX - startXY.clientX;
+        const deltaY = clientY - startXY.clientY;
+        const touchMoveDistance = Math.hypot(deltaX, deltaY);
+        const isSignificant = touchMoveDistance >= distance;
+        return isSignificant;
     }
 
     /**
@@ -168,7 +196,7 @@ class JSort {
             zIndex: this.zIndex,
             opacity: this.opacity,
         });
-        this.elGhost.classList.remove(this.classActive);
+        this.elGhost.classList.remove(this.classActive, this.classTarget);
         this.elGhost.classList.add(this.classGhost);
         this.elGhost.animate([
             { scale: this.scale }
@@ -495,8 +523,12 @@ class JSort {
         const evTarget = /** @type {Element} */ (ev.target);
         const elClosestItem = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItems}`));
 
-        if (!elClosestItem) return;
-        if (elClosestItem.parentElement !== this.elGrabParent) return; // Does not belongs to this sortable
+        if (
+            // Not an item
+            !elClosestItem ||
+            // Does not belongs to this sortable
+            elClosestItem.parentElement !== this.elGrabParent
+        ) return;
 
         const foundHandler = /** @type {Element} */ (elClosestItem.querySelector(this.selectorHandler));
         const isHandlerVisible = foundHandler?.checkVisibility();
@@ -508,19 +540,19 @@ class JSort {
         this.pointerStart.clientX = ev.clientX;
         this.pointerStart.clientY = ev.clientY;
         this.elGrabbed = elClosestItem;
-        this.elGrabbed.setPointerCapture(ev.pointerId);
-        this.elGrabbed.classList.add(this.classActive);
-        this.elGrabbed.style.cursor = "move";
-        this.elGrabbed.style.userSelect = "none";
         this.indexGrab = [...this.elGrabParent.children].indexOf(this.elGrabbed);
 
         const isUserValidated = this.onBeforeGrab?.call(this, ev) ?? true;
 
         if (isUserValidated) {
-            this.onGrab?.call(this, ev);
+            // this.elGrabbed.setPointerCapture(ev.pointerId);
+            this.elGrabbed.classList.add(this.classActive);
+            this.elGrabbed.style.cursor = "move";
+            this.elGrabbed.style.userSelect = "none";
             if (ev.pointerType === "mouse") {
                 this.isScrollPrevented = true;
             }
+            this.onGrab?.call(this, ev);
         } else {
             this.reset();
         }
@@ -531,19 +563,23 @@ class JSort {
      * @param {PointerEvent} ev
      */
     move = (ev) => {
-        const { pointerId, clientX, clientY } = ev;
-
         if (
+            !this.elGrabbed ||
             !this.isScrollPrevented ||
-            !this.elGrabbed?.hasPointerCapture(pointerId)
+            this.hasPointerMoved && !this.elGrabbed?.hasPointerCapture(ev.pointerId)
         ) return;
 
-        if (!this.isFirstMove) {
-            this.isFirstMove = true;
+        const isSignificantMove = this.isSignificantMove(this.pointerStart, ev, this.dragThreshold);
+
+        if (!this.hasPointerMoved && isSignificantMove) {
+            this.hasPointerMoved = true;
+            this.elGrabbed.setPointerCapture(ev.pointerId);
+            // INSERT GHOST!
             this.appendGhost();
             this.elGrabbed.classList.add(this.classGrabbed);
         }
 
+        const { clientX, clientY } = ev;
         const isValid = this.checkValidity({ clientX, clientY });
         if (this.elGhost) {
             this.elGhost.style.translate = `${clientX - this.pointerStart.clientX}px ${clientY - this.pointerStart.clientY}px`;
@@ -568,34 +604,31 @@ class JSort {
     }
 
     /**
-     * get all child elements of a sortable parent (ignore elGhost, if present)
-     * @param {HTMLElement} elParent
-     * @returns {HTMLElement[]}
-     */
-    getChildren(elParent) {
-        const children = /** @type {HTMLElement[]} */ ([...elParent.children].filter(el => el !== this.elGhost));
-        return children;
-    }
-
-    /**
      * Called when an item is dropped on pointerUp
      * @param {PointerEvent} ev
      */
     drop = (ev) => {
         this.stopEdgeScroll();
         this.isScrollPrevented = false;
-        const { pointerId, clientX, clientY } = ev;
-        if (!this.elGrabbed || !this.elGrabbed?.hasPointerCapture(pointerId)) return;
+
+        if (!this.elGrabbed) return;
+
         this.elGrabbed.style.removeProperty("user-select");
         this.elGrabbed.style.removeProperty("cursor");
         this.elGrabbed.classList.remove(this.classActive, this.classGrabbed, this.classTouch);
         this.elTarget?.classList.remove(this.classTarget);
-        const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
-        // INSERT
-        this._currentEvent = ev;
-        const isInserted = this.insert(this.elGrabbed, elFromPoint);
-        if (isInserted) this.onDrop?.call(this, ev);
+
+        if (this.elGrabbed?.hasPointerCapture(ev.pointerId)) {
+            const { clientX, clientY } = ev;
+            const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
+            // INSERT
+            this._currentEvent = ev;
+            const isInserted = this.insert(this.elGrabbed, elFromPoint);
+            if (isInserted) this.onDrop?.call(this, ev);
+        }
+
         this.reset();
+        this.removeGhost();
     }
 
     /**
@@ -622,17 +655,15 @@ class JSort {
      */
     handleTouchMove = (ev) => {
         if (!this.elGrabbed || !this.initialTouch) return;
+
         // Handle drag
         if (this.isScrollPrevented) {
             ev.preventDefault();
             return
         }
+
         // Handle scroll
-        const { clientX, clientY } = ev.touches[0];
-        const deltaX = clientX - this.initialTouch.clientX;
-        const deltaY = clientY - this.initialTouch.clientY;
-        const touchMoveDistance = Math.hypot(deltaX, deltaY);
-        const isSignificantMove = touchMoveDistance > this.dragThreshold && !this.hasMoved;
+        const isSignificantMove = this.isSignificantMove(this.initialTouch, ev.touches[0], this.scrollThreshold);
         if (!this.hasMoved && isSignificantMove) {
             this.hasMoved = true;
             clearTimeout(this.moveTimeout);
@@ -672,7 +703,7 @@ class JSort {
         this.indexDrop = -1;
         this.affectedElements = [];
         this.pointerStart = {};
-        this.isFirstMove = false;
+        this.hasPointerMoved = false;
         this.scrollParent = null;
         this.scrollDirection = null;
         this.scrollAnim = null;
