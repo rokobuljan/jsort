@@ -393,6 +393,99 @@ class JSort {
     }
 
     /**
+     * Insert elItem into this JSort parent
+     * @param {HTMLElement} elGrabbed
+     * @param {HTMLElement} elTarget
+     * @returns {boolean} True if insertion was successful
+     */
+    insert(elGrabbed, elTarget) {
+        // Fallback to instance parent
+        const elGrabParent = elGrabbed.closest(this.selectorParent);
+        const grabChildren = elGrabParent ? [...elGrabParent.children] : [];
+        this.indexGrab = grabChildren.indexOf(elGrabbed);
+        const grabSiblings = grabChildren.filter((el) => el !== elGrabbed && !el.matches(`.${this.classGhost}`));
+        this.elDrop = /** @type {HTMLElement} */ (elTarget?.closest(`${this.selectorItems}, ${this.selectorParent}`));
+        const isDroppedOntoParent = this.elDrop?.matches(this.selectorParent);
+        this.elDropParent = /** @type {HTMLElement} */ (this.elDrop?.closest(this.selectorParent));
+        const dropChildren = this.elDropParent ? [...this.elDropParent.children] : [];
+        const isSameParent = elGrabParent === this.elDropParent;
+
+        this.indexDrop = isDroppedOntoParent ?
+            Math.max(0, isSameParent ? grabSiblings.length : dropChildren.length) :
+            dropChildren.indexOf(this.elDrop);
+
+        // 1. Retract ghost scaling and store its position
+        // (The order of execution of the two following lines is important!)
+        this.elGhost?.animate([{ scale: 1.0 }], { duration: 0, fill: "forwards" });
+        const ghostRect = this.elGhost?.getBoundingClientRect();
+
+        this.affectedElements = [];
+
+        if (this.swap) {
+            this.affectedElements = this.elDrop ? [this.elDrop] : [];
+        }
+        else if (isSameParent) {
+            const indexMin = isDroppedOntoParent ? this.indexGrab : Math.min(this.indexDrop, this.indexGrab);
+            const indexMax = isDroppedOntoParent ? grabSiblings.length - 1 : Math.max(this.indexDrop, this.indexGrab);
+            this.affectedElements = /** @type {HTMLElement[]} */ (grabSiblings.slice(indexMin, indexMax + 1));
+        }
+        else {
+            this.affectedElements = /** @type {HTMLElement[]} */ ([...grabSiblings.slice(this.indexGrab), ...dropChildren.slice(this.indexDrop)]);
+        }
+
+        // 2. Store initial positions of all affected elements (before DOM manipulation)
+        const affectedElementsData = this.affectedElements.map((el) => {
+            const { x, y } = el.getBoundingClientRect();
+            return { el, x, y };
+        });
+
+        const isValidDrop = this.checkValidity({ el: elTarget });
+        const isValidByUser = this.onBeforeDrop?.call(this, this._currentEvent) ?? true;
+        const isValid = Boolean(this.elDrop) && isValidDrop && isValidByUser;
+
+        if (isValid) {
+            // 3. Insert into DOM
+            if (this.swap && !isDroppedOntoParent) {
+                const elNext = elGrabbed.nextSibling;
+                this.elDropParent?.insertBefore(elGrabbed, this.elDrop.nextSibling);
+                elGrabParent?.insertBefore(this.elDrop, elNext);
+            } else {
+                if (isDroppedOntoParent) {
+                    this.elDropParent?.append(elGrabbed);
+                } else if (isSameParent) {
+                    this.elDropParent?.insertBefore(elGrabbed, this.indexDrop < this.indexGrab ? this.elDrop : this.elDrop.nextSibling);
+                } else {
+                    this.elDropParent?.insertBefore(elGrabbed, this.elDrop);
+                }
+            }
+
+            // 4. Animate other elements
+            affectedElementsData.forEach((data) => {
+                if (data.el === elGrabbed) return; // We'll animate the grabbed item later
+                this.animateItem(data);
+            });
+        }
+
+        // 5. Always animate the grabbed item
+        if (ghostRect) {
+            // const elGrabbed = this.elGrabbed;
+            elGrabbed.classList.add(`${this.classAnimatedDrop}`);
+            const anim = this.animateItem({ el: elGrabbed, x: ghostRect.left, y: ghostRect.top });
+            if (anim) {
+                anim.addEventListener("finish", () => {
+                    elGrabbed.classList.remove(`${this.classAnimatedDrop}`);
+                    this.onAnimationEnd?.call(this);
+                });
+            } else {
+                elGrabbed.classList.remove(`${this.classAnimatedDrop}`);
+            }
+        }
+
+        this.removeGhost();
+        return isValid;
+    }
+
+    /**
      * Grab an item
      * @param {PointerEvent} ev
      */
@@ -499,99 +592,6 @@ class JSort {
     getChildren(elParent) {
         const children = /** @type {HTMLElement[]} */ ([...elParent.children].filter(el => el !== this.elGhost));
         return children;
-    }
-
-    /**
-     * Insert elItem into this JSort parent
-     * @param {HTMLElement} elGrabbed
-     * @param {HTMLElement} elTarget
-     * @returns {boolean} True if insertion was successful
-     */
-    insert(elGrabbed, elTarget) {
-        // Fallback to instance parent
-        const elGrabParent = elGrabbed.closest(this.selectorParent);
-        const grabChildren = elGrabParent ? [...elGrabParent.children] : [];
-        this.indexGrab = grabChildren.indexOf(elGrabbed);
-        const grabSiblings = grabChildren.filter((el) => el !== elGrabbed && !el.matches(`.${this.classGhost}`));
-        this.elDrop = /** @type {HTMLElement} */ (elTarget?.closest(`${this.selectorItems}, ${this.selectorParent}`));
-        const isDroppedOntoParent = this.elDrop?.matches(this.selectorParent);
-        this.elDropParent = /** @type {HTMLElement} */ (this.elDrop?.closest(this.selectorParent));
-        const dropChildren = this.elDropParent ? [...this.elDropParent.children] : [];
-        const isSameParent = elGrabParent === this.elDropParent;
-
-        this.indexDrop = isDroppedOntoParent ?
-            Math.max(0, isSameParent ? grabSiblings.length : dropChildren.length) :
-            dropChildren.indexOf(this.elDrop);
-
-        // 1. Retract ghost scaling and store its position
-        // (The order of execution of the two following lines is important!)
-        this.elGhost?.animate([{ scale: 1.0 }], { duration: 0, fill: "forwards" });
-        const ghostRect = this.elGhost?.getBoundingClientRect();
-
-        this.affectedElements = [];
-
-        if (this.swap) {
-            this.affectedElements = this.elDrop ? [this.elDrop] : [];
-        }
-        else if (isSameParent) {
-            const indexMin = isDroppedOntoParent ? this.indexGrab : Math.min(this.indexDrop, this.indexGrab);
-            const indexMax = isDroppedOntoParent ? grabSiblings.length - 1 : Math.max(this.indexDrop, this.indexGrab);
-            this.affectedElements = /** @type {HTMLElement[]} */ (grabSiblings.slice(indexMin, indexMax + 1));
-        }
-        else {
-            this.affectedElements = /** @type {HTMLElement[]} */ ([...grabSiblings.slice(this.indexGrab), ...dropChildren.slice(this.indexDrop)]);
-        }
-
-        // 2. Store initial positions of all affected elements (before DOM manipulation)
-        const affectedElementsData = this.affectedElements.map((el) => {
-            const { x, y } = el.getBoundingClientRect();
-            return { el, x, y };
-        });
-
-        const isValidDrop = this.checkValidity({ el: elTarget });
-        const isValidByUser = this.onBeforeDrop?.call(this, this._currentEvent) ?? true;
-        const isValid = Boolean(this.elDrop) && isValidDrop && isValidByUser;
-
-        if (isValid) {
-            // 3. Insert into DOM
-            if (this.swap && !isDroppedOntoParent) {
-                const elNext = elGrabbed.nextSibling;
-                this.elDropParent?.insertBefore(elGrabbed, this.elDrop.nextSibling);
-                elGrabParent?.insertBefore(this.elDrop, elNext);
-            } else {
-                if (isDroppedOntoParent) {
-                    this.elDropParent?.append(elGrabbed);
-                } else if (isSameParent) {
-                    this.elDropParent?.insertBefore(elGrabbed, this.indexDrop < this.indexGrab ? this.elDrop : this.elDrop.nextSibling);
-                } else {
-                    this.elDropParent?.insertBefore(elGrabbed, this.elDrop);
-                }
-            }
-
-            // 4. Animate other elements
-            affectedElementsData.forEach((data) => {
-                if (data.el === elGrabbed) return; // We'll animate the grabbed item later
-                this.animateItem(data);
-            });
-        }
-
-        // 5. Always animate the grabbed item
-        if (ghostRect) {
-            // const elGrabbed = this.elGrabbed;
-            elGrabbed.classList.add(`${this.classAnimatedDrop}`);
-            const anim = this.animateItem({ el: elGrabbed, x: ghostRect.left, y: ghostRect.top });
-            if (anim) {
-                anim.addEventListener("finish", () => {
-                    elGrabbed.classList.remove(`${this.classAnimatedDrop}`);
-                    this.onAnimationEnd?.call(this);
-                });
-            } else {
-                elGrabbed.classList.remove(`${this.classAnimatedDrop}`);
-            }
-        }
-
-        this.removeGhost();
-        return isValid;
     }
 
     /**
