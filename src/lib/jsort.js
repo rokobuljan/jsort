@@ -38,9 +38,6 @@ class JSort {
     /** @type {HTMLElement[]} */
     affectedElements = [];
 
-    /** @type {PointerEventInit | Object} */
-    pointerStart = {};
-
     /** @type {HTMLElement | null} */
     scrollParent = null;
 
@@ -63,45 +60,49 @@ class JSort {
     hasPointerMoved = false;
 
     /** @type {boolean} */
-    hasMoved = false;
+    hasTouchMoved = false;
 
     /** @type {null | { clientX: number, clientY: number }} */
-    initialTouch = null;
+    pointerStart = null;
+
+    /** @type {null | { clientX: number, clientY: number }} */
+    touchStart = null;
 
     /**
      * @constructor
      * @param {HTMLElement} el
      * @param {Object} [options]
-     * @param {string} [options.group] Link-group parents i.e: "group-a"
-     * @param {boolean} [options.swap] Swap items mode (Swap elements on drop)
-     * @param {number} [options.duration] Ms items animation duration
-     * @param {string} [options.easing] Items animation easing
-     * @param {number} [options.scale] Ghost element scale
-     * @param {number} [options.opacity] Ghost element opacity
-     * @param {number} [options.grabTimeout] Ms before grab is considered instead of scroll on touch devices (has no effect for mouse Event)
-     * @param {boolean} [options.parentDrop] Can drop item onto parent
-     * @param {number} [options.dragThreshold] Px before it's considered a pointer drag (Allows to click inner links, buttons, inputs, etc)
-     * @param {number} [options.scrollThreshold] Px before it's considered a scroll
-     * @param {number} [options.edgeThreshold] Pixels from edge to start parent auto-scrolling
-     * @param {number} [options.scrollSpeed] Scroll pixels per frame while ghost is near parent edge
-     * @param {number} [options.zIndex] Maximum 32-bit signed integer
-     * @param {string} [options.selectorParent] Selector for parent elements
-     * @param {string} [options.selectorItems] Selector for item elements
-     * @param {string} [options.selectorHandler] Selector for handler elements
-     * @param {string} [options.classGhost] Class name for ghost element
-     * @param {string} [options.classActive] Class name for item on mousedown, pointerdown
-     * @param {string} [options.classTouch] Class name for item on touchstart event only
-     * @param {string} [options.classGrabbed] Class name for grabbed item
-     * @param {string} [options.classTarget] Class name for hovered element (either item or Sort parent)
-     * @param {string} [options.classAnimated] Class name for all animated elements (on drop)
-     * @param {string} [options.classAnimatedDrop] Class name for the animated grabbed element (on drop)
-     * @param {string} [options.classInvalid] Class name for invalid item
-     * @param {function} [options.onBeforeGrab] Callback function called before grab (return false to cancel grab)
-     * @param {function} [options.onGrab] Callback function called after grab
-     * @param {function} [options.onMove] Callback function called on move
-     * @param {function} [options.onBeforeDrop] Callback function called before drop (return false to cancel drop)
-     * @param {function} [options.onDrop] Callback function called after drop
-     * @param {function} [options.onAnimationEnd] Callback function called when animation ends
+     * @param {string} [options.group=""] Link-group parents i.e: "group-a"
+     * @param {boolean} [options.swap=false] Swap items mode (Swap elements on drop)
+     * @param {number} [options.duration=420] Ms items animation duration
+     * @param {string} [options.easing="cubic-bezier(0.6, 0, 0.6, 1)"] Items animation easing
+     * @param {number} [options.scale=1.1] Ghost element scale
+     * @param {number} [options.opacity=0.8] Ghost element opacity
+     * @param {number} [options.grabTimeout=140] Ms before grab is considered instead of scroll on touch devices (has no effect for mouse Event)
+     * @param {boolean} [options.parentDrop=true] Can drop item onto parent
+     * @param {number} [options.dragThreshold=0] Px before it's considered a pointer drag (Allows to click inner links, buttons, inputs, etc)
+     * @param {number} [options.scrollThreshold=8] Px before it's considered a scroll
+     * @param {number} [options.edgeThreshold=50] Pixels from edge to start parent auto-scrolling
+     * @param {number} [options.scrollSpeed=10] Scroll pixels per frame while ghost is near parent edge
+     * @param {number} [options.zIndex=2147483647] Maximum 32-bit signed integer
+     * @param {string} [options.selectorParent=".jsort"] Selector for parent elements
+     * @param {string} [options.selectorItems=".jsort-item"] Selector for item elements
+     * @param {string} [options.selectorHandler=".jsort.handler"] Selector for handler elements
+     * @param {string} [options.selectorIgnore=":is(in"] Selector for ignoring specific child elements like action elements etc.
+     * @param {string} [options.classGhost="is-jsort-ghost"] Class name for ghost element
+     * @param {string} [options.classActive="is-jsort-active"] Class name for item on mousedown, pointerdown
+     * @param {string} [options.classTouch="is-jsort-touch"] Class name for item on touchstart event only
+     * @param {string} [options.classGrabbed="is-jsort-grabbed"] Class name for grabbed item
+     * @param {string} [options.classTarget="is-jsort-target"] Class name for hovered element (either item or Sort parent)
+     * @param {string} [options.classAnimated="is-jsort-animated"] Class name for all animated elements (on drop)
+     * @param {string} [options.classAnimatedDrop="is-jsort-animated-drop"] Class name for the animated grabbed element (on drop)
+     * @param {string} [options.classInvalid="is-jsort-invalid"] Class name for invalid item
+     * @param {function} [options.onBeforeGrab=() => {}] Callback function called before grab (return false to cancel grab)
+     * @param {function} [options.onGrab=() => {}] Callback function called after grab
+     * @param {function} [options.onMove=() => {}] Callback function called on move
+     * @param {function} [options.onBeforeDrop=() => {}] Callback function called before drop (return false to cancel drop)
+     * @param {function} [options.onDrop=() => {}] Callback function called after drop
+     * @param {function} [options.onAnimationEnd=() => {}] Callback function called when animation ends
      */
     constructor(el, options = {}) {
         this.elGrabParent = el;
@@ -113,14 +114,15 @@ class JSort {
         this.opacity = 0.8;
         this.grabTimeout = 140;
         this.parentDrop = true;
-        this.dragThreshold = 2;
+        this.dragThreshold = 0;
         this.scrollThreshold = 8;
         this.edgeThreshold = 50;
         this.scrollSpeed = 10;
-        this.zIndex = 0x7FFFFFFF;
+        this.zIndex = 2147483647 // 0x7FFFFFFF;
         this.selectorParent = ".jsort";
         this.selectorItems = ".jsort-item";
         this.selectorHandler = ".jsort-handler";
+        this.selectorIgnore = `.jsort-ignore, :is(input, select, textarea, button, details > summary, [contenteditable=""], [contenteditable="true"], [tabindex]:not([tabindex^="-"]), a[href]:not(a[href=""]), area[href]):not(:disabled)`;
         this.classGhost = "is-jsort-ghost";
         this.classActive = "is-jsort-active";
         this.classTouch = "is-jsort-touch";
@@ -522,8 +524,11 @@ class JSort {
 
         const evTarget = /** @type {Element} */ (ev.target);
         const elClosestItem = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItems}`));
+        const elIgnored = evTarget.closest(this.selectorIgnore);
 
         if (
+            // Is in ignore list
+            elIgnored ||
             // Not an item
             !elClosestItem ||
             // Does not belongs to this sortable
@@ -536,9 +541,8 @@ class JSort {
         const elHandler = evTarget?.closest(this.selectorHandler);
 
         if (hasHandler && isHandlerVisible && !elHandler) return;
-
-        this.pointerStart.clientX = ev.clientX;
-        this.pointerStart.clientY = ev.clientY;
+        const { clientX, clientY} = ev;
+        this.pointerStart = { clientX, clientY };
         this.elGrabbed = elClosestItem;
         this.indexGrab = [...this.elGrabParent.children].indexOf(this.elGrabbed);
 
@@ -581,7 +585,7 @@ class JSort {
 
         const { clientX, clientY } = ev;
         const isValid = this.checkValidity({ clientX, clientY });
-        if (this.elGhost) {
+        if (this.elGhost && this.pointerStart) {
             this.elGhost.style.translate = `${clientX - this.pointerStart.clientX}px ${clientY - this.pointerStart.clientY}px`;
             this.elGhost.classList.toggle(this.classInvalid, !isValid);
         }
@@ -636,13 +640,13 @@ class JSort {
      * @param {TouchEvent} ev
      */
     handleTouchStart = (ev) => {
-        if (!this.elGrabbed || this.initialTouch) return;
+        if (!this.elGrabbed || this.touchStart) return;
         const { clientX, clientY } = ev.touches[0];
-        this.initialTouch = { clientX, clientY };
+        this.touchStart = { clientX, clientY };
         this.moveTimeout && clearTimeout(this.moveTimeout);
         this.moveTimeout = setTimeout(() => {
             // Only activate drag if we haven't moved beyond threshold
-            if (!this.hasMoved) {
+            if (!this.hasTouchMoved) {
                 this.elGrabbed?.classList.add(`${this.classTouch}`);
                 this.isScrollPrevented = true;
             }
@@ -654,7 +658,7 @@ class JSort {
      * @param {TouchEvent} ev
      */
     handleTouchMove = (ev) => {
-        if (!this.elGrabbed || !this.initialTouch) return;
+        if (!this.elGrabbed || !this.touchStart) return;
 
         // Handle drag
         if (this.isScrollPrevented) {
@@ -663,9 +667,9 @@ class JSort {
         }
 
         // Handle scroll
-        const isSignificantMove = this.isSignificantMove(this.initialTouch, ev.touches[0], this.scrollThreshold);
-        if (!this.hasMoved && isSignificantMove) {
-            this.hasMoved = true;
+        const isSignificantMove = this.isSignificantMove(this.touchStart, ev.touches[0], this.scrollThreshold);
+        if (!this.hasTouchMoved && isSignificantMove) {
+            this.hasTouchMoved = true;
             clearTimeout(this.moveTimeout);
             this.moveTimeout = undefined;
         }
@@ -702,16 +706,16 @@ class JSort {
         this.indexGrab = -1;
         this.indexDrop = -1;
         this.affectedElements = [];
-        this.pointerStart = {};
-        this.hasPointerMoved = false;
         this.scrollParent = null;
         this.scrollDirection = null;
         this.scrollAnim = null;
         this.edgePressure = 0;
         this.moveTimeout = undefined;
         this.isScrollPrevented = false;
-        this.hasMoved = false;
-        this.initialTouch = null;
+        this.pointerStart = null;
+        this.touchStart = null;
+        this.hasPointerMoved = false;
+        this.hasTouchMoved = false;
     }
 
     /**
