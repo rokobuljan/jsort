@@ -303,7 +303,7 @@ For custom styling JSort provides several classes you could use in your CSS to f
 | .jsort                  | Parent container                                                                      |
 | .jsort-item             | Sortable children elements                                                            |
 | .jsort-handler          | Child of `.jsort-item` to be used as a grab handler                                   |
-| .jsort-ghost            | Ghost element                                                                         |
+| .is-jsort-ghost         | Class added tp Ghost element                                                          |
 | .is-jsort-active        | Active item (not yet grabbed/moved). Useful as a *"drag ready"* clue on touch devices |
 | .is-jsort-grabbed       | Currently grabbed item (PS: not the ghost element)                                    |
 | .is-jsort-target        | Hovered element item or `.jsort` parent                                               |
