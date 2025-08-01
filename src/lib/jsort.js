@@ -527,23 +527,6 @@ class JSort {
     }
 
     /**
-     * Just like Array.sort() but animated
-     * @param {(a: HTMLElement, b: HTMLElement) => number} fn
-     * @returns {HTMLElement[]} Sorted items
-     */
-    sort(fn) {
-        const items = this.getChildren(this.elGrabParent);
-        const affectedElementsData = items.map((el) => {
-            const { x, y } = el.getBoundingClientRect();
-            return { el, x, y };
-        });
-        const itemsSorted = [...items].sort(fn);
-        this.elGrabParent.append(...itemsSorted);
-        affectedElementsData.forEach((data) => this.animateItem(data));
-        return itemsSorted;
-    }
-
-    /**
      * Move an item
      * @param {PointerEvent} ev
      */
@@ -655,6 +638,23 @@ class JSort {
             clearTimeout(this.moveTimeout);
             this.moveTimeout = undefined;
         }
+    }
+
+    /**
+     * Just like Array.sort() but animated
+     * @param {(a: HTMLElement, b: HTMLElement) => number} fn
+     * @returns {HTMLElement[]} Sorted items
+     */
+    sort(fn) {
+        const items = this.getChildren(this.elGrabParent);
+        const affectedElementsData = items.map((el) => {
+            const { x, y } = el.getBoundingClientRect();
+            return { el, x, y };
+        });
+        const itemsSorted = [...items].sort(fn);
+        this.elGrabParent.append(...itemsSorted);
+        affectedElementsData.forEach((data) => this.animateItem(data));
+        return itemsSorted;
     }
 
     /**
