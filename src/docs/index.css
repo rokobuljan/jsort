@@ -111,10 +111,10 @@ label {
 input:not([type="checkbox"], [type="radio"]),
 select {
     padding: 0.6rem 1rem;
-    border: 0.3rem solid var(--bg2);
-    background: var(--fg);
+    border: none;
     color: var(--bg);
-    border-radius: 1.5em;
+    background-color: var(--fg);
+    border-radius: 1rem;
 }
 
 /* Details tag animation */
@@ -176,10 +176,10 @@ code {
     font-size: 0.8rem;
 }
 
-s #app {
+#app {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 5rem;
 }
 
 .col,
@@ -219,14 +219,13 @@ s #app {
 }
 
 .grid {
-    color-scheme: dark;
+    color-scheme: light;
     display: grid;
     width: 100%;
     gap: 1rem;
     margin: 0 auto;
-    color: var(--bg);
+    color: var(--fg);
     grid-template-columns: repeat(auto-fill, minmax(min(7rem, 100%), 1fr));
-    margin-bottom: 2rem;
 
     & > * {
         padding: 1em;
@@ -291,6 +290,13 @@ s #app {
         & + li {
             margin-top: -0.3rem;
         }
+    }
+}
+
+.grid,
+.list {
+    a {
+        color: #fff;
     }
 }
 

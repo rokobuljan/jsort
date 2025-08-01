@@ -70,43 +70,43 @@ const JSortInstance = new JSort(HTMLElement, { /* Options */ });
 
 The second parameter accepts an options object to customize the sorting behavior and appearance.
 
-| Option                | Type       | Default                                  | Description                                                          |
-| --------------------- | ---------- | ---------------------------------------- | -------------------------------------------------------------------- |
-| **Behavior**          |            |                                          |                                                                      |
-| `group`               | `string`   | `""`                                     | Group sortable parents                                               |
-| `swap`                | `boolean`  | `false`                                  | Swap elements (instead of reordering)                                |
-| `parentDrop`          | `boolean`  | `true`                                   | Allow drop onto parent container                                     |
-| `dragThreshold`       | `number`   | `0`                                      | Px before it's considered a pointer-drag                             |
-| `grabTimeout`         | `number`   | `140`                                    | Grab delay in *ms* (touch devices only)                              |
-| **Scroll**            |            |                                          |                                                                      |
-| `scrollThreshold`     | `number`   | `8`                                      | Px before it's considered a scroll                                   |
-| `edgeThreshold`       | `number`   | `50`                                     | *Px* edge distance to trigger auto-scroll                            |
-| `scrollSpeed`         | `number`   | `10`                                     | Auto-scroll speed in pixels per step                                 |
-| **Animation**         |            |                                          |                                                                      |
-| `duration`            | `number`   | `420`                                    | *ms* sort animation duration                                         |
-| `easing`              | `string`   | `"cubic-bezier(0.6,0,0.6,1)"`            | Animation easing function                                            |
-| **Ghost Styles**      |            |                                          |                                                                      |
-| `scale`               | `number`   | `1.1`                                    | Ghost element scale                                                  |
-| `opacity`             | `number`   | `0.8`                                    | Ghost element opacity (0-1)                                          |
-| `zIndex`              | `number`   | `2147483647`                             | Ghost element z-index                                                |
-| **Selectors**         |            |                                          |                                                                      |
-| `selectorParent`      | `string`   | `".jsort"`                               | CSS selector for parent container                                    |
-| `selectorItems`       | `string`   | `".jsort-item"`                          | CSS selector for sortable items                                      |
-| `selectorHandler`     | `string`   | `".jsort-handler"`                       | CSS selector for drag handles                                        |
-| `selectorIgnore`      | `string`   | `".jsort-ignore, :is(action-elements*)"` | CSS selector to ignore grab for specific items (links, buttons, etc) |
-| **CSS Classes**       |            |                                          |                                                                      |
-| `classGhost`          | `string`   | `"is-jsort-ghost"`                       | Applied to ghost element                                             |
-| `classAnimated`       | `string`   | `"is-jsort-animated"`                    | Applied during animations                                            |
-| `classGrabbed`        | `string`   | `"is-jsort-grabbed"`                     | Applied to grabbed element                                           |
-| `classTarget`         | `string`   | `"is-jsort-target"`                      | Applied to drop target element                                       |
-| `classInvalid`        | `string`   | `"is-jsort-invalid"`                     | Applied to ghost over invalid drop zones                             |
-| **Event Callbacks**   |            |                                          |                                                                      |
-| `onBeforeGrab(event)` | `function` |                                          | Called before item grab                                              |
-| `onGrab(event)`       | `function` |                                          | Called on item grabb                                                 |
-| `onMove(event)`       | `function` |                                          | Called on item move                                                  |
-| `onBeforeDrop(event)` | `function` |                                          | Called before itme drop                                              |
-| `onDrop(event)`       | `function` |                                          | Called on drop                                                       |
-| `onAnimationEnd()`    | `function` |                                          | Called on drop animation end                                         |
+| Option                | Type       | Default                            | Description                              |
+| --------------------- | ---------- | ---------------------------------- | ---------------------------------------- |
+| **Behavior**          |            |                                    |                                          |
+| `group`               | `string`   | `""`                               | Group sortable parents                   |
+| `swap`                | `boolean`  | `false`                            | Swap elements (instead of reordering)    |
+| `parentDrop`          | `boolean`  | `true`                             | Allow drop onto parent container         |
+| `dragThreshold`       | `number`   | `0`                                | Px before it's considered a pointer-drag |
+| `grabTimeout`         | `number`   | `140`                              | Grab delay in *ms* (touch devices only)  |
+| **Scroll**            |            |                                    |                                          |
+| `scrollThreshold`     | `number`   | `8`                                | Px before considering suto-scroll        |
+| `edgeThreshold`       | `number`   | `50`                               | Autoscroll distance to edge              |
+| `scrollSpeed`         | `number`   | `10`                               | Auto-scroll speed in pixels per step     |
+| **Animation**         |            |                                    |                                          |
+| `duration`            | `number`   | `420`                              | Sort animation duration in *ms*          |
+| `easing`              | `string`   | `"cubic-bezier(0.6,0,0.6,1)"`      | Animation easing function                |
+| **Ghost Styles**      |            |                                    |                                          |
+| `scale`               | `number`   | `1.1`                              | Ghost element scale                      |
+| `opacity`             | `number`   | `0.8`                              | Ghost element opacity (0-1)              |
+| `zIndex`              | `number`   | `2147483647`                       | Ghost element z-index                    |
+| **Selectors**         |            |                                    |                                          |
+| `selectorParent`      | `string`   | `".jsort"`                         | Parent container selector                |
+| `selectorItems`       | `string`   | `".jsort-item:not(.jsort-ignore)"` | Sortable (and *:not* sortable) selector  |
+| `selectorHandler`     | `string`   | `".jsort-handler"`                 | Drag handle selector                     |
+| `selectorIgnore`      | `string`   | `":is(action-elements*)"`          | Ignore children (target) selector        |
+| **CSS Classes**       |            |                                    |                                          |
+| `classGhost`          | `string`   | `"is-jsort-ghost"`                 | Ghost element class                      |
+| `classAnimated`       | `string`   | `"is-jsort-animated"`              | ANimated elements class                  |
+| `classGrabbed`        | `string`   | `"is-jsort-grabbed"`               | Grabbed element class                    |
+| `classTarget`         | `string`   | `"is-jsort-target"`                | Hovered, targeted element class          |
+| `classInvalid`        | `string`   | `"is-jsort-invalid"`               | Ghost element over invalid zones         |
+| **Event Callbacks**   |            |                                    |                                          |
+| `onBeforeGrab(event)` | `function` |                                    | Called before item grab                  |
+| `onGrab(event)`       | `function` |                                    | Called on item grabb                     |
+| `onMove(event)`       | `function` |                                    | Called on item move                      |
+| `onBeforeDrop(event)` | `function` |                                    | Called before itme drop                  |
+| `onDrop(event)`       | `function` |                                    | Called on drop                           |
+| `onAnimationEnd()`    | `function` |                                    | Called on drop animation end             |
 
 ### Example
 

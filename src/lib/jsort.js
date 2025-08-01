@@ -120,9 +120,9 @@ class JSort {
         this.scrollSpeed = 10;
         this.zIndex = 2147483647 // 0x7FFFFFFF;
         this.selectorParent = ".jsort";
-        this.selectorItems = ".jsort-item";
+        this.selectorItems = ".jsort-item:not(.jsort-ignore)";
         this.selectorHandler = ".jsort-handler";
-        this.selectorIgnore = `.jsort-ignore, :is(input, select, textarea, button, details > summary, [contenteditable=""], [contenteditable="true"], [tabindex]:not([tabindex^="-"]), a[href]:not(a[href=""]), area[href]):not(:disabled)`;
+        this.selectorIgnore = `:is(input, select, textarea, button, details > summary, [contenteditable=""], [contenteditable="true"], [tabindex]:not([tabindex^="-"]), a[href]:not(a[href=""]), area[href]):not(:disabled)`;
         this.classGhost = "is-jsort-ghost";
         this.classActive = "is-jsort-active";
         this.classTouch = "is-jsort-touch";
@@ -184,7 +184,7 @@ class JSort {
      * Append ghost element to grab's parent
      * @returns {void}
      */
-    appendGhost() {
+    insertGhost() {
         if (!this.elGrabbed) return;
         const { x, y, width, height } = this.elGrabbed.getBoundingClientRect();
         this.elGhost = /** @type {HTMLElement} */ (this.elGrabbed.cloneNode(true));
@@ -524,11 +524,11 @@ class JSort {
 
         const evTarget = /** @type {Element} */ (ev.target);
         const elClosestItem = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItems}`));
-        const elIgnored = evTarget.closest(this.selectorIgnore);
+        const isElIgnored = Boolean(evTarget !== elClosestItem && evTarget.closest(this.selectorIgnore));
 
         if (
             // Is in ignore list
-            elIgnored ||
+            isElIgnored ||
             // Not an item
             !elClosestItem ||
             // Does not belongs to this sortable
@@ -541,7 +541,7 @@ class JSort {
         const elHandler = evTarget?.closest(this.selectorHandler);
 
         if (hasHandler && isHandlerVisible && !elHandler) return;
-        const { clientX, clientY} = ev;
+        const { clientX, clientY } = ev;
         this.pointerStart = { clientX, clientY };
         this.elGrabbed = elClosestItem;
         this.indexGrab = [...this.elGrabParent.children].indexOf(this.elGrabbed);
@@ -549,7 +549,7 @@ class JSort {
         const isUserValidated = this.onBeforeGrab?.call(this, ev) ?? true;
 
         if (isUserValidated) {
-            // this.elGrabbed.setPointerCapture(ev.pointerId);
+            ev.preventDefault(); // prevent i.e: links drag and other browser defaults
             this.elGrabbed.classList.add(this.classActive);
             this.elGrabbed.style.cursor = "move";
             this.elGrabbed.style.userSelect = "none";
@@ -578,9 +578,9 @@ class JSort {
         if (!this.hasPointerMoved && isSignificantMove) {
             this.hasPointerMoved = true;
             this.elGrabbed.setPointerCapture(ev.pointerId);
-            // INSERT GHOST!
-            this.appendGhost();
             this.elGrabbed.classList.add(this.classGrabbed);
+            // INSERT GHOST!
+            this.insertGhost();
         }
 
         const { clientX, clientY } = ev;
