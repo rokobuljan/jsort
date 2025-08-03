@@ -293,13 +293,17 @@ myJSort.sort(sortLogic);</code></pre>
                 <details>
                     <summary>How to ignore grab of certain items</summary>
                     <div class="answer">
-                        By default, all immediate children are sortable. There's a couple of ways to ignore certain
+                        By default, all immediate children are sortable. There's several ways to ignore certain
                         elements
                         <ul>
                             <li>Add the HTML class <code>jsort-ignore</code> to your desired items,
                                 or modify the desired class in Options
                                 <code>selectorItemsIgnore: ".my-ignore-class"</code> (by default it's
                                 <code>".jsort-ignore"</code>)
+                            </li>
+                            <li>
+                                In Options, define a chstom selector for your itens using the <code>:not()</code> CSS selector like:
+                                <code>selectorItems: "*:not(.ignore)"</code> and add that chstom <code>.ignore</code> class to your Elements
                             </li>
                             <li>In Options, define a custom items selector: <code>".item"</code> and add it only to the
                                 children

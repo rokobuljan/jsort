@@ -11,9 +11,10 @@ const els = (sel, par = document) => par.querySelectorAll(sel);
 el("#version").textContent = `${JSort.version}`;
 console.log(`Running JSort version: ${JSort.version}`);
 
-els(".jsort:not([id^=example])").forEach((el) => {
+els(`.jsort:not([id^="example-"])`).forEach((el) => {
     // Make sortable
     new JSort(el, {
+        selectorItems: "*:not(.ignore)",
         onDrop(data) {
             console.log(data);
             // console.log(`Dropped "${this.elGrabbed.textContent}" from index ${this.indexGrab} into index ${this.indexDrop} Parents:`, this.elGrabParent, this.elDropParent);
