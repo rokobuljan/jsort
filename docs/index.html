@@ -17,7 +17,7 @@
     <meta property="og:image" content="wallpaper.png" />
     <link rel="author" href="https://github.com/rokobuljan" />
     <link rel="shortcut icon" href="jsort-favicon.png" type="image/x-icon" />
-  <script type="module" crossorigin src="./assets/index-60pM4_04.js"></script>
+  <script type="module" crossorigin src="./assets/index-DHHU_J_G.js"></script>
   <link rel="stylesheet" crossorigin href="./assets/index-CdXZKPS8.css">
 </head>
 
@@ -46,7 +46,7 @@
                 <details>
                     <summary>View code</summary>
                     <pre><code>
-&lt;div class="jsort" id="myGrid"&gt;
+&lt;div class="jsort"&gt;
   &lt;div&gt;One&lt;/div&gt;
   &lt;div&gt;
     &lt;div class="jsort-handler"&gt;Handler&lt;/div&gt;
@@ -56,7 +56,7 @@
 
 &lt;script type="module"&gt;
 import JSort from "@rbuljan/jsort";
-document.querySelectorAll(".grid").forEach((el) =&gt; new JSort(el));
+document.querySelectorAll(".jsort").forEach((el) =&gt; new JSort(el));
 &lt;/script&gt;</code></pre>
                 </details>
             </div>
@@ -103,17 +103,17 @@ document.querySelectorAll(".grid").forEach((el) =&gt; new JSort(el));
                 <details>
                     <summary>View code</summary>
                     <pre><code>
-&lt;ul class="jsort list" data-jsort="group:a"&gt;
+&lt;ul class="jsort" data-jsort="group:a"&gt;
   &lt;li&gt; A 1 &lt;/li&gt;
   &lt;li&gt; A 2 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;ul class="jsort list" data-jsort="group:a"&gt;
+&lt;ul class="jsort" data-jsort="group:a"&gt;
   &lt;li&gt; B 1 &lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;script type="module"&gt;
 import JSort from "@rbuljan/jsort";
-document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
+document.querySelectorAll(".jsort").forEach((el) =&gt; new JSort(el));
 &lt;/script&gt;
 </code></pre>
                 </details>
@@ -143,9 +143,9 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
                 <details>
                     <summary>View code</summary>
                     <pre><code>
-&lt;ul class="jsort list" data-jsort="group:a"&gt;
+&lt;ul class="jsort" data-jsort="group:a"&gt;
   &lt;li&gt; A
-    &lt;ul class="jsort list" data-jsort="group:a"&gt;
+    &lt;ul class="jsort" data-jsort="group:a"&gt;
       &lt;li&gt; B &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
@@ -153,7 +153,7 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
 
 &lt;script type="module"&gt;
 import JSort from "@rbuljan/jsort";
-document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
+document.querySelectorAll(".jsort").forEach((el) =&gt; new JSort(el));
 &lt;/script&gt;</code></pre>
                 </details>
             </div>
@@ -192,17 +192,17 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
                 <details>
                     <summary>View code</summary>
                     <pre><code>
-&lt;ul class="jsort list" data-jsort="group:a;swap:true;"&gt;
+&lt;ul class="jsort" data-jsort="group:a;swap:true;"&gt;
   &lt;li&gt; A 1 &lt;/li&gt;
   &lt;li&gt; A 2 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;ul class="jsort list" data-jsort="group:a;swap:true;"&gt;
+&lt;ul class="jsort" data-jsort="group:a;swap:true;"&gt;
   &lt;li&gt; B 1 &lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;script type="module"&gt;
 import JSort from "@rbuljan/jsort";
-document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
+document.querySelectorAll(".jsort").forEach((el) =&gt; new JSort(el));
 &lt;/script&gt;</code></pre>
                 </details>
             </div>
@@ -237,12 +237,12 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
                 </p>
                 <details>
                     <summary>View code</summary>
-                    <pre><code>
-myJSort.sort((a, b) => {
-  return a.textContent.localeCompare(b.textContent, "en", {
-    numeric: true
-  });
-});</code></pre>
+                    <pre><code>;
+const myJSort = new JSort(document.querySelector(".jsort"));
+// Your custom sorting logic:
+const sortLogic = (a, b) => a.textContent.localeCompare(b.textContent, "en", { numeric: true });
+// Sort:
+myJSort.sort(sortLogic);</code></pre>
                 </details>
             </div>
             <div class="col">
