@@ -236,7 +236,8 @@ document.querySelectorAll(".jsort").forEach((el) =&gt; new JSort(el));
                 </p>
                 <details>
                     <summary>View code</summary>
-                    <pre><code>;
+                    <pre><code>
+import JSort from "@rbuljan/jsort";
 const myJSort = new JSort(document.querySelector(".jsort"));
 // Your custom sorting logic:
 const sortLogic = (a, b) => a.textContent.localeCompare(b.textContent, "en", { numeric: true });
