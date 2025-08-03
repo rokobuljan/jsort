@@ -86,7 +86,7 @@ The second parameter accepts an options object to customize the sorting behavior
 | `group`                | `string`   | `""`                  | Group sortable parents                                |
 | `swap`                 | `boolean`  | `false`               | Swap elements (instead of reordering)                 |
 | `parentDrop`           | `boolean`  | `true`                | Allow drop onto parent container                      |
-| `dragThreshold`        | `number`   | `0`                   | Px before it's considered a pointer-drag              |
+| `moveThreshold`        | `number`   | `0`                   | Px before it's considered a pointer move              |
 | `grabTimeout`          | `number`   | `140`                 | Grab delay in *ms* (touch devices only)               |
 | **Selectors**          |            |                       |                                                       |
 | `selectorParent`       | `string`   | `".jsort"`            | Parent container selector                             |

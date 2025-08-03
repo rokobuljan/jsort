@@ -83,7 +83,7 @@ class JSort {
      * @param {number} [options.opacity=0.8] Ghost element opacity
      * @param {number} [options.grabTimeout=140] Ms before grab is considered instead of scroll on touch devices (has no effect for mouse Event)
      * @param {boolean} [options.parentDrop=true] Can drop item onto parent
-     * @param {number} [options.dragThreshold=0] Px before it's considered a pointer drag (Allows to click inner links, buttons, inputs, etc)
+     * @param {number} [options.moveThreshold=0] Px before it's considered a pointer drag (Allows to click inner links, buttons, inputs, etc)
      * @param {number} [options.scrollThreshold=8] Px before it's considered a scroll
      * @param {number} [options.edgeThreshold=50] Pixels from edge to start parent auto-scrolling
      * @param {number} [options.scrollSpeed=10] Scroll pixels per frame while ghost is near parent edge
@@ -119,7 +119,7 @@ class JSort {
         this.opacity = 0.8;
         this.grabTimeout = 140;
         this.parentDrop = true;
-        this.dragThreshold = 0;
+        this.moveThreshold = 0;
         this.scrollThreshold = 8;
         this.edgeThreshold = 50;
         this.scrollSpeed = 10;
@@ -608,7 +608,7 @@ class JSort {
             this.hasPointerMoved && !this.elGrab?.hasPointerCapture(ev.pointerId)
         ) return;
 
-        const isSignificantMove = this.isSignificantMove(this.pointerGrab, ev, this.dragThreshold);
+        const isSignificantMove = this.isSignificantMove(this.pointerGrab, ev, this.moveThreshold);
 
         if (!this.hasPointerMoved && isSignificantMove) {
             this.hasPointerMoved = true;
