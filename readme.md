@@ -119,7 +119,7 @@ By defafult, the `selectorIgnoreFields` provides a good sane selector in order t
 
 ```css
 /* DO NOT GRAB ITEM IF POINTER TARGET IS AN ACTION FIELD: */
-:is(input, select, textarea, button, summary, [contenteditable=""], [contenteditable="true"], [tabindex]:not([tabindex^="-"]), a[href]:not(a[href=""]), area[href]):not(:disabled)
+:is(input, select, textarea, button, label, summary, [contenteditable=""], [contenteditable="true"], [tabindex]:not([tabindex^="-"]), a[href]:not(a[href=""]), area[href]):not(:disabled)
 ```
 
 ***Tip:***  
