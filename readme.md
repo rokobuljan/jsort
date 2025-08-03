@@ -20,6 +20,7 @@ Demo &amp; examples: [JSort — Homepage](https://rokobuljan.github.io/jsort/)
 - [x] Swap items
 - [x] Dynamic items (delegated events)
 - [x] Scroll parent on edge drag
+- [x] No external dependencies
 - [ ] Multiple select (*soon*)
 
 ## Installation
