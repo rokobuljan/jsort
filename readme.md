@@ -236,20 +236,20 @@ JSort allows to drag &amp; drop into a linked group by adding a `group` property
 
 ```html
 <div class="jsort" data-jsort="group:a">
-    <div class="jsort-item">A 1</div>
-    <div class="jsort-item">A 2</div>
-    <div class="jsort-item">A 3</div>
+    <div>A 1</div>
+    <div>A 2</div>
+    <div>A 3</div>
 </div>
 
 <div class="jsort" data-jsort="group:a">
-    <div class="jsort-item">B 1</div>
-    <div class="jsort-item">B 2</div>
+    <div>B 1</div>
+    <div>B 2</div>
 </div>
 
 <script type="module">
     import JSort from '@rbuljan/jsort';
     document.querySelectorAll(".jsort").forEach((el) => {
-        new JSort(el, {/*Options*/});
+        new JSort(el, { /* Options */ });
     });
 </script>
 ```
@@ -259,33 +259,31 @@ JSort allows to drag &amp; drop into a linked group by adding a `group` property
 By default JSort *reorders* the items on drop. If instead you want to **swap**, you can set the `swap` option to `true` to your element or group elements:
 
 ```html
-<div class="jsort swap" data-jsort="group:a; swap:true">
-    <div class="jsort-item">A 1</div>
-    <div class="jsort-item">A 2</div>
-    <div class="jsort-item">A 3</div>
+<div class="jsort" data-jsort="group:a; swap:true">
+    <div>A 1</div>
+    <div>A 2</div>
+    <div>A 3</div>
 </div>
-
-<div class="jsort swap" data-jsort="group:a; swap:true">
-    <div class="jsort-item">B 1</div>
-    <div class="jsort-item">B 2</div>
+<div class="jsort" data-jsort="group:a; swap:true">
+    <div>B 1</div>
+    <div>B 2</div>
 </div>
 
 <script type="module">
     import JSort from '@rbuljan/jsort';
-    document.querySelectorAll(".swap").forEach(el => new JSort(el));
+    document.querySelectorAll(".jsort").forEach(el => new JSort(el));
 </script>
 ```
 
 Instead of using data-jsort, you can set the options directly in the constructor:
 
 ```js
-document.querySelectorAll(".list-swap").forEach(el => {
+document.querySelectorAll(".list-swap").forEach((el) => {
   new JSort(el, {
-    group: "swap-group-1",
+    group: "a",
     swap: true
   });
 });
-</script>
 ```
 
 ## Styling
@@ -322,8 +320,7 @@ For custom styling JSort provides several classes you could use in your CSS to f
 | className               | Description                                                                           |
 | ----------------------- | ------------------------------------------------------------------------------------- |
 | .jsort                  | Parent container                                                                      |
-| .jsort-item             | Sortable children elements                                                            |
-| .jsort-handler          | Child of `.jsort-item` to be used as a grab handler                                   |
+| .jsort-handler          | Child of item, to be used as a grab handler                                           |
 | .is-jsort-ghost         | Class added tp Ghost element                                                          |
 | .is-jsort-active        | Active item (not yet grabbed/moved). Useful as a *"drag ready"* clue on touch devices |
 | .is-jsort-grabbed       | Currently grabbed item (PS: not the ghost element)                                    |
