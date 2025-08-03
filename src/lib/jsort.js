@@ -341,7 +341,7 @@ class JSort {
     findScrollParent(el) {
         while (el && el !== document.documentElement) {
             const style = getComputedStyle(el);
-            if (el.scrollHeight > el.clientHeight &&
+            if ((el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth) &&
                 /^(auto|scroll)$/.test(style.overflowY)) {
                 return el;
             }
