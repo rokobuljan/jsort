@@ -307,6 +307,28 @@ myJSort.sort(sortLogic);</code></pre>
                         </ul>
                     </div>
                 </details>
+                <details>
+                    <summary>On mobile (touch) how to make sortable items immediately draggable?</summary>
+                    <div class="answer">
+                        By default, on mobile (touch) there's a slight timeout to register scroll-intent, so that large sortable items would not get in the way of a user trying to actually scroll the page/app.<br>
+                        Being aware of this, if instead you want your sortable items to be immediately, seamlessly draggable, you can set the <code>grabTimeout</code> option to <code>0</code>
+                    </div>
+                </details>
+                <details>
+                    <summary>On drop, how to get the item's old and new indexes?</summary>
+                    <div class="answer">
+                        As explained in the <a href="https://github.com/rokobuljan/jsort?tab=readme-ov-file#options">JSort docs</a>, use the several <code>on*</code> callback options, one being <code>onDrop()</code> and see all the available `data` Object values.
+                        <br><br>
+                        <pre><code>
+myJSort(Element, {
+  onDrop(data) => {
+    console.log(data)
+    console.log(data.indexGrab, data.indexDrop);
+    console.log(this); // if you need even more info
+  });
+});</code></pre>
+                    </div>
+                </details>
             </div>
         </div>
 
