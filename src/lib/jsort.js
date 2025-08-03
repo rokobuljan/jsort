@@ -129,7 +129,7 @@ class JSort {
         this.selectorItemsIgnore = ".jsort-ignore";
         this.selectorHandler = ".jsort-handler";
         this.selectorIgnoreTarget = "";
-        this.selectorIgnoreFields = `:is(input, select, textarea, button, label, summary, [contenteditable=""], [contenteditable="true"], [tabindex]:not([tabindex^="-"]), a[href]:not(a[href=""]), area[href]):not(:disabled)`;
+        this.selectorIgnoreFields = `:is(input, select, textarea, button, label, [contenteditable=""], [contenteditable="true"], [tabindex]:not([tabindex^="-"]), a[href]:not(a[href=""]), area[href]):not(:disabled)`;
         this.classGhost = "is-jsort-ghost";
         this.classActive = "is-jsort-active";
         this.classTouch = "is-jsort-touch";
