@@ -88,7 +88,7 @@ h2 {
     padding-bottom: 0.5em;
 }
 
-ul {
+.list {
     list-style: none;
     padding: 0;
 }
@@ -159,6 +159,16 @@ details {
         &:hover {
             color: color-mix(in srgb, var(--accent), var(--bg) 40%);
         }
+    }
+
+    ul {
+        padding: 1.5rem 1rem;
+    }
+
+    code {
+        background: #fff2;
+        padding: 0.1em 0.5em;
+        border-radius: 0.3em;
     }
 }
 

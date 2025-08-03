@@ -36,29 +36,31 @@ const JSortInstance = new JSort(HTMLElement, { /* Options */ });
 
 ## Usage
 
+Add class `class="jsort"` to your HTML element, and instantiate `JSort` with the desired Options
+
 ```html
 <ul class="jsort" id="list">
-    <li class="jsort-item">1</li>
-    <li class="jsort-item">
+    <li>1</li>
+    <li>2</li>
+    <li>
         <div class="jsort-handler">✥</div>
-        2 Grab by the handler
+        3 Grab me by the handler
     </li>
-    <li class="jsort-item">3</li>
-    <li class="jsort-item">4</li>
+    <li>4</li>
 </ul>
 
 <script type="module">
     import JSort from '@rbuljan/jsort';
     const jsortList = new JSort(document.querySelector("#list"), {
         duration: 360,
-        onGrab(ev) {
-            console.log(this, ev);
+        onGrab(data) {
+            console.log(this, data);
         }
-        onMove(ev) {
-            console.log(this, ev);
+        onMove(data) {
+            console.log(this, data);
         }
-        onDrop(ev) {
-            console.log(this, ev);
+        onDrop(data) {
+            console.log(this, data);
         }
     });
 </script>
@@ -70,43 +72,59 @@ const JSortInstance = new JSort(HTMLElement, { /* Options */ });
 
 The second parameter accepts an options object to customize the sorting behavior and appearance.
 
-| Option                | Type       | Default                            | Description                              |
-| --------------------- | ---------- | ---------------------------------- | ---------------------------------------- |
-| **Behavior**          |            |                                    |                                          |
-| `group`               | `string`   | `""`                               | Group sortable parents                   |
-| `swap`                | `boolean`  | `false`                            | Swap elements (instead of reordering)    |
-| `parentDrop`          | `boolean`  | `true`                             | Allow drop onto parent container         |
-| `dragThreshold`       | `number`   | `0`                                | Px before it's considered a pointer-drag |
-| `grabTimeout`         | `number`   | `140`                              | Grab delay in *ms* (touch devices only)  |
-| **Scroll**            |            |                                    |                                          |
-| `scrollThreshold`     | `number`   | `8`                                | Px before considering suto-scroll        |
-| `edgeThreshold`       | `number`   | `50`                               | Autoscroll distance to edge              |
-| `scrollSpeed`         | `number`   | `10`                               | Auto-scroll speed in pixels per step     |
-| **Animation**         |            |                                    |                                          |
-| `duration`            | `number`   | `420`                              | Sort animation duration in *ms*          |
-| `easing`              | `string`   | `"cubic-bezier(0.6,0,0.6,1)"`      | Animation easing function                |
-| **Ghost Styles**      |            |                                    |                                          |
-| `scale`               | `number`   | `1.1`                              | Ghost element scale                      |
-| `opacity`             | `number`   | `0.8`                              | Ghost element opacity (0-1)              |
-| `zIndex`              | `number`   | `2147483647`                       | Ghost element z-index                    |
-| **Selectors**         |            |                                    |                                          |
-| `selectorParent`      | `string`   | `".jsort"`                         | Parent container selector                |
-| `selectorItems`       | `string`   | `".jsort-item:not(.jsort-ignore)"` | Sortable (and *:not* sortable) selector  |
-| `selectorHandler`     | `string`   | `".jsort-handler"`                 | Drag handle selector                     |
-| `selectorIgnore`      | `string`   | `":is(action-elements*)"`          | Ignore children (target) selector        |
-| **CSS Classes**       |            |                                    |                                          |
-| `classGhost`          | `string`   | `"is-jsort-ghost"`                 | Ghost element class                      |
-| `classAnimated`       | `string`   | `"is-jsort-animated"`              | ANimated elements class                  |
-| `classGrabbed`        | `string`   | `"is-jsort-grabbed"`               | Grabbed element class                    |
-| `classTarget`         | `string`   | `"is-jsort-target"`                | Hovered, targeted element class          |
-| `classInvalid`        | `string`   | `"is-jsort-invalid"`               | Ghost element over invalid zones         |
-| **Event Callbacks**   |            |                                    |                                          |
-| `onBeforeGrab(event)` | `function` |                                    | Called before item grab                  |
-| `onGrab(event)`       | `function` |                                    | Called on item grabb                     |
-| `onMove(event)`       | `function` |                                    | Called on item move                      |
-| `onBeforeDrop(event)` | `function` |                                    | Called before itme drop                  |
-| `onDrop(event)`       | `function` |                                    | Called on drop                           |
-| `onAnimationEnd()`    | `function` |                                    | Called on drop animation end             |
+| Option                 | Type       | Default               | Description                                           |
+| ---------------------- | ---------- | --------------------- | ----------------------------------------------------- |
+| **Event Callbacks**    |            |                       |                                                       |
+| `onBeforeGrab(data)`   | `function` |                       | Called before item grab                               |
+| `onGrab(data)`         | `function` |                       | Called on item grabb                                  |
+| `onMove(data)`         | `function` |                       | Called on item move                                   |
+| `onBeforeDrop(data)`   | `function` |                       | Called before itme drop                               |
+| `onDrop(data)`         | `function` |                       | Called on drop                                        |
+| `onAnimationEnd()`     | `function` |                       | Called on drop animation end                          |
+| **Behavior**           |            |                       |                                                       |
+| `group`                | `string`   | `""`                  | Group sortable parents                                |
+| `swap`                 | `boolean`  | `false`               | Swap elements (instead of reordering)                 |
+| `parentDrop`           | `boolean`  | `true`                | Allow drop onto parent container                      |
+| `dragThreshold`        | `number`   | `0`                   | Px before it's considered a pointer-drag              |
+| `grabTimeout`          | `number`   | `140`                 | Grab delay in *ms* (touch devices only)               |
+| **Selectors**          |            |                       |                                                       |
+| `selectorParent`       | `string`   | `".jsort"`            | Parent container selector                             |
+| `selectorItems`        | `string`   | `"*"`                 | Sortable items (parent's immediate children) selector |
+| `selectorItemsIgnore`  | `string`   | `".jsort-ignore"`     | Ignored sortable's immediate children                 |
+| `selectorIgnoreTarget` | `string`   | `""`                  | Prevent grab on item descendant selectors             |
+| `selectorIgnoreFields` | `string`   | *Read Tip below*      | Prevent grab on item descendant action elements       |
+| `selectorHandler`      | `string`   | `".jsort-handler"`    | Drag handle selector                                  |
+| **CSS Classes**        |            |                       |                                                       |
+| `classGrabbed`         | `string`   | `"is-jsort-grabbed"`  | Grabbed element class                                 |
+| `classGhost`           | `string`   | `"is-jsort-ghost"`    | Ghost element class                                   |
+| `classTarget`          | `string`   | `"is-jsort-target"`   | Hovered, targeted element class                       |
+| `classAnimated`        | `string`   | `"is-jsort-animated"` | Animated elements class                               |
+| `classInvalid`         | `string`   | `"is-jsort-invalid"`  | Ghost element over invalid zones                      |
+| `classTouch`           | `string`   | `"is-jsort-touch"`    | Grabbed element - only if Event was "touchstart"      |
+| **Animation**          |            |                       |                                                       |
+| `duration`             | `number`   | `420`                 | Sort animation duration in *ms*                       |
+| `easing`               | `string`   | `"cubic-bezier()"`    | Animation easing function                             |
+| **Ghost Styles**       |            |                       |                                                       |
+| `scale`                | `number`   | `1.1`                 | Ghost element scale                                   |
+| `opacity`              | `number`   | `0.8`                 | Ghost element opacity (0-1)                           |
+| `zIndex`               | `number`   | `2147483647`          | Ghost element z-index                                 |
+| **Scroll**             |            |                       |                                                       |
+| `scrollThreshold`      | `number`   | `8`                   | Px before considering auto-scroll                     |
+| `edgeThreshold`        | `number`   | `50`                  | Autoscroll distance to edge                           |
+| `scrollSpeed`          | `number`   | `10`                  | Auto-scroll speed in pixels per step                  |
+
+***Tip:***  
+By defafult, the `selectorIgnoreFields` provides a good sane selector in order to prevent grabbing an item if the direct target is an *action element*, like: Anchor, Button, Input, Contenteditable, etc:
+
+```css
+/* DO NOT GRAB ITEM IF POINTER TARGET IS AN ACTION FIELD: */
+:is(input, select, textarea, button, summary, [contenteditable=""], [contenteditable="true"], [tabindex]:not([tabindex^="-"]), a[href]:not(a[href=""]), area[href]):not(:disabled)
+```
+
+***Tip:***  
+Internally, the Options **selectors** will be **concatenated** like `selectorParent > selectorItems:not( selectorItemsIgnore )` into i.e: `.jsort > *:not(.jsort-ignore)` (or like: `.jsort > *` if you pass an empty string to the `selectorItemsIgnore`). The `>` immediate child selector will always be injected by default.
+
+
 
 ### Example
 
@@ -115,8 +133,8 @@ const sortable = new JSort(document.querySelector('.my-list'), {
   group: 'shared-group',
   duration: 300,
   scale: 1.05,
-  onDrop: (event) => {
-    console.log(this, event); // {JSort, Event}
+  onDrop: (data) => {
+    console.log(this, data); // JSort, data{}
   }
 });
 ```
@@ -127,6 +145,7 @@ Options (that are not callbacks) can be assigned directly in your HTML markup us
 ```html
 <ul class="jsort" data-jsort="
         group: a;
+        selectorItems: .item;
         selectorHandler: .my-handler;
         swap: true;
         duration: 300;
@@ -134,8 +153,8 @@ Options (that are not callbacks) can be assigned directly in your HTML markup us
         zIndex: 999;
         parentDrop: false;
     ">
-    <li class="jsort-item"><div class="my-handler">✥</div>Item 1</li>
-    <li class="jsort-item"><div class="my-handler">✥</div>Item 2</li>
+    <li class="item"><div class="my-handler">✥</div>Item 1</li>
+    <li class="item"><div class="my-handler">✥</div>Item 2</li>
 </ul>
 ```
 
@@ -147,12 +166,12 @@ To manually abort some actions depending on a condition, you can use the  `onBef
 
 ```js
 new JSort(myListElement, {
-    onBeforeGrab(event) {
-        if (this.indexGrab === 0) {
+    onBeforeGrab(data) {
+        if (data.indexGrab === 0) {
             console.error("Cannot grab first item");
             return false;
         }
-        if (this.elGrab.closest(".no-grab")) {
+        if (data.elGrab.closest(".no-grab")) {
             console.error("Grabbed an invalid item");
             return false;
         }
@@ -160,12 +179,12 @@ new JSort(myListElement, {
     onGrab() {
         console.log(`Grabbed index ${this.indexGrab}`);
     },
-    onBeforeDrop(event) {
-        if (this.indexDrop === 0) {
+    onBeforeDrop(data) {
+        if (data.indexDrop === 0) {
             console.error("Cannot drop into first item");
             return false;
         }
-        if (this.elDrop.closest(".no-drop")) {
+        if (data.elDrop.closest(".no-drop")) {
             console.error("Cannot drop here");
             return false;
         }
@@ -189,7 +208,7 @@ If you returned `false` from one of the callbacks, the respective  `onGrab` or `
 
 ## Properties
 
-`JSortInstance`
+`JSort`
 
 | Property           | Type            | Default | Description                                |
 | ------------------ | --------------- | ------- | ------------------------------------------ |
@@ -204,6 +223,8 @@ If you returned `false` from one of the callbacks, the respective  `onGrab` or `
 | `affectedElements` | `HTMLElement[]` | `[]`    | Array of drop-affected (animated) elements |
 
 ## Static Properties
+
+`JSort`
 
 | Property  | Type     | Description             |
 | --------- | -------- | ----------------------- |

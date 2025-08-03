@@ -35,6 +35,7 @@
                 <a href="https://www.npmjs.com/package/@rbuljan/jsort"><b>NPM</b> @rbuljan/jsort</a>
             </p>
         </div>
+
         <div class="row">
             <div class="sm-row">
                 <h2>Grid</h2>
@@ -44,9 +45,12 @@
                 <details>
                     <summary>View code</summary>
                     <pre><code>
-&lt;div class="jsort grid"&gt;
-  &lt;div class="jsort-item"&gt;JSort&lt;/div&gt;
-  &lt;div class="jsort-item"&gt;&lt;div class="jsort-handler"&gt;Handler&lt;/div&gt;&lt;/div&gt;
+&lt;div class="jsort" id="myGrid"&gt;
+  &lt;div&gt;One&lt;/div&gt;
+  &lt;div&gt;
+    &lt;div class="jsort-handler"&gt;Handler&lt;/div&gt;
+    Two
+  &lt;/div&gt;
 &lt;/div&gt;
 
 &lt;script type="module"&gt;
@@ -57,33 +61,33 @@ document.querySelectorAll(".grid").forEach((el) =&gt; new JSort(el));
             </div>
             <div class="col">
                 <div class="jsort grid">
-                    <div class="jsort-item"><b>JSort</b></div>
-                    <div class="jsort-item">2.</div>
-                    <div class="jsort-item">
+                    <div><b>JSort</b></div>
+                    <div>2.</div>
+                    <div>
                         3. Link test:<br>
                         <a target="_blank" rel="noopener noreferrer"
                             href="https://github.com/rokobuljan/jsort"><b>GitHub JSort</b></a>
                     </div>
-                    <div class="jsort-item">
+                    <div>
                         <div class="jsort-handler">Handler</div>
                         4.
                     </div>
-                    <div class="jsort-item">
+                    <div>
                         <div class="jsort-handler" style="display: none;">Handler</div>
-                        <div>Handler is display: none;</div>
+                        <div>Handler exists but has <code>display: none;</code></div>
                     </div>
-                    <div class="jsort-item">6</div>
-                    <div class="jsort-item">
+                    <div>6</div>
+                    <div>
                         7. Input test <br>
                         <input type="text" placeholder="Test...">
                     </div>
-                    <a href="https://github.com/rokobuljan/jsort" class="jsort-item">8. I'm a sortable (yet clickable) anchor</a>
-                    <div class="jsort-item">
+                    <a href="https://github.com/rokobuljan/jsort">8. I'm an Anchor. Sortable and clickable!</a>
+                    <div>
                         <div class="jsort-handler">Handler</div>
                         <div>9. DIV child</div>
                     </div>
-                    <div class="jsort-item">10.</div>
-                    <div class="jsort-item jsort-ignore">11. (Ignore)</div>
+                    <div>10.</div>
+                    <div class="jsort-ignore">11. IGNORED!</div>
                 </div>
             </div>
         </div>
@@ -99,11 +103,11 @@ document.querySelectorAll(".grid").forEach((el) =&gt; new JSort(el));
                     <summary>View code</summary>
                     <pre><code>
 &lt;ul class="jsort list" data-jsort="group:a"&gt;
-  &lt;li class="jsort-item"&gt; A 1 &lt;/li&gt;
-  &lt;li class="jsort-item"&gt; A 2 &lt;/li&gt;
+  &lt;li&gt; A 1 &lt;/li&gt;
+  &lt;li&gt; A 2 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;ul class="jsort list" data-jsort="group:a"&gt;
-  &lt;li class="jsort-item"&gt; B 1 &lt;/li&gt;
+  &lt;li&gt; B 1 &lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;script type="module"&gt;
@@ -115,15 +119,15 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
             </div>
             <div class="row">
                 <ul class="jsort list" data-jsort="group:a">
-                    <li class="jsort-item">A 1</li>
-                    <li class="jsort-item">A 2</li>
-                    <li class="jsort-item">A 3</li>
-                    <li class="jsort-item">A 4</li>
-                    <li class="jsort-item">A 5</li>
+                    <li>A 1</li>
+                    <li>A 2</li>
+                    <li>A 3</li>
+                    <li>A 4</li>
+                    <li>A 5</li>
                 </ul>
                 <ul class="jsort list" data-jsort="group:a">
-                    <!-- <li class="jsort-item">B 1</li>
-                    <li class="jsort-item">B 2</li> -->
+                    <!-- <li>B 1</li>
+                    <li>B 2</li> -->
                 </ul>
             </div>
         </div>
@@ -139,9 +143,9 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
                     <summary>View code</summary>
                     <pre><code>
 &lt;ul class="jsort list" data-jsort="group:a"&gt;
-  &lt;li class="jsort-item"&gt; A
+  &lt;li&gt; A
     &lt;ul class="jsort list" data-jsort="group:a"&gt;
-      &lt;li class="jsort-item"&gt; B &lt;/li&gt;
+      &lt;li&gt; B &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
@@ -154,21 +158,21 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
             </div>
             <div class="row">
                 <ul class="jsort list" data-jsort="group:a">
-                    <li class="jsort-item">
+                    <li>
                         <div>A 1</div>
                     </li>
-                    <li class="jsort-item">
+                    <li>
                         <div>B 1</div>
                     </li>
-                    <li class="jsort-item">
+                    <li>
                         <div>C 1</div>
                         <ul class="jsort list" data-jsort="group:a">
-                            <li class="jsort-item">C 1 a</li>
-                            <li class="jsort-item">
+                            <li>C 1 a</li>
+                            <li>
                                 <div>C 1 a 1</div>
                                 <ul class="jsort list" data-jsort="group:a">
-                                    <li class="jsort-item">D.a 1</li>
-                                    <li class="jsort-item">D.a 2</li>
+                                    <li>D.a 1</li>
+                                    <li>D.a 2</li>
                                 </ul>
                             </li>
                         </ul>
@@ -188,11 +192,11 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
                     <summary>View code</summary>
                     <pre><code>
 &lt;ul class="jsort list" data-jsort="group:a;swap:true;"&gt;
-  &lt;li class="jsort-item"&gt; A 1 &lt;/li&gt;
-  &lt;li class="jsort-item"&gt; A 2 &lt;/li&gt;
+  &lt;li&gt; A 1 &lt;/li&gt;
+  &lt;li&gt; A 2 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;ul class="jsort list" data-jsort="group:a;swap:true;"&gt;
-  &lt;li class="jsort-item"&gt; B 1 &lt;/li&gt;
+  &lt;li&gt; B 1 &lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;script type="module"&gt;
@@ -205,20 +209,20 @@ document.querySelectorAll(".list").forEach((el) =&gt; new JSort(el));
                 <div>
                     <h3>Substitutes</h3>
                     <ul class="jsort list" data-jsort="group:b;swap:true">
-                        <li class="jsort-item">Player 8</li>
-                        <li class="jsort-item">Player 14</li>
-                        <li class="jsort-item">Player 12</li>
-                        <li class="jsort-item">Player 5</li>
+                        <li>Player 8</li>
+                        <li>Player 14</li>
+                        <li>Player 12</li>
+                        <li>Player 5</li>
                     </ul>
                 </div>
                 <div>
                     <h3>Team</h3>
                     <ul class="jsort list" data-jsort="group:b;swap:true">
-                        <li class="jsort-item">Player 9</li>
-                        <li class="jsort-item">Player 10</li>
-                        <li class="jsort-item">Player 7</li>
-                        <li class="jsort-item">Player 3</li>
-                        <li class="jsort-item">Player 1</li>
+                        <li>Player 9</li>
+                        <li>Player 10</li>
+                        <li>Player 7</li>
+                        <li>Player 3</li>
+                        <li>Player 1</li>
                     </ul>
                 </div>
             </div>
@@ -252,15 +256,56 @@ myJSort.sort((a, b) => {
                     </label>
                 </div>
                 <ul id="example-sort" class="jsort list">
-                    <li class="jsort-item" data-name="Zeus">Zeus</li>
-                    <li class="jsort-item" data-name="Apollo">Apollo</li>
-                    <li class="jsort-item" data-name="Aphrodite">Aphrodite</li>
-                    <li class="jsort-item" data-name="Athena">Athena</li>
-                    <li class="jsort-item" data-name="Hermes">Hermes</li>
-                    <li class="jsort-item" data-name="Poseidon">Poseidon</li>
-                    <li class="jsort-item" data-name="Ares">Ares</li>
-                    <li class="jsort-item" data-name="Hera">Hera</li>
+                    <li data-name="Zeus">Zeus</li>
+                    <li data-name="Apollo">Apollo</li>
+                    <li data-name="Aphrodite">Aphrodite</li>
+                    <li data-name="Athena">Athena</li>
+                    <li data-name="Hermes">Hermes</li>
+                    <li data-name="Poseidon">Poseidon</li>
+                    <li data-name="Ares">Ares</li>
+                    <li data-name="Hera">Hera</li>
                 </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="sm-row">
+                <h2>FAQ</h2>
+                <p>
+                    Here's what's asked the most
+                </p>
+            </div>
+            <div>
+                <details>
+                    <summary>How to make items' text selectable</summary>
+                    <div class="answer">
+                        Since the item becomes draggable/sortable, text selection within your items can be achieved by
+                        either
+                        <ul>
+                            <li>Add a grab handler child to your items HTML</li>
+                            <li>Use in Options the <code>selectorIgnore</code> like: <code>selectorIgnore: "p"</code>
+                                (to ignore paragraphs
+                                descendants)</li>
+                        </ul>
+                    </div>
+                </details>
+                <details>
+                    <summary>How to ignore grab of certain items</summary>
+                    <div class="answer">
+                        By default, all immediate children are sortable. There's a couple of ways to ignore certain
+                        elements
+                        <ul>
+                            <li>Add the HTML class <code>jsort-ignore</code> to your desired items,
+                                or modify the desired class in Options
+                                <code>selectorItemsIgnore: ".my-ignore-class"</code> (by default it's
+                                <code>".jsort-ignore"</code>)
+                            </li>
+                            <li>In Options, define a custom items selector: <code>".item"</code> and add it only to the
+                                children
+                                items you want to be draggable/sortable</li>
+                        </ul>
+                    </div>
+                </details>
             </div>
         </div>
 

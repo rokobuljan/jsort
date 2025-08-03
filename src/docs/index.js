@@ -5,11 +5,13 @@ import "./hljs.css";
 
 hljs.registerLanguage('javascript', javascript);
 
-document.querySelector("#version").textContent = `${JSort.version}`;
+const el = (sel, par = document) => par.querySelector(sel);
+const els = (sel, par = document) => par.querySelectorAll(sel);
 
+el("#version").textContent = `${JSort.version}`;
 console.log(`Running JSort version: ${JSort.version}`);
 
-document.querySelectorAll(".jsort:not([id^=example])").forEach((el) => {
+els(".jsort:not([id^=example])").forEach((el) => {
     // Make sortable
     new JSort(el, {
         onDrop() {
@@ -18,10 +20,10 @@ document.querySelectorAll(".jsort:not([id^=example])").forEach((el) => {
     });
 });
 
-const elExampleSortSelect = document.querySelector("#example-sort-select");
-const elExampleSort = document.querySelector("#example-sort");
+const elExampleSortSelect = el("#example-sort-select");
+const elExampleSort = el("#example-sort");
 const jsortExampleSort = new JSort(elExampleSort);
-const elsLI = elExampleSort.querySelectorAll("li");
+const elsLI = els("li", elExampleSort);
 elsLI.forEach((el, i) => el.dataset.index = i);
 elExampleSortSelect.addEventListener("input", () => {
     const isDec = elExampleSortSelect.value === "dec";
@@ -32,11 +34,11 @@ elExampleSortSelect.addEventListener("input", () => {
     });
 });
 
-document.querySelectorAll("pre > code").forEach((el) => {
+els("pre > code").forEach((el) => {
     hljs.highlightElement(el);
 });
 
 // Random background colors
-document.querySelectorAll(".jsort-item").forEach((el) => {
+els(".grid > *, .list > *").forEach((el) => {
     el.style.backgroundColor = `hsl(${~~(Math.random() * 200 + 80)} 56% 65%)`;
 });
