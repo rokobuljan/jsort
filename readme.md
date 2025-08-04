@@ -5,7 +5,11 @@
 
 Small yet powerful drag and drop sortable library with touch support, smooth animations, for a great UX.
 
-[![NPM](https://img.shields.io/npm/v/@rbuljan/jsort)](https://www.npmjs.com/package/@rbuljan/jsort)<br>
+[![NPM](https://img.shields.io/npm/v/@rbuljan/jsort)](https://www.npmjs.com/package/@rbuljan/jsort) &nbsp;
+[![JSort on GitHub](https://img.shields.io/badge/GitHub-ffffff?style=flat&logo=github&logoColor=000000)](https://github.com/rokobuljan/jsort) &nbsp;
+[![JSort GitHub Stars](https://img.shields.io/github/stars/rokobuljan/jsort)](https://github.com/rokobuljan/jsort) &nbsp;
+[![Full-JS | JSort Homepage](https://img.shields.io/badge/MIT%20-%20JSort-0086ca?style=flat&logo=javascript&logoColor=f7e024)](https://rokobuljan.github.io/jsort/)
+<br>
 NPM: [@rbuljan/jsort](https://www.npmjs.com/package/@rbuljan/jsort)  
 Demo &amp; examples: [JSort — Homepage](https://rokobuljan.github.io/jsort/)  
 
