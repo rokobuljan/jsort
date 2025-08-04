@@ -15,17 +15,20 @@ Demo &amp; examples: [JSort — Homepage](https://rokobuljan.github.io/jsort/)
 
 ## Features
 
-- [x] Smooth animations for a better UX
-- [x] Touch support (pointer events)
-- [x] Customization options
-- [x] Drag &amp; drop into linked groups
-- [x] Grab handler
-- [x] Nested groups
-- [x] Swap items
-- [x] Dynamic items (delegated events)
-- [x] Scroll parent on edge drag
+- [ ] Multiple items select (*coming soon*)
 - [x] No external dependencies
-- [ ] Multiple select (*soon*)
+- [x] Smooth animations for a better UE/UX
+- [x] Touch &amp; Mouse support (with Pointer events)
+- [x] Dual customization options (via instance argument or `data-jsort` HTML attribute)
+- [x] Grab handler
+- [x] Linked groups
+- [x] Nested groups
+- [x] Swap group items
+- [x] Scroll-intent on touch devices
+- [x] Dynamic items support (delegated events)
+- [x] Scroll parent on near-edge drag-move
+- [x] Respects selection on inner *action* elements
+- [x] In-place animated sorting <sup>beta</sup>
 
 ## Installation
 
