@@ -30,7 +30,7 @@ body {
     color-scheme: light;
     background-color: var(--bg);
     color: var(--fg);
-    font: min(3cqmin, 1rem) / 1.5 system-ui;
+    font: 1rem / 1.5 system-ui;
     padding: 2.3rem;
     padding-bottom: 8rem;
     overflow-x: clip;
@@ -164,12 +164,12 @@ details {
     ul {
         padding: 1.5rem 1rem;
     }
+}
 
-    code {
-        background: #fff2;
-        padding: 0.1em 0.5em;
-        border-radius: 0.3em;
-    }
+:is(p, details) > code {
+    background: #0001;
+    padding: 0.1em 0.5em;
+    border-radius: 0.3em;
 }
 
 pre {
@@ -327,7 +327,7 @@ code {
     outline: 2px solid currentColor;
 }
 
-.is-jsort-grabbed {
+.is-jsort-grab {
     opacity: 0;
 }
 
