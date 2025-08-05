@@ -107,7 +107,7 @@ The second parameter accepts an options object to customize the sorting behavior
 | `classGhost`           | `string`   | `"is-jsort-ghost"`         | Ghost element                                   |
 | `classTarget`          | `string`   | `"is-jsort-target"`        | Hovered target element                          |
 | `classAnimated`        | `string`   | `"is-jsort-animated"`      | All affected and animated items                 |
-| `classAnimated`        | `string`   | `"is-jsort-animated-drop"` | Grabbed item during drop animation              |
+| `classAnimatedDrop`    | `string`   | `"is-jsort-animated-drop"` | Grabbed item during drop animation              |
 | `classInvalid`         | `string`   | `"is-jsort-invalid"`       | Ghost element over invalid drop zones           |
 | `classTouch`           | `string`   | `"is-jsort-touch"`         | Grabbed item if Event is touchstart (touch)     |
 | **Animation**          |            |                            |                                                 |
