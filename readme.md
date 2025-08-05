@@ -241,7 +241,33 @@ If you returned `false` from one of the callbacks, the respective  `onGrab` or `
 
 ## Linked Groups
 
-JSort allows to drag &amp; drop into a linked group by adding a `group` property in the `data-jsort` attribute.
+JSort allows to drag &amp; drop into a linked group by defining a `group` property
+
+```html
+<div class="jsort group-a">
+    <div>A 1</div>
+    <div>A 2</div>
+    <div>A 3</div>
+</div>
+<div class="jsort group-a">
+    <div>B 1</div>
+    <div>B 2</div>
+</div>
+
+<script type="module">
+    import JSort from '@rbuljan/jsort';
+    document.querySelectorAll(".group-a").forEach((el) => {
+        new JSort(el, { 
+            group: "a"
+        });
+    });
+</script>
+```
+
+or by adding the `data-jsort` attribute in HTML:
+
+<details>
+  <summary>View code</summary>
 
 ```html
 <div class="jsort" data-jsort="group:a">
@@ -249,51 +275,71 @@ JSort allows to drag &amp; drop into a linked group by adding a `group` property
     <div>A 2</div>
     <div>A 3</div>
 </div>
-
 <div class="jsort" data-jsort="group:a">
     <div>B 1</div>
     <div>B 2</div>
+</div>
+
+<script type="module">
+    import JSort from '@rbuljan/jsort';
+    document.querySelectorAll(".jsort").forEach((el) => new JSort(el));
+</script>
+```
+
+</details>
+
+## Swap items
+
+By default JSort *reorders* the items on drop. If instead you want to **swap**, you can set the `swap` option to `true` to your element or grouped elements:
+
+```html
+<div class="jsort">
+    <div>Mark</div>
+    <div>Jack</div>
+    <div>Theo</div>
+</div>
+<div class="jsort">
+    <div>Luke</div>
+    <div>John</div>
+    <div>Roko</div>
 </div>
 
 <script type="module">
     import JSort from '@rbuljan/jsort';
     document.querySelectorAll(".jsort").forEach((el) => {
-        new JSort(el, { /* Options */ });
+        new JSort(el, {
+            group: "players",
+            swap: true,
+        })
     });
 </script>
 ```
 
-## Swap items
+PS: Instead of using the constructor options, you can use the data-jsort:
 
-By default JSort *reorders* the items on drop. If instead you want to **swap**, you can set the `swap` option to `true` to your element or group elements:
+<details>
+  <summary>View code</summary>
 
 ```html
-<div class="jsort" data-jsort="group:a; swap:true">
-    <div>A 1</div>
-    <div>A 2</div>
-    <div>A 3</div>
+<div class="jsort" data-jsort="group:players; swap:true">
+    <div>Mark</div>
+    <div>Jack</div>
+    <div>Theo</div>
 </div>
-<div class="jsort" data-jsort="group:a; swap:true">
-    <div>B 1</div>
-    <div>B 2</div>
+<div class="jsort" data-jsort="group:players; swap:true">
+    <div>Luke</div>
+    <div>John</div>
+    <div>Roko</div>
 </div>
 
 <script type="module">
     import JSort from '@rbuljan/jsort';
-    document.querySelectorAll(".jsort").forEach(el => new JSort(el));
+    document.querySelectorAll(".jsort").forEach((el) => new JSort(el));
 </script>
 ```
 
-Instead of using data-jsort, you can set the options directly in the constructor:
+</details>
 
-```js
-document.querySelectorAll(".list-swap").forEach((el) => {
-  new JSort(el, {
-    group: "a",
-    swap: true
-  });
-});
-```
 
 ## Styling
 
@@ -305,20 +351,20 @@ Yes! This is the minimal CSS styling you might want to use to get the best from 
 /* JSort — Minimal suggested styles */
 
 .is-jsort-active.is-jsort-touch {
-    outline: 0.15rem solid currentColor; /* Visual hint on touch devices */
+    outline: 2px solid currentColor; /* Useful hint on touch devices */
 }
 
 .is-jsort-grab {
-    opacity: 0; 
+    opacity: 0; /* Dim the original grabbed element */
 }
 
 .is-jsort-target {
     z-index: 1;
-    outline: 0.15rem dashed currentColor;
+    outline: 2px dashed currentColor;
 }
 
 .is-jsort-invalid {
-    outline: 0.15rem solid red;
+    outline: 2px solid red;
 }
 ```
 
@@ -328,7 +374,7 @@ For custom styling JSort provides several classes you could use in your CSS to f
 
 ___
 
-See the [JSort Homepage](https://rokobuljan.github.io/jsort/) for inspiration.
+See the [JSort Homepage](https://rokobuljan.github.io/jsort/) for examples and inspiration.
 
 ## Motivation
 
