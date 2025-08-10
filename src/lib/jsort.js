@@ -538,7 +538,7 @@ class JSort {
      */
     grab = (ev) => {
         if (this.elGrab) return;
-
+        
         const evTarget = /** @type {Element} */ (ev.target);
         const elClosestItem = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItemsFull}`));
         const isElIgnored = Boolean(
@@ -654,10 +654,10 @@ class JSort {
      * @param {PointerEvent} ev
      */
     drop = (ev) => {
+        if (!this.elGrab || !this.elGrab?.hasPointerCapture(ev.pointerId)) return;
         this.stopEdgeScroll();
         this.isScrollPrevented = false;
 
-        if (!this.elGrab) return;
 
         this.elGrab.style.removeProperty("user-select");
         this.elGrab.style.removeProperty("cursor");
