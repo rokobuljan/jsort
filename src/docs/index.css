@@ -339,3 +339,7 @@ code {
 .is-jsort-invalid {
     outline: 2px solid red;
 }
+
+.is-selected {
+    outline: 2px solid blue;
+}

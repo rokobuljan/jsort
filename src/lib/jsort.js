@@ -533,6 +533,78 @@ class JSort {
         return isValid;
     }
 
+    multiple = true;
+    ctrlOn = false;
+    classSelected = "is-selected";
+    selekted = [];
+    selektLast = null;
+    onSelect = () => {};
+
+    selekt(ev) {
+        // Nohighlight
+        let isCtrl = (this.ctrlOn || ev.ctrlKey || ev.metaKey);
+        let isShift = ev.shiftKey;
+
+        if (isShift || isCtrl) ev.preventDefault();
+
+        const elTarget = ev.target.closest(`${this.classItems}`);
+        if (!elTarget) return;
+        const siblings = [...elTarget.parentElement?.children];
+
+        console.log(siblings);
+
+
+        let isHighlighted = elTarget.matches(this.classSelected);
+
+        // Prevent toggle on single
+        if (this.selekted.length === 1 && isHighlighted) {
+            return;
+        }
+        // Prevent deselect on contextmenu
+        if (this.selekted.length > 1 && ev.which === 3 && isHighlighted) {
+            return;
+        }
+
+        this.selekted.forEach(el => el.classList.remove(this.classSelected));
+
+        if (this.multiple) {
+
+            isCtrl = (this.ctrlOn || ev.ctrlKey || ev.metaKey);
+            isShift = ev.shiftKey;
+            let ti = siblings.indexOf(elTarget); // target index
+            let li = siblings.indexOf(this.selektLast); // last known index
+            let ai = this.selekted.indexOf(elTarget); // indexes array
+
+            if (isCtrl) {
+                //console.log("Is CTRL")
+                if (ai > -1) this.selekted.splice(ai, 1);
+                else this.selekted.push(elTarget);
+            }
+            if (isShift && this.selekted.length > 0) {
+                //console.log("Is SHIFT and one or more are selected")
+                var selectDirectionUp = ti < li;
+                if (ti > li) ti = [li, li = ti][0];
+                this.selekted = siblings.slice(ti, li + 1);
+                if (selectDirectionUp) {
+                    this.selekted = this.selekted.reverse(); // Reverse in order to preserve user selection direction
+                }
+            }
+            if (!isShift && !isCtrl) {
+                this.selekted = ai < 0 || this.selekted.length > 1 ? [elTarget] : [];
+            }
+            this.selektLast = elTarget;
+        } else {
+            console.log("Logic: single")
+            this.selektLast = elTarget;
+            this.selekted = [elTarget];
+        }
+
+        this.selekted.forEach(el => el.classList.add(this.classSelected));
+
+        // CALLBACK:
+        this.onSelect?.call(this, this.selekted, this.selektLast);
+    }
+
     /**
      * Grab an item
      * @param {PointerEvent} ev
