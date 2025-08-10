@@ -10,7 +10,7 @@
 class JSort {
 
     /** @type {string} */
-    static version =  "__APP_VERSION__";
+    static version = "__APP_VERSION__";
 
     /** @type {string} selectorParent + selectorItems*/
     selectorItemsFull = "";
@@ -538,7 +538,7 @@ class JSort {
      */
     grab = (ev) => {
         if (this.elGrab) return;
-        
+
         const evTarget = /** @type {Element} */ (ev.target);
         const elClosestItem = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItemsFull}`));
         const isElIgnored = Boolean(
@@ -712,7 +712,7 @@ class JSort {
 
         // Handle drag
         if (this.isScrollPrevented) {
-            ev.preventDefault();
+            if (ev.cancelable) ev.preventDefault();
             return
         }
 
