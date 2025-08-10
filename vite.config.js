@@ -2,9 +2,9 @@
 
 import { defineConfig } from "vite";
 import postcssNesting from "postcss-nesting";
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import packageJson from './package.json'
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import packageJson from "./package.json"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,16 +16,25 @@ export default defineConfig({
     base: "./",
     resolve: {
         alias: {
-            '@lib': path.resolve(__dirname, `./src/lib/${LIB_NAME}.js`)
+            "@lib": path.resolve(__dirname, `./src/lib/${LIB_NAME}.js`)
         }
     },
+    plugins: [
+        {
+            name: "replace-version",
+            transform(code, id) {
+                if (id.includes("jsort.js")) {
+                    return code.replace("__APP_VERSION__", packageJson.version)
+                }
+            }
+        }
+    ],
     define: {
         __APP_VERSION__: JSON.stringify(packageJson.version)
     },
     build: {
         minify: "terser",
-        // sourcemap: false,
-        outDir: '../../docs',
+        outDir: "../../docs",
         emptyOutDir: true,
     },
     css: {

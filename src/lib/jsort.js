@@ -1,18 +1,16 @@
 // @ts-check
 
-import { version } from '../../package.json';
-
 /**
  * @class JSort
  * @author Roko C. Buljan <https://github.com/rokobuljan>
- * @license MIT
  * @description Small yet powerful drag and drop sortable library with touch support, smooth animations, for a great UX.
+ * @license MIT
  * @see {@link https://github.com/rokobuljan/jsort}
  */
 class JSort {
 
     /** @type {string} */
-    static version = version;
+    static version =  "__APP_VERSION__";
 
     /** @type {string} selectorParent + selectorItems*/
     selectorItemsFull = "";

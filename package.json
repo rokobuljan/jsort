@@ -12,6 +12,7 @@
   "type": "module",
   "main": "dist/jsort.js",
   "module": "dist/jsort.js",
+  "types": "dist/jsort.d.ts",
   "files": [
     "dist"
   ],
@@ -20,6 +21,7 @@
     "build": "npm run build:lib && npm run build:docs",
     "build:docs": "vite build",
     "build:lib": "vite build --config vite.config.lib.js",
+    "build:types": "tsc",
     "preview": "vite preview --outDir ../../docs",
     "prepublishOnly": "npm run build:lib"
   },
@@ -32,16 +34,20 @@
   "description": "A JavaScript library for sorting and reordering grid or list items.",
   "keywords": [
     "sort",
+    "reorder",
     "sorting",
     "sortable",
     "draggable",
     "drag-and-drop",
-    "reorder",
+    "dnd",
     "list",
     "grid",
     "swap",
     "javascript",
-    "jsort",
-    "js"
-  ]
+    "js",
+    "jsort"
+  ],
+  "dependencies": {
+    "vite-plugin-dts": "^4.5.4"
+  }
 }
