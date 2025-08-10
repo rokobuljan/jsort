@@ -153,8 +153,6 @@ class JSort {
      */
     getChildren(elParent) {
         const children = /** @type {HTMLElement[]} */ ([...elParent.children].filter(el => el !== this.elGhost));
-        // console.log([...elParent.children])
-        // console.log(Array.from(elParent.querySelectorAll(":scope > *")));
         return children;
     }
 
@@ -654,32 +652,28 @@ class JSort {
      * @param {PointerEvent} ev
      */
     drop = (ev) => {
-        if (!this.elGrab || !this.elGrab?.hasPointerCapture(ev.pointerId)) return;
+        if (!this.elGrab) return;
         this.stopEdgeScroll();
         this.isScrollPrevented = false;
-
-
         this.elGrab.style.removeProperty("user-select");
         this.elGrab.style.removeProperty("cursor");
         this.elGrab.classList.remove(this.classActive, this.classGrab, this.classTouch);
         this.elTarget?.classList.remove(this.classTarget);
 
-        if (this.elGrab?.hasPointerCapture(ev.pointerId)) {
-            const { clientX, clientY } = ev;
-            const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
-            // INSERT
-            this._currentEvent = ev;
-            const isInserted = this.insert(this.elGrab, elFromPoint);
-            if (isInserted) this.onDrop?.call(this, {
-                elGrab: this.elGrab,
-                elGrabParent: this.elGrabParent,
-                elDrop: this.elDrop,
-                elDropParent: this.elDropParent,
-                indexGrab: this.indexGrab,
-                indexDrop: this.indexDrop,
-                event: ev
-            });
-        }
+        const { clientX, clientY } = ev;
+        const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
+        // INSERT
+        this._currentEvent = ev;
+        const isInserted = this.insert(this.elGrab, elFromPoint);
+        if (isInserted) this.onDrop?.call(this, {
+            elGrab: this.elGrab,
+            elGrabParent: this.elGrabParent,
+            elDrop: this.elDrop,
+            elDropParent: this.elDropParent,
+            indexGrab: this.indexGrab,
+            indexDrop: this.indexDrop,
+            event: ev
+        });
 
         this.reset();
         this.removeGhost();
