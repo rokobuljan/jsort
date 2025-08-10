@@ -53,7 +53,7 @@ class JSort {
     /** @type {number} */
     edgePressure = 0;
 
-    /** @type {number | NodeJS.Timeout | undefined} */
+    /** @type {number | undefined} */
     moveTimeout;
 
     /** @type {boolean} */
@@ -155,6 +155,8 @@ class JSort {
      */
     getChildren(elParent) {
         const children = /** @type {HTMLElement[]} */ ([...elParent.children].filter(el => el !== this.elGhost));
+        // console.log([...elParent.children])
+        // console.log(Array.from(elParent.querySelectorAll(":scope > *")));
         return children;
     }
 
@@ -561,7 +563,7 @@ class JSort {
         }
 
         const foundHandler = /** @type {Element} */ (elClosestItem.querySelector(this.selectorHandler));
-        const isHandlerVisible = foundHandler?.checkVisibility();
+        const isHandlerVisible = foundHandler?.['checkVisibility']?.();
         const hasHandler = Boolean(foundHandler);
         const elHandler = evTarget?.closest(this.selectorHandler);
 
