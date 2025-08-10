@@ -1,9 +1,9 @@
 // @ts-check
 
 /**
+ * Small yet powerful drag and drop sortable library with touch support, smooth animations, for a great UX.
  * @class JSort
  * @author Roko C. Buljan <https://github.com/rokobuljan>
- * @description Small yet powerful drag and drop sortable library with touch support, smooth animations, for a great UX.
  * @license MIT
  * @see {@link https://github.com/rokobuljan/jsort}
  */
