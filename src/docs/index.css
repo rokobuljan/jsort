@@ -327,7 +327,7 @@ code {
     outline: 2px solid currentColor;
 }
 
-.is-jsort-grab {
+.is-jsort-grab:not(.is-jsort-selected) {
     opacity: 0;
 }
 
@@ -341,5 +341,6 @@ code {
 }
 
 .is-jsort-selected {
-    outline: 0.2rem solid #000;
+    z-index: 1;
+    outline: 0.25rem solid #000;
 }
