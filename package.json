@@ -1,6 +1,6 @@
 {
   "name": "@rbuljan/jsort",
-  "version": "1.9.15",
+  "version": "1.9.16",
   "author": {
     "name": "Roko C. Buljan",
     "url": "https://github.com/rokobuljan"
@@ -28,7 +28,8 @@
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
     "postcss-nesting": "^13.0.2",
-    "vite": "^7.0.4"
+    "vite": "^7.0.4",
+    "vite-plugin-dts": "^4.5.4"
   },
   "license": "MIT",
   "description": "A JavaScript library for sorting and reordering grid or list items.",
@@ -46,8 +47,5 @@
     "javascript",
     "js",
     "jsort"
-  ],
-  "dependencies": {
-    "vite-plugin-dts": "^4.5.4"
-  }
+  ]
 }
