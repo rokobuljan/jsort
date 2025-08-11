@@ -1,5 +1,3 @@
-// @ts-check
-
 /**
  * Small yet powerful drag and drop sortable library with touch support, smooth animations, for a great UX.
  * @class JSort
