@@ -150,8 +150,10 @@ class JSort {
      * @returns {HTMLElement[]}
      */
     getChildren(elParent) {
-        const children = /** @type {HTMLElement[]} */ ([...elParent.children].filter(el => !el.matches(`.${this.classGhost}`)));
-        return children;
+        if (!elParent) return [];
+        const children = /** @type {HTMLElement[]} */ ([...elParent.children]);
+        const childrenNoGhost = children.filter(el => !el.matches(`.${this.classGhost}`));
+        return childrenNoGhost;
     }
 
     /**
@@ -436,13 +438,14 @@ class JSort {
     insert(elGrab, elTarget) {
         // Fallback to instance parent
         const elGrabParent = /** @type {HTMLElement} */ (elGrab.closest(this.selectorParent));
-        const grabChildren = this.getChildren(elGrabParent) ?? [];
+        const grabChildren = this.getChildren(elGrabParent);
         this.indexGrab = grabChildren.indexOf(elGrab);
         const grabSiblings = grabChildren.filter((el) => el !== elGrab);
         this.elDrop = /** @type {HTMLElement} */ (elTarget?.closest(`${this.selectorItemsFull}, ${this.selectorParent}`));
         const isDroppedOntoParent = this.elDrop?.matches(this.selectorParent);
         this.elDropParent = /** @type {HTMLElement} */ (this.elDrop?.closest(this.selectorParent));
-        const dropChildren = this.getChildren(this.elDropParent) ?? [];
+        
+        const dropChildren = this.getChildren(this.elDropParent);
         const isSameParent = elGrabParent === this.elDropParent;
 
         this.indexDrop = isDroppedOntoParent ?
@@ -567,7 +570,7 @@ class JSort {
         const { clientX, clientY } = ev;
         this.pointerGrab = { clientX, clientY };
         this.elGrab = elClosestItem;
-        const grabChildren = this.getChildren(this.elGrabParent) ?? [];
+        const grabChildren = this.getChildren(this.elGrabParent);
         this.indexGrab = grabChildren.indexOf(this.elGrab);
 
         const isUserValidated = this.onBeforeGrab?.call(this, {
