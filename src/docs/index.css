@@ -341,5 +341,5 @@ code {
 }
 
 .is-jsort-selected {
-    outline: 2px solid blue;
+    outline: 0.2rem solid #000;
 }

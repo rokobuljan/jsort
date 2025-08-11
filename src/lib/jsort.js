@@ -540,28 +540,27 @@ class JSort {
     selektLast = null;
     onSelect = () => {};
 
-    selekt(ev) {
+    selekt(/** @type {PointerEvent} */ ev) {
         // Nohighlight
         let isCtrl = (this.ctrlOn || ev.ctrlKey || ev.metaKey);
         let isShift = ev.shiftKey;
 
         if (isShift || isCtrl) ev.preventDefault();
 
-        const elTarget = ev.target.closest(`${this.selectorItems}`);
+        const evTarget = /** @type {HTMLElement} */ (ev.target);
+        const elTarget = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItemsFull}`));
         if (!elTarget) return;
-        const siblings = [...elTarget.parentElement?.children];
+        const siblings = this.getChildren(elTarget.parentElement) ?? [];
 
-        console.log(siblings);
-
-
-        let isHighlighted = elTarget.matches(this.classSelected);
+        let isHighlighted = elTarget.matches(`.${this.classSelected}`);
 
         // Prevent toggle on single
         if (this.selekted.length === 1 && isHighlighted) {
             return;
         }
+
         // Prevent deselect on contextmenu
-        if (this.selekted.length > 1 && ev.which === 3 && isHighlighted) {
+        if (this.selekted.length > 1 && ev.button === 2 && isHighlighted) {
             return;
         }
 
@@ -599,6 +598,8 @@ class JSort {
             this.selekted = [elTarget];
         }
 
+        // Filter out not allowed (ignore) items
+        this.selekted = this.selekted.filter((el) => !el.matches(this.selectorItemsIgnore));
         this.selekted.forEach(el => el.classList.add(this.classSelected));
 
         // CALLBACK:
@@ -610,6 +611,9 @@ class JSort {
      * @param {PointerEvent} ev
      */
     grab = (ev) => {
+
+        this.selekt(ev);
+
         if (this.elGrab) return;
 
         const evTarget = /** @type {Element} */ (ev.target);

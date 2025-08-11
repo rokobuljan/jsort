@@ -16,7 +16,7 @@ els(`.jsort:not([id^="example-"])`).forEach((el) => {
     new JSort(el, {
         selectorItems: "*:not(.ignore)",
         onDrop(data) {
-            console.log(data);
+            // console.log(data);
             // console.log(`Dropped "${this.elGrabbed.textContent}" from index ${this.indexGrab} into index ${this.indexDrop} Parents:`, this.elGrabParent, this.elDropParent);
         }
     });
