@@ -344,3 +344,16 @@ code {
     z-index: 1;
     outline: 0.25rem solid #000;
 }
+
+[data-jsort-selected]::before {
+    content: attr(data-jsort-selected);
+    position: absolute;
+    width: max-content;
+    padding: 0.5em;
+    aspect-ratio: 1;
+    left: -1rem;
+    top: -1rem;
+    background: red;
+    color: #fff;
+    border-radius: 2rem;
+}

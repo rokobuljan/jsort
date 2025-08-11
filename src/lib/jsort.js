@@ -205,6 +205,7 @@ class JSort {
         });
         this.elGhost.classList.remove(this.classActive, this.classTarget);
         this.elGhost.classList.add(this.classGhost);
+        if (JSort.selected.length > 1) this.elGhost.dataset.jsortSelected = `${JSort.selected.length}`;
         this.elGhost.animate([
             { scale: this.scale }
         ], {
@@ -595,7 +596,6 @@ class JSort {
 
             console.log(ai);
 
-
             if (isCtrl) {
                 console.log("Is CTRL");
                 // Deselect
@@ -797,7 +797,10 @@ class JSort {
             });
         }
 
-        if (!isInserted) this.selekt(ev);
+        if (!isInserted && this.multiple) {
+            // If nothing was inserted, handle selection
+            this.selekt(ev);
+        }
 
         this.reset();
         this.removeGhost();
