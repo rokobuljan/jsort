@@ -538,7 +538,7 @@ class JSort {
     classSelected = "is-jsort-selected";
     selekted = /** @type {HTMLElement[]} */ ([]);
     selektLast = null;
-    onSelect = () => {};
+    onSelect = () => { };
 
     selekt(/** @type {PointerEvent} */ ev) {
         // Nohighlight
@@ -554,8 +554,8 @@ class JSort {
 
         let isHighlighted = elTarget.matches(`.${this.classSelected}`);
 
-        // Prevent toggle on single
-        if (this.selekted.length === 1 && isHighlighted) {
+        // Prevent toggle on single (unless Ctrl key is pressed)
+        if (this.selekted.length === 1 && isHighlighted && !isCtrl) {
             return;
         }
 
@@ -611,9 +611,6 @@ class JSort {
      * @param {PointerEvent} ev
      */
     grab = (ev) => {
-
-        this.selekt(ev);
-
         if (this.elGrab) return;
 
         const evTarget = /** @type {Element} */ (ev.target);
@@ -732,6 +729,8 @@ class JSort {
      * @param {PointerEvent} ev
      */
     drop = (ev) => {
+        this.selekt(ev);
+
         if (!this.elGrab) return;
         this.stopEdgeScroll();
         this.isScrollPrevented = false;
