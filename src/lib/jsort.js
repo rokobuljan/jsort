@@ -535,8 +535,8 @@ class JSort {
 
     multiple = true;
     ctrlOn = false;
-    classSelected = "is-selected";
-    selekted = [];
+    classSelected = "is-jsort-selected";
+    selekted = /** @type {HTMLElement[]} */ ([]);
     selektLast = null;
     onSelect = () => {};
 
@@ -547,7 +547,7 @@ class JSort {
 
         if (isShift || isCtrl) ev.preventDefault();
 
-        const elTarget = ev.target.closest(`${this.classItems}`);
+        const elTarget = ev.target.closest(`${this.selectorItems}`);
         if (!elTarget) return;
         const siblings = [...elTarget.parentElement?.children];
 
@@ -568,7 +568,7 @@ class JSort {
         this.selekted.forEach(el => el.classList.remove(this.classSelected));
 
         if (this.multiple) {
-
+            console.log("Logic: multiple");
             isCtrl = (this.ctrlOn || ev.ctrlKey || ev.metaKey);
             isShift = ev.shiftKey;
             let ti = siblings.indexOf(elTarget); // target index
@@ -576,12 +576,12 @@ class JSort {
             let ai = this.selekted.indexOf(elTarget); // indexes array
 
             if (isCtrl) {
-                //console.log("Is CTRL")
+                console.log("Is CTRL");
                 if (ai > -1) this.selekted.splice(ai, 1);
                 else this.selekted.push(elTarget);
             }
             if (isShift && this.selekted.length > 0) {
-                //console.log("Is SHIFT and one or more are selected")
+                console.log("Is SHIFT and one or more are selected")
                 var selectDirectionUp = ti < li;
                 if (ti > li) ti = [li, li = ti][0];
                 this.selekted = siblings.slice(ti, li + 1);
@@ -594,7 +594,7 @@ class JSort {
             }
             this.selektLast = elTarget;
         } else {
-            console.log("Logic: single")
+            console.log("Logic: single");
             this.selektLast = elTarget;
             this.selekted = [elTarget];
         }

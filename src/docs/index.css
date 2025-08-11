@@ -340,6 +340,6 @@ code {
     outline: 2px solid red;
 }
 
-.is-selected {
+.is-jsort-selected {
     outline: 2px solid blue;
 }
