@@ -100,7 +100,7 @@ class JSort {
      * @param {string} [options.classAnimated="is-jsort-animated"] Class name for all animated elements (on drop)
      * @param {string} [options.classAnimatedDrop="is-jsort-animated-drop"] Class name for the animated grabbed element (on drop)
      * @param {string} [options.classInvalid="is-jsort-invalid"] Class name for invalid item
-     * @param {function} [options.onBeforeGrab=() => {}] Callback function called before grab (return false to cancel grab)
+     * @param {function} [options.onBeforeGrab=(data) => {}] Callback function called before grab (return false to cancel grab)
      * @param {function} [options.onGrab=(data) => {}] Callback function called after grab
      * @param {function} [options.onMove=(data) => {}] Callback function called on move
      * @param {function} [options.onBeforeDrop=(data) => {}] Callback function called before drop (return false to cancel drop)
@@ -147,12 +147,12 @@ class JSort {
     }
 
     /**
-     * get all child elements of a sortable parent (ignore elGhost, if present)
+     * Get Array of all child elements (ignores .is-jsort-ghost element, if present)
      * @param {HTMLElement} elParent
      * @returns {HTMLElement[]}
      */
     getChildren(elParent) {
-        const children = /** @type {HTMLElement[]} */ ([...elParent.children].filter(el => el !== this.elGhost));
+        const children = /** @type {HTMLElement[]} */ ([...elParent.children].filter(el => !el.matches(`.${this.classGhost}`)));
         return children;
     }
 
@@ -281,6 +281,8 @@ class JSort {
     checkValidity({ clientX = 0, clientY = 0, el }) {
         const elFromPoint = el ?? document.elementFromPoint(clientX, clientY);
         const elTarget = elFromPoint?.closest(`${this.selectorItemsFull}, ${this.selectorParent}`);
+        const isIgnored = elFromPoint?.closest(`${this.selectorItemsIgnore}`);
+        if (isIgnored) return false;
         const elDropParent = /** @type {HTMLElement} */ (elFromPoint?.closest(this.selectorParent));
         const isParentDrop = elTarget === elDropParent;
         const isOntoSelf = elTarget && this.closestElement(elTarget, this.elGrab) === this.elGrab;
@@ -435,14 +437,14 @@ class JSort {
      */
     insert(elGrab, elTarget) {
         // Fallback to instance parent
-        const elGrabParent = elGrab.closest(this.selectorParent);
-        const grabChildren = elGrabParent ? [...elGrabParent.children] : [];
+        const elGrabParent = /** @type {HTMLElement} */ (elGrab.closest(this.selectorParent));
+        const grabChildren = this.getChildren(elGrabParent) ?? [];
         this.indexGrab = grabChildren.indexOf(elGrab);
-        const grabSiblings = grabChildren.filter((el) => el !== elGrab && !el.matches(`.${this.classGhost}`));
+        const grabSiblings = grabChildren.filter((el) => el !== elGrab);
         this.elDrop = /** @type {HTMLElement} */ (elTarget?.closest(`${this.selectorItemsFull}, ${this.selectorParent}`));
         const isDroppedOntoParent = this.elDrop?.matches(this.selectorParent);
         this.elDropParent = /** @type {HTMLElement} */ (this.elDrop?.closest(this.selectorParent));
-        const dropChildren = this.elDropParent ? [...this.elDropParent.children] : [];
+        const dropChildren = this.getChildren(this.elDropParent) ?? [];
         const isSameParent = elGrabParent === this.elDropParent;
 
         this.indexDrop = isDroppedOntoParent ?
@@ -567,7 +569,8 @@ class JSort {
         const { clientX, clientY } = ev;
         this.pointerGrab = { clientX, clientY };
         this.elGrab = elClosestItem;
-        this.indexGrab = [...this.elGrabParent.children].indexOf(this.elGrab);
+        const grabChildren = this.getChildren(this.elGrabParent) ?? [];
+        this.indexGrab = grabChildren.indexOf(this.elGrab);
 
         const isUserValidated = this.onBeforeGrab?.call(this, {
             elGrab: this.elGrab,
