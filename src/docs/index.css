@@ -324,10 +324,10 @@ code {
 }
 
 .is-jsort-active.is-jsort-touch {
-    outline: 2px solid currentColor;
+    outline: 0.25rem solid currentColor;
 }
 
-.is-jsort-grab:not(.is-jsort-selected) {
+.is-jsort-grab {
     opacity: 0;
 }
 
@@ -336,24 +336,30 @@ code {
     z-index: 1;
 }
 
-.is-jsort-invalid {
-    outline: 2px solid red;
-}
-
 .is-jsort-selected {
-    z-index: 1;
     outline: 0.25rem solid #000;
+    outline-offset: -.3rem;
+    transition: opacity 0.4s;
 }
 
-[data-jsort-selected]::before {
-    content: attr(data-jsort-selected);
+:has(.is-jsort-ghost) .is-jsort-selected {
+    opacity: 0;
+}
+
+.is-jsort-invalid {
+    outline: 0.25rem solid red;
+}
+
+[data-jsort-selected]::after {
+    content: "+" attr(data-jsort-selected);
     position: absolute;
     width: max-content;
     padding: 0.5em;
     aspect-ratio: 1;
     left: -1rem;
     top: -1rem;
-    background: red;
+    background: #000;
     color: #fff;
     border-radius: 2rem;
 }
+

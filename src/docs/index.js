@@ -14,7 +14,7 @@ console.log(`Running JSort version: ${JSort.version}`);
 els(`.jsort:not([id^="example-"])`).forEach((el) => {
     // Make sortable
     new JSort(el, {
-        duration: 800,
+        duration: 500,
         selectorItems: "*:not(.ignore)",
         onDrop(data) {
             // console.log(data);
