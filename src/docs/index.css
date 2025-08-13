@@ -336,14 +336,16 @@ code {
     z-index: 1;
 }
 
-.is-jsort-multiple .is-jsort-selected {
-    outline: 0.25rem solid #000;
-    outline-offset: -.3rem;
-    transition: opacity 0.4s;
-}
+.is-jsort-multiple {
+    .is-jsort-selected {
+        outline: 0.25rem solid #000;
+        outline-offset: -0.3rem;
+        transition: opacity 0.4s;
+    }
 
-.is-jsort-multiple:has(.is-jsort-ghost) .is-jsort-selected {
-    opacity: 0.2;
+    &:has(.is-jsort-ghost) .is-jsort-selected {
+        opacity: 0.2;
+    }
 }
 
 .is-jsort-invalid {
@@ -354,6 +356,7 @@ code {
     content: "+" attr(data-jsort-selected);
     position: absolute;
     width: max-content;
+    font-size: 0.9rem;
     padding: 0.5em;
     aspect-ratio: 1;
     left: -1rem;
@@ -363,4 +366,3 @@ code {
     border-radius: 2rem;
     box-shadow: 0 0.2rem 1rem #000d;
 }
-
