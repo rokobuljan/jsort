@@ -339,11 +339,11 @@ code {
 .is-jsort-selected {
     outline: 0.25rem solid #000;
     outline-offset: -.3rem;
-    transition: opacity 0.4s;
+    transition: opacity 0.5s;
 }
 
 :has(.is-jsort-ghost) .is-jsort-selected {
-    opacity: 0;
+    opacity: 0.2;
 }
 
 .is-jsort-invalid {
@@ -361,5 +361,6 @@ code {
     background: #000;
     color: #fff;
     border-radius: 2rem;
+    box-shadow: 0 0.2rem 1rem #000d;
 }
 

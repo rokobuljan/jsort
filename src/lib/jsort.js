@@ -289,7 +289,7 @@ class JSort {
         const elDropParent = /** @type {HTMLElement} */ (elFromPoint?.closest(this.selectorParent));
         const isParentDrop = elTarget === elDropParent;
         const isOntoSelf = elTarget && this.closestElement(elTarget, elGrab) === elGrab;
-        // if (isOntoSelf) return false;
+        if (isOntoSelf) return false;
         const isSameParent = elDropParent === elGrabParent;
         const groupDrop = elDropParent?.dataset.jsortGroup;
         const isValidGroup = !isSameParent && Boolean(groupDrop && this.group === groupDrop);
@@ -439,7 +439,6 @@ class JSort {
      * @returns {boolean} true on insertion was valid
      */
     insert(elements, elTarget) {
-
         this.elDrop = /** @type {HTMLElement} */ (elTarget?.closest(`${this.selectorItemsFull}, ${this.selectorParent}`));
         this.elDropParent = /** @type {HTMLElement} */ (this.elDrop?.closest(this.selectorParent));
         const affectedElements = [];
@@ -486,7 +485,7 @@ class JSort {
             }
             else if (isSameParent) {
                 const indexMin = isDroppedOntoParent ? this.indexGrab : Math.min(this.indexDrop, this.indexGrab);
-                const indexMax = isDroppedOntoParent ? grabSiblings.length - 1 : Math.max(this.indexDrop, this.indexGrab);
+                const indexMax = isDroppedOntoParent ? grabSiblings.length : Math.max(this.indexDrop, this.indexGrab);
                 // affectedElements = /** @type {HTMLElement[]} */ ();
                 affectedElements.push(...grabSiblings.slice(indexMin, indexMax));
             }
@@ -518,7 +517,6 @@ class JSort {
                 }
             });
 
-
             // 4. Animate other elements
             this.affectedElementsData.forEach((data) => {
                 // We'll animate the grabbed item later
@@ -536,7 +534,7 @@ class JSort {
                 if (anim) {
                     anim.addEventListener("finish", () => {
                         elGrab.classList.remove(`${this.classAnimatedDrop}`);
-                        // this.onAnimationEnd?.call(this);
+                        // @TODO this.onAnimationEnd?.call(this);
                     });
                 } else {
                     elGrab.classList.remove(`${this.classAnimatedDrop}`);
@@ -750,7 +748,6 @@ class JSort {
             this.elGrab.classList.add(this.classGrab);
             // INSERT GHOST!
             console.log("INSERT GHOST!");
-
             this.insertGhost();
         }
 
@@ -795,6 +792,16 @@ class JSort {
         if (!this.elGrab) {
             return;
         }
+
+        if (this.multiple && this.getSelectControls(ev).isAny) {
+            // If nothing was inserted, handle selection
+            this.selekt(ev);
+            // this.reset();
+            this.removeGhost();
+            return
+        }
+
+
         this.stopEdgeScroll();
         this.isScrollPrevented = false;
         this.elGrab.style.removeProperty("user-select");
@@ -810,7 +817,7 @@ class JSort {
         let isInserted = false;
 
         if (JSort.selected.length) {
-            if (this.getSelectControls(ev).isNone) isInserted = this.insert(JSort.selected, elFromPoint);
+            isInserted = this.insert(JSort.selected, elFromPoint);
         } else {
             isInserted = this.insert([this.elGrab], elFromPoint);
         }
@@ -825,11 +832,6 @@ class JSort {
                 indexDrop: this.indexDrop,
                 event: ev
             });
-        }
-
-        if (!isInserted && this.multiple && this.getSelectControls(ev).isAny) {
-            // If nothing was inserted, handle selection
-            this.selekt(ev);
         }
 
         this.reset();
