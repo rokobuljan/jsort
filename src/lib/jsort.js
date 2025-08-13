@@ -484,7 +484,8 @@ class JSort {
             isSameParent,
             event: this._currentEvent,
         }) ?? true;
-        const isValid = Boolean(this.elDrop) && isValidTarget && isValidByUser;
+        const isNotActuallyMoved = isSameParent && this.indexGrab === this.indexDrop;
+        const isValid = Boolean(this.elDrop) && isValidTarget && isValidByUser && !isNotActuallyMoved;
 
         if (isValid) {
 
