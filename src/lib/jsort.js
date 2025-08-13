@@ -6,66 +6,54 @@
  * @see {@link https://github.com/rokobuljan/jsort}
  */
 class JSort {
-
     /** @type {string} */
     static version = "__APP_VERSION__";
-
     /** @type {string} selectorParent + selectorItems*/
     selectorItemsFull = "";
-
     /** @type {HTMLElement | null} */
     elGhost;
-
     /** @type {HTMLElement | null} */
     elGrab;
-
     /** @type {HTMLElement | null} */
     elTarget;
-
     /** @type {HTMLElement | null} */
     elDrop;
-
     /** @type {HTMLElement | null} */
     elDropParent;
-
     /** @type {number} */
     indexGrab = -1;
-
     /** @type {number} */
     indexDrop = -1;
-
     /** @type {HTMLElement[]} */
     affectedElements = [];
-
     /** @type {HTMLElement | null} */
     scrollParent = null;
-
     /** @type {string | null} */
     scrollDirection = null;
-
     /** @type {null | { start: Function, stop: Function, tick: Function }} */
     scrollAnim = null;
-
     /** @type {number} */
     edgePressure = 0;
-
     /** @type {number | undefined} */
     moveTimeout;
-
+    /** @type {boolean} */
+    isSignificantMove = false;
     /** @type {boolean} */
     isScrollPrevented = false;
-
+    /** @type {boolean} */
+    isPointerDown = false;
     /** @type {boolean} */
     hasPointerMoved = false;
-
     /** @type {boolean} */
     hasTouchMoved = false;
-
     /** @type {null | { clientX: number, clientY: number }} */
     pointerGrab = null;
-
     /** @type {null | { clientX: number, clientY: number }} */
     touchStart = null;
+    /** @type {DOMRect | null} */
+    ghostRect = null;
+    /** @type {object[]} */
+    affectedElementsData = [];
 
     /**
      * @constructor
@@ -79,6 +67,8 @@ class JSort {
      * @param {number} [options.opacity=0.8] Ghost element opacity
      * @param {number} [options.grabTimeout=140] Ms before grab is considered instead of scroll on touch devices (has no effect for mouse Event)
      * @param {boolean} [options.parentDrop=true] Can drop item onto parent
+     * @param {boolean} [options.multiple=false] Allow multiple items select
+     * @param {boolean} [options.ctrlOn=false] Emulate CTRL key lock for multiple selection
      * @param {number} [options.moveThreshold=0] Px before it's considered a pointer drag (Allows to click inner links, buttons, inputs, etc)
      * @param {number} [options.scrollThreshold=8] Px before it's considered a scroll
      * @param {number} [options.edgeThreshold=50] Pixels from edge to start parent auto-scrolling
@@ -98,12 +88,15 @@ class JSort {
      * @param {string} [options.classAnimated="is-jsort-animated"] Class name for all animated elements (on drop)
      * @param {string} [options.classAnimatedDrop="is-jsort-animated-drop"] Class name for the animated grabbed element (on drop)
      * @param {string} [options.classInvalid="is-jsort-invalid"] Class name for invalid item
+     * @param {string} [options.classSelected="is-jsort-selected"] Class name for selected items
+     * @param {string} [options.classMultiple="is-jsort-multiple"] Class name for parent if multiple mode is true
      * @param {function} [options.onBeforeGrab=(data) => {}] Callback function called before grab (return false to cancel grab)
      * @param {function} [options.onGrab=(data) => {}] Callback function called after grab
      * @param {function} [options.onMove=(data) => {}] Callback function called on move
      * @param {function} [options.onBeforeDrop=(data) => {}] Callback function called before drop (return false to cancel drop)
      * @param {function} [options.onDrop=(data) => {}] Callback function called after drop
      * @param {function} [options.onAnimationEnd=() => {}] Callback function called when animation ends
+     * @param {function} [options.onSelect=() => {}] Callback function called when item is selected
      */
     constructor(el, options = {}) {
         this.elGrabParent = el;
@@ -134,12 +127,18 @@ class JSort {
         this.classAnimated = "is-jsort-animated";
         this.classAnimatedDrop = "is-jsort-animated-drop";
         this.classInvalid = "is-jsort-invalid";
+        this.classSelected = "is-jsort-selected";
+        this.classMultiple = "is-jsort-multiple";
+        this.multiple = false;
+        this.ctrlOn = false;
+
         this.onBeforeGrab = () => { };
         this.onGrab = () => { };
         this.onMove = () => { };
         this.onBeforeDrop = () => { };
         this.onDrop = () => { };
         this.onAnimationEnd = () => { };
+        this.onSelect = () => { };
 
         this.init(options);
     }
@@ -289,17 +288,19 @@ class JSort {
         const elDropParent = /** @type {HTMLElement} */ (elFromPoint?.closest(this.selectorParent));
         const isParentDrop = elTarget === elDropParent;
         const isOntoSelf = elTarget && this.closestElement(elTarget, elGrab) === elGrab;
-        if (isOntoSelf) return false;
         const isSameParent = elDropParent === elGrabParent;
         const groupDrop = elDropParent?.dataset.jsortGroup;
         const isValidGroup = !isSameParent && Boolean(groupDrop && this.group === groupDrop);
         if (!this.parentDrop && isParentDrop) return false;
         const isValid =
-            elTarget &&
-            elDropParent &&
-            (isValidGroup || isSameParent);
+            !isOntoSelf
+            && elTarget
+            && elDropParent
+            && isValidGroup
+            || isSameParent;
         return isValid;
     }
+
 
     /**
      * Create reusable animation engine
@@ -429,9 +430,6 @@ class JSort {
         }
     }
 
-    ghostRect /** @type {DOMRect | null} */ = null;
-    affectedElementsData /** @type {object[]} */ = [];
-
     /**
      * Insert elItem into this JSort parent
      * @param {HTMLElement} elTarget The target element
@@ -448,6 +446,7 @@ class JSort {
         // (The order of execution of the two following lines is important!)
         this.elGhost?.animate([{ scale: 1.0 }], { duration: 0, fill: "forwards" });
         this.ghostRect = (this.elGhost ?? elFirst).getBoundingClientRect();
+        this.removeGhost();
 
         const elGrabParent = /** @type {HTMLElement} */ (elFirst.closest(this.selectorParent));
         const grabChildren = this.getChildren(elGrabParent);
@@ -528,13 +527,17 @@ class JSort {
 
         // 5. Always animate the grabbed item
         if (this.ghostRect) {
-            JSort.selected.forEach((elGrab) => {
+            let anim;
+            JSort.selected.forEach((elGrab, i) => {
                 elGrab.classList.add(`${this.classAnimatedDrop}`);
-                const anim = this.animateItem({ el: elGrab, x: this.ghostRect.left, y: this.ghostRect.top });
+                anim = this.animateItem({ el: elGrab, x: this.ghostRect.left, y: this.ghostRect.top });
                 if (anim) {
                     anim.addEventListener("finish", () => {
                         elGrab.classList.remove(`${this.classAnimatedDrop}`);
-                        // @TODO this.onAnimationEnd?.call(this);
+                        // Notify only once on animation end
+                        if (i === JSort.selected.length - 1) {
+                            this.onAnimationEnd?.call(this);
+                        }
                     });
                 } else {
                     elGrab.classList.remove(`${this.classAnimatedDrop}`);
@@ -542,19 +545,12 @@ class JSort {
             });
         }
 
-        this.removeGhost();
-
         return isValid;
     }
 
-    multiple = true;
-    ctrlOn = false;
-    classSelected = "is-jsort-selected";
     selectedLast = null;
     static selected = /** @type {HTMLElement[]} */ ([]);
-    onSelect = () => { };
     unselekt() {
-        console.log("UNSELECT");
         JSort.selected.forEach(el => el.classList.remove(this.classSelected));
         JSort.selected = [];
     }
@@ -570,12 +566,9 @@ class JSort {
     }
     selekt(/** @type {PointerEvent} */ ev) {
         const selCtrl = this.getSelectControls(ev);
-        // const isCtrl = (this.ctrlOn || ev.ctrlKey || ev.metaKey);
-        // const isShift = ev.shiftKey;
 
         if (selCtrl.isAny) {
             ev.preventDefault();
-            this.moveThreshold = 10;
         }
 
         const evTarget = /** @type {HTMLElement} */ (ev.target);
@@ -613,17 +606,14 @@ class JSort {
         const siblings = this.getChildren(elItem.parentElement);
 
         if (this.multiple) {
-            console.log("Logic: multiple");
             let ti = siblings.indexOf(elItem); // target index
             let li = siblings.indexOf(this.selectedLast); // last known index
             let ai = JSort.selected.indexOf(elItem); // indexes array
             if (selCtrl.isCtrl) {
-                console.log("Is CTRL");
                 if (ai > -1) JSort.selected.splice(ai, 1); // Unselect
                 else JSort.selected.push(elItem); // Select
             }
             if (selCtrl.isShift && JSort.selected.length > 0) {
-                console.log("Is SHIFT and one or more are selected")
                 var selectDirectionUp = ti < li;
                 if (ti > li) ti = [li, li = ti][0];
                 JSort.selected = siblings.slice(ti, li + 1);
@@ -636,7 +626,6 @@ class JSort {
             }
             this.selectedLast = elItem;
         } else {
-            console.log("Logic: single");
             this.selectedLast = elItem;
             JSort.selected = [elItem];
         }
@@ -644,16 +633,13 @@ class JSort {
         // Filter out not allowed (ignore) items
         JSort.selected = JSort.selected.filter((el) => !el.matches(this.selectorItemsIgnore));
         JSort.selected.forEach(el => el.classList.add(this.classSelected));
-        // Sort selected items as they were originally (as close as possible)
-        // JSort.selected.sort((a, b) => siblings.indexOf(a) - siblings.indexOf(b));
+
         // CALLBACK:
         this.onSelect?.call(this, {
             selected: JSort.selected,
             selectedLast: this.selectedLast
         });
     }
-
-    isPointerDown = false
 
     /**
      * Grab an item
@@ -728,8 +714,6 @@ class JSort {
         }
     }
 
-    isSignificantMove = false;
-
     /**
      * Move an item
      * @param {PointerEvent} ev
@@ -749,7 +733,6 @@ class JSort {
             this.elGrab.setPointerCapture(ev.pointerId);
             this.elGrab.classList.add(this.classGrab);
             // INSERT GHOST!
-            console.log("INSERT GHOST!");
             this.insertGhost();
         }
 
@@ -802,39 +785,33 @@ class JSort {
         this.elGrab.classList.remove(this.classActive, this.classGrab, this.classTouch);
         this.elTarget?.classList.remove(this.classTarget);
 
-        if (this.multiple && !this.hasPointerMoved && JSort.selected.length) {
-            // If nothing was inserted, handle selection
-            console.log("handling drop selektion");
+        if (!this.hasPointerMoved && this.multiple && JSort.selected.length) {
+            // Handle selection
             this.selekt(ev);
         } else {
+            const { clientX, clientY } = ev;
+            const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
+            // INSERT
+            this._currentEvent = ev;
 
+            let isInserted = false;
 
-            if (this.hasPointerMoved) {
-                const { clientX, clientY } = ev;
-                const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
-                // INSERT
-                this._currentEvent = ev;
+            if (JSort.selected.length) {
+                isInserted = this.insert(JSort.selected, elFromPoint);
+            } else {
+                isInserted = this.insert([this.elGrab], elFromPoint);
+            }
 
-                let isInserted = false;
-
-                if (JSort.selected.length) {
-                    isInserted = this.insert(JSort.selected, elFromPoint);
-                } else {
-                    isInserted = this.insert([this.elGrab], elFromPoint);
-                }
-
-                if (isInserted) {
-                    console.log("is inserted");
-                    this.onDrop?.call(this, {
-                        elGrab: this.elGrab,
-                        elGrabParent: this.elGrabParent,
-                        elDrop: this.elDrop,
-                        elDropParent: this.elDropParent,
-                        indexGrab: this.indexGrab,
-                        indexDrop: this.indexDrop,
-                        event: ev
-                    });
-                }
+            if (isInserted) {
+                this.onDrop?.call(this, {
+                    elGrab: this.elGrab,
+                    elGrabParent: this.elGrabParent,
+                    elDrop: this.elDrop,
+                    elDropParent: this.elDropParent,
+                    indexGrab: this.indexGrab,
+                    indexDrop: this.indexDrop,
+                    event: ev
+                });
             }
         }
 
@@ -948,6 +925,7 @@ class JSort {
             this.elGrabParent.addEventListener("pointermove", this.move);
             this.elGrabParent.addEventListener("pointerup", this.drop);
             this.elGrabParent.addEventListener("pointercancel", this.drop);
+            if (this.multiple) this.elGrabParent.classList.add(this.classMultiple);
             if (this.group !== "") this.elGrabParent.dataset.jsortGroup = this.group;
         }
     }
@@ -964,6 +942,7 @@ class JSort {
             this.elGrabParent.removeEventListener("pointermove", this.move);
             this.elGrabParent.removeEventListener("pointerup", this.drop);
             this.elGrabParent.removeEventListener("pointercancel", this.drop);
+            this.elGrabParent.classList.remove(this.classMultiple);
             if (this.group !== "") delete this.elGrabParent.dataset.jsortGroup;
         }
     }
