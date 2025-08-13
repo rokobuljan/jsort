@@ -444,7 +444,7 @@ class JSort {
         this.elDrop = /** @type {HTMLElement} */ (elTarget?.closest(`${this.selectorItemsFull}, ${this.selectorParent}`));
         const isDroppedOntoParent = this.elDrop?.matches(this.selectorParent);
         this.elDropParent = /** @type {HTMLElement} */ (this.elDrop?.closest(this.selectorParent));
-        
+
         const dropChildren = this.getChildren(this.elDropParent);
         const isSameParent = elGrabParent === this.elDropParent;
 
@@ -471,12 +471,6 @@ class JSort {
             this.affectedElements = /** @type {HTMLElement[]} */ ([...grabSiblings.slice(this.indexGrab), ...dropChildren.slice(this.indexDrop)]);
         }
 
-        // 2. Store initial positions of all affected elements (before DOM manipulation)
-        const affectedElementsData = this.affectedElements.map((el) => {
-            const { x, y } = el.getBoundingClientRect();
-            return { el, x, y };
-        });
-
         const isValidTarget = this.checkValidity({ el: elTarget });
         const isValidByUser = this.onBeforeDrop?.call(this, {
             elGrab: this.elGrab,
@@ -493,6 +487,13 @@ class JSort {
         const isValid = Boolean(this.elDrop) && isValidTarget && isValidByUser;
 
         if (isValid) {
+
+            // 2. Store initial positions of all affected elements (before DOM manipulation)
+            const affectedElementsData = this.affectedElements.map((el) => {
+                const { x, y } = el.getBoundingClientRect();
+                return { el, x, y };
+            });
+
             // 3. Insert into DOM
             if (this.swap && !isDroppedOntoParent) {
                 const elNext = elGrab.nextSibling;
