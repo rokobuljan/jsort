@@ -652,6 +652,7 @@ class JSort {
             return;
         }
 
+        const selCtrl = this.getSelectControls(ev);
         const evTarget = /** @type {Element} */ (ev.target);
         const elClosestItem = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItemsFull}`));
         const isElIgnored = Boolean(
@@ -678,7 +679,7 @@ class JSort {
         const hasHandler = Boolean(foundHandler);
         const elHandler = evTarget?.closest(this.selectorHandler);
 
-        if (hasHandler && isHandlerVisible && !elHandler) {
+        if (hasHandler && isHandlerVisible && !elHandler && !selCtrl.isAny) {
             return;
         }
         const { clientX, clientY } = ev;
