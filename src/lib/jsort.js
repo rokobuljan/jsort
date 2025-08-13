@@ -801,12 +801,11 @@ class JSort {
         this.elGrab.style.removeProperty("cursor");
         this.elGrab.classList.remove(this.classActive, this.classGrab, this.classTouch);
         this.elTarget?.classList.remove(this.classTarget);
-        
+
         if (this.multiple && !this.hasPointerMoved && JSort.selected.length) {
             // If nothing was inserted, handle selection
             console.log("handling drop selektion");
             this.selekt(ev);
-            this.removeGhost();
         } else {
 
 
@@ -840,7 +839,6 @@ class JSort {
         }
 
         this.reset();
-        this.removeGhost();
     }
 
     /**
