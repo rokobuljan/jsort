@@ -176,7 +176,7 @@ class JSort {
      * @param {number} distance Distance in px
      * @returns {boolean}
      */
-    isSignificantMove(startXY, currentXY, distance) {
+    checkSignificantMove(startXY, currentXY, distance) {
         const { clientX, clientY } = currentXY;
         const deltaX = clientX - startXY.clientX;
         const deltaY = clientY - startXY.clientY;
@@ -475,8 +475,8 @@ class JSort {
             isSameParent,
             event: this._currentEvent,
         }) ?? true;
-
-        const isValid = Boolean(this.elDrop) && isValidTarget && isValidByUser;
+        const isNotActuallyMoved = isSameParent && this.indexGrab === this.indexDrop;
+        const isValid = Boolean(this.elDrop) && isValidTarget && isValidByUser && !isNotActuallyMoved;
 
         if (isValid) {
 
@@ -728,6 +728,8 @@ class JSort {
         }
     }
 
+    isSignificantMove = false;
+
     /**
      * Move an item
      * @param {PointerEvent} ev
@@ -740,9 +742,9 @@ class JSort {
             this.hasPointerMoved && !this.elGrab?.hasPointerCapture(ev.pointerId)
         ) return;
 
-        const isSignificantMove = this.isSignificantMove(this.pointerGrab, ev, this.moveThreshold);
+        this.isSignificantMove = this.checkSignificantMove(this.pointerGrab, ev, this.moveThreshold);
 
-        if (!this.hasPointerMoved && isSignificantMove) {
+        if (!this.hasPointerMoved && this.isSignificantMove) {
             this.hasPointerMoved = true;
             this.elGrab.setPointerCapture(ev.pointerId);
             this.elGrab.classList.add(this.classGrab);
@@ -793,45 +795,48 @@ class JSort {
             return;
         }
 
-        if (this.multiple && this.getSelectControls(ev).isAny) {
-            // If nothing was inserted, handle selection
-            this.selekt(ev);
-            // this.reset();
-            this.removeGhost();
-            return
-        }
-
-
         this.stopEdgeScroll();
         this.isScrollPrevented = false;
         this.elGrab.style.removeProperty("user-select");
         this.elGrab.style.removeProperty("cursor");
         this.elGrab.classList.remove(this.classActive, this.classGrab, this.classTouch);
         this.elTarget?.classList.remove(this.classTarget);
-
-        const { clientX, clientY } = ev;
-        const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
-        // INSERT
-        this._currentEvent = ev;
-
-        let isInserted = false;
-
-        if (JSort.selected.length) {
-            isInserted = this.insert(JSort.selected, elFromPoint);
+        
+        if (this.multiple && !this.hasPointerMoved && JSort.selected.length) {
+            // If nothing was inserted, handle selection
+            console.log("handling drop selektion");
+            this.selekt(ev);
+            this.removeGhost();
         } else {
-            isInserted = this.insert([this.elGrab], elFromPoint);
-        }
 
-        if (isInserted) {
-            this.onDrop?.call(this, {
-                elGrab: this.elGrab,
-                elGrabParent: this.elGrabParent,
-                elDrop: this.elDrop,
-                elDropParent: this.elDropParent,
-                indexGrab: this.indexGrab,
-                indexDrop: this.indexDrop,
-                event: ev
-            });
+
+            if (this.hasPointerMoved) {
+                const { clientX, clientY } = ev;
+                const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
+                // INSERT
+                this._currentEvent = ev;
+
+                let isInserted = false;
+
+                if (JSort.selected.length) {
+                    isInserted = this.insert(JSort.selected, elFromPoint);
+                } else {
+                    isInserted = this.insert([this.elGrab], elFromPoint);
+                }
+
+                if (isInserted) {
+                    console.log("is inserted");
+                    this.onDrop?.call(this, {
+                        elGrab: this.elGrab,
+                        elGrabParent: this.elGrabParent,
+                        elDrop: this.elDrop,
+                        elDropParent: this.elDropParent,
+                        indexGrab: this.indexGrab,
+                        indexDrop: this.indexDrop,
+                        event: ev
+                    });
+                }
+            }
         }
 
         this.reset();
@@ -874,8 +879,8 @@ class JSort {
         }
 
         // Handle scroll
-        const isSignificantMove = this.isSignificantMove(this.touchStart, ev.touches[0], this.scrollThreshold);
-        if (!this.hasTouchMoved && isSignificantMove) {
+        this.isSignificantMove = this.checkSignificantMove(this.touchStart, ev.touches[0], this.scrollThreshold);
+        if (!this.hasTouchMoved && this.isSignificantMove) {
             this.hasTouchMoved = true;
             clearTimeout(this.moveTimeout);
             this.moveTimeout = undefined;
@@ -921,9 +926,10 @@ class JSort {
         this.isScrollPrevented = false;
         this.pointerGrab = null;
         this.touchStart = null;
-        this.hasPointerMoved = false;
         this.hasTouchMoved = false;
+        this.hasPointerMoved = false;
         this.ghostRect = null;
+        this.isSignificantMove = false;
     }
 
     /**
