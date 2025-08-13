@@ -55,7 +55,7 @@ class JSort {
     /** @type {object[]} */
     affectedElementsData = [];
     /** @type {HTMLElement | null} */
-    selectedLast = null;
+    static selectedLast = null;
     /** @type {HTMLElement[]} */
     static selected = [];
 
@@ -566,6 +566,8 @@ class JSort {
     }
 
     selekt(/** @type {PointerEvent} */ ev) {
+        console.log(ev.type);
+        
         const evTarget = /** @type {HTMLElement} */ (ev.target);
         const elItem = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItemsFull}`));
         if (!elItem) return;
@@ -577,6 +579,9 @@ class JSort {
         }
 
         const isSelected = elItem.matches(`.${this.classSelected}`);
+        const notOfSameParent = !JSort.selectedLast ? false : JSort.selectedLast.closest(`${this.selectorParent}`) !== this.elGrabParent;
+        console.log(notOfSameParent);
+        
 
         // Prevent toggle on single (unless Ctrl key is pressed)
         if (JSort.selected.length === 1 && isSelected && !selCtrl.isCtrl) {
@@ -596,9 +601,11 @@ class JSort {
         // Multiple selections are rescheduled for pointerup,
         // that way we can drag multiple items at the same time without losing selection.
         if (ev.type === "pointerdown" && !isFirstSelect) {
+            console.log("PASSING TO PUP");
+            
             return; // We'll handle multi-selekt on pointerup
         }
-        if (ev.type === "pointerdown" && isFirstSelect) {
+        if (notOfSameParent || ev.type === "pointerdown" && isFirstSelect) {
             this.unselekt();
         }
 
@@ -607,7 +614,7 @@ class JSort {
 
         if (this.multiple) {
             let ti = siblings.indexOf(elItem); // target index
-            let li = siblings.indexOf(this.selectedLast); // last known index
+            let li = siblings.indexOf(JSort.selectedLast); // last known index
             let ai = JSort.selected.indexOf(elItem); // indexes array
             if (selCtrl.isCtrl) {
                 if (ai > -1) JSort.selected.splice(ai, 1); // Unselect
@@ -624,9 +631,9 @@ class JSort {
             if (selCtrl.isNone) {
                 JSort.selected = ai < 0 || JSort.selected.length > 1 ? [elItem] : [];
             }
-            this.selectedLast = elItem;
+            JSort.selectedLast = elItem;
         } else {
-            this.selectedLast = elItem;
+            JSort.selectedLast = elItem;
             JSort.selected = [elItem];
         }
 
@@ -637,7 +644,7 @@ class JSort {
         // CALLBACK:
         this.onSelect?.call(this, {
             selected: JSort.selected,
-            selectedLast: this.selectedLast
+            selectedLast: JSort.selectedLast
         });
     }
 

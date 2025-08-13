@@ -134,6 +134,7 @@ details {
     summary {
         cursor: pointer;
         user-select: none;
+        outline: none;
     }
 }
 
@@ -353,11 +354,11 @@ code {
 }
 
 [data-jsort-selected]::after {
-    content: "+" attr(data-jsort-selected);
+    content: attr(data-jsort-selected);
     position: absolute;
     width: max-content;
     font-size: 0.9rem;
-    padding: 0.5em;
+    padding: 0.3em 0.5em;
     aspect-ratio: 1;
     left: -1rem;
     top: -1rem;
