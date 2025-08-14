@@ -9,61 +9,44 @@ class JSort {
 
     /** @type {string} */
     static version = "__APP_VERSION__";
-
     /** @type {string} selectorParent + selectorItems*/
     selectorItemsFull = "";
-
     /** @type {HTMLElement | null} */
     elGhost;
-
     /** @type {HTMLElement | null} */
     elGrab;
-
     /** @type {HTMLElement | null} */
     elTarget;
-
     /** @type {HTMLElement | null} */
     elDrop;
-
     /** @type {HTMLElement | null} */
     elDropParent;
-
     /** @type {number} */
     indexGrab = -1;
-
     /** @type {number} */
     indexDrop = -1;
-
     /** @type {HTMLElement[]} */
     affectedElements = [];
-
     /** @type {HTMLElement | null} */
     scrollParent = null;
-
     /** @type {string | null} */
     scrollDirection = null;
-
     /** @type {null | { start: Function, stop: Function, tick: Function }} */
     scrollAnim = null;
-
     /** @type {number} */
     edgePressure = 0;
-
     /** @type {number | undefined} */
     moveTimeout;
-
     /** @type {boolean} */
     isScrollPrevented = false;
-
     /** @type {boolean} */
     hasPointerMoved = false;
-
     /** @type {boolean} */
     hasTouchMoved = false;
-
+    /** @type {boolean} - If we should remove jsort class from parent on destroy */
+    destroyParentClass = false;
     /** @type {null | { clientX: number, clientY: number }} */
     pointerGrab = null;
-
     /** @type {null | { clientX: number, clientY: number }} */
     touchStart = null;
 
@@ -777,6 +760,13 @@ class JSort {
         const data = this.parseDataAttribute(this.elGrabParent);
         Object.assign(this, options, data);
         this.reset();
+
+        // Make parent's .jsort class optional (add it programmatically)
+        if (this.selectorParent[0]?.trim() === "." && !this.elGrabParent.matches(this.selectorParent)) {
+            this.elGrabParent.classList.add(`${this.selectorParent.replace(/^\./, "")}`);
+            this.destroyParentClass = true;
+        }
+
         this.selectorItems = (this.selectorItems ?? "*").replace(/^(?! *>)/, "> $&");
         this.selectorItemsFull = `${this.selectorParent}${this.selectorItems}${this.selectorItemsIgnore ? `:not(${this.selectorItemsIgnore})` : ""}`;
         if (this.elGrabParent) {
@@ -803,6 +793,7 @@ class JSort {
             this.elGrabParent.removeEventListener("pointerup", this.drop);
             this.elGrabParent.removeEventListener("pointercancel", this.drop);
             if (this.group !== "") delete this.elGrabParent.dataset.jsortGroup;
+            if (this.destroyParentClass) this.elGrabParent.classList.remove(`${this.selectorParent.replace(/^\./, "")}`);
         }
     }
 }

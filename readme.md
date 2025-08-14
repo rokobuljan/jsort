@@ -42,12 +42,12 @@ npm install @rbuljan/jsort
 const JSortInstance = new JSort(HTMLElement, { /* Options */ });
 ```
 
-## Usage
+## Usage example
 
-Add class `class="jsort"` to your HTML element, and instantiate `JSort` with the desired Options
+
 
 ```html
-<ul class="jsort" id="list">
+<ul id="list">
     <li>1</li>
     <li>2</li>
     <li>
@@ -61,6 +61,7 @@ Add class `class="jsort"` to your HTML element, and instantiate `JSort` with the
     import JSort from '@rbuljan/jsort';
     const jsortList = new JSort(document.querySelector("#list"), {
         duration: 360,
+        // Other Options here
         onGrab(data) {
             console.log(this, data);
         }
@@ -73,6 +74,9 @@ Add class `class="jsort"` to your HTML element, and instantiate `JSort` with the
     });
 </script>
 ```
+
+**_Tip:_**  
+Works with any parent Tag
 
 ## Options
 
@@ -134,17 +138,19 @@ By defafult, the `selectorIgnoreFields` provides a good sane selector in order t
 Internally, the Options **selectors** will be **concatenated** like `selectorParent > selectorItems:not( selectorItemsIgnore )` into i.e: `.jsort > *:not(.jsort-ignore)` (or like: `.jsort > *` if you pass an empty string to the `selectorItemsIgnore`). The `>` immediate child selector will always be injected by default.
 
 
-
-### Example
+### Options example
 
 ```javascript
-const sortable = new JSort(document.querySelector('.my-list'), {
-  group: 'shared-group',
+const sortable = new JSort(document.querySelector("#mySortable"), {
+  selectorItems: ".item",
+  group: "shared-group",
+  swap: true,
   duration: 300,
   scale: 1.05,
   onDrop: (data) => {
     console.log(this, data); // JSort, data{}
-  }
+  },
+  // More options here...
 });
 ```
 
@@ -152,19 +158,19 @@ const sortable = new JSort(document.querySelector('.my-list'), {
 Options (that are not callbacks) can be assigned directly in your HTML markup using the `data-jsort` attribute in this format `option: value; option: value`
 
 ```html
-<ul class="jsort" data-jsort="
-        group: a;
-        selectorItems: .item;
-        selectorHandler: .my-handler;
-        swap: true;
-        duration: 300;
-        easing: ease-out;
-        zIndex: 999;
-        parentDrop: false;
-    ">
-    <li class="item"><div class="my-handler">✥</div>Item 1</li>
-    <li class="item"><div class="my-handler">✥</div>Item 2</li>
-</ul>
+<div id="mySortable" data-jsort="
+    group: a;
+    selectorItems: .item;
+    selectorHandler: .my-handler;
+    swap: true;
+    duration: 300;
+    easing: ease-out;
+    zIndex: 999;
+    parentDrop: false;
+  ">
+  <div class="item"><div class="my-handler">✥</div>Item 1</div>
+  <div class="item"><div class="my-handler">✥</div>Item 2</div>
+</div>
 ```
 
 just remember that `data-jsort` options **will override** any instance options you passed to the constructor (analogue to stylesheet vs. `style=""` attribute). Having that in consideration, you can define some JSort global, shared options from JavaScript, and customize specific elements using the `data-jsort=""` attribute, if needed.
@@ -185,8 +191,8 @@ new JSort(myListElement, {
             return false;
         }
     },
-    onGrab() {
-        console.log(`Grabbed index ${this.indexGrab}`);
+    onGrab(data) {
+        console.log(`Grabbed index ${data.indexGrab}`);
     },
     onBeforeDrop(data) {
         if (data.indexDrop === 0) {
@@ -198,8 +204,8 @@ new JSort(myListElement, {
             return false;
         }
     },
-    onDrop() {
-        console.log(`Dropped index ${this.indexGrab} into ${this.indexDrop}`);
+    onDrop(data) {
+        console.log(`Dropped index ${data.indexGrab} into ${data.indexDrop}`, this);
     }
 })
 ```
@@ -244,21 +250,21 @@ If you returned `false` from one of the callbacks, the respective  `onGrab` or `
 JSort allows to drag &amp; drop into a linked group by defining a `group` property
 
 ```html
-<div class="jsort group-a">
+<div class="shared">
     <div>A 1</div>
     <div>A 2</div>
     <div>A 3</div>
 </div>
-<div class="jsort group-a">
+<div class="shared">
     <div>B 1</div>
     <div>B 2</div>
 </div>
 
 <script type="module">
     import JSort from '@rbuljan/jsort';
-    document.querySelectorAll(".group-a").forEach((el) => {
+    document.querySelectorAll(".shared").forEach((el) => {
         new JSort(el, { 
-            group: "a"
+            group: "shared"
         });
     });
 </script>
@@ -270,19 +276,19 @@ or by adding the `data-jsort` attribute in HTML:
   <summary>View code</summary>
 
 ```html
-<div class="jsort" data-jsort="group:a">
+<div class="shared" data-jsort="group:shared">
     <div>A 1</div>
     <div>A 2</div>
     <div>A 3</div>
 </div>
-<div class="jsort" data-jsort="group:a">
+<div class="shared" data-jsort="group:shared">
     <div>B 1</div>
     <div>B 2</div>
 </div>
 
 <script type="module">
     import JSort from '@rbuljan/jsort';
-    document.querySelectorAll(".jsort").forEach((el) => new JSort(el));
+    document.querySelectorAll(".shared").forEach((el) => new JSort(el));
 </script>
 ```
 
@@ -293,12 +299,12 @@ or by adding the `data-jsort` attribute in HTML:
 By default JSort *reorders* the items on drop. If instead you want to **swap**, you can set the `swap` option to `true` to your element or grouped elements:
 
 ```html
-<div class="jsort">
+<div class="players">
     <div>Mark</div>
     <div>Jack</div>
     <div>Theo</div>
 </div>
-<div class="jsort">
+<div class="players">
     <div>Luke</div>
     <div>John</div>
     <div>Roko</div>
@@ -306,9 +312,9 @@ By default JSort *reorders* the items on drop. If instead you want to **swap**, 
 
 <script type="module">
     import JSort from '@rbuljan/jsort';
-    document.querySelectorAll(".jsort").forEach((el) => {
+    document.querySelectorAll(".players").forEach((el) => {
         new JSort(el, {
-            group: "players",
+            group: "team",
             swap: true,
         })
     });
@@ -321,12 +327,12 @@ PS: Instead of using the constructor options, you can use the data-jsort:
   <summary>View code</summary>
 
 ```html
-<div class="jsort" data-jsort="group:players; swap:true">
+<div class="players" data-jsort="group:team; swap:true">
     <div>Mark</div>
     <div>Jack</div>
     <div>Theo</div>
 </div>
-<div class="jsort" data-jsort="group:players; swap:true">
+<div class="players" data-jsort="group:team; swap:true">
     <div>Luke</div>
     <div>John</div>
     <div>Roko</div>
@@ -334,9 +340,11 @@ PS: Instead of using the constructor options, you can use the data-jsort:
 
 <script type="module">
     import JSort from '@rbuljan/jsort';
-    document.querySelectorAll(".jsort").forEach((el) => new JSort(el));
+    document.querySelectorAll(".players").forEach((el) => new JSort(el));
 </script>
 ```
+
+Find more examples on [**JSort Homepage**](https://rokobuljan.github.io/jsort/).
 
 </details>
 
@@ -374,7 +382,7 @@ For custom styling JSort provides several classes you could use in your CSS to f
 
 ___
 
-See the [JSort Homepage](https://rokobuljan.github.io/jsort/) for examples and inspiration.
+See the [**JSort Homepage**](https://rokobuljan.github.io/jsort/) for examples and inspiration.
 
 ## Motivation
 

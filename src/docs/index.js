@@ -10,18 +10,30 @@ const els = (sel, par = document) => par.querySelectorAll(sel);
 
 el("#version").textContent = `${JSort.version}`;
 console.log(`Running JSort version: ${JSort.version}`);
-
-els(`.jsort:not([id^="example-"])`).forEach((el) => {
-    // Make sortable
-    new JSort(el, {
-        selectorItems: "*:not(.ignore)",
-        onDrop(data) {
-            console.log(data);
-            // console.log(`Dropped "${this.elGrabbed.textContent}" from index ${this.indexGrab} into index ${this.indexDrop} Parents:`, this.elGrabParent, this.elDropParent);
-        }
-    });
+// Code highlight
+els("pre > code").forEach((el) => {
+    hljs.highlightElement(el);
+});
+// Random background colors
+els(".grid > *, .list > *").forEach((el) => {
+    el.style.backgroundColor = `hsl(${~~(Math.random() * 200 + 80)} 56% 65%)`;
 });
 
+// JSort
+
+// Example grid
+new JSort(el("#example-grid"));
+
+// Example groups
+els(".example-groups").forEach((elGroup) => new JSort(elGroup, { group: "shared" }));
+
+// Example nested
+els(".example-nested").forEach((elGroup) => new JSort(elGroup, { group: "nested" }));
+
+// Example swap
+els(".example-swap").forEach((elGroup) => new JSort(elGroup, { group: "swap" }));
+
+// Example inplace sort
 const elExampleSortSelect = el("#example-sort-select");
 const elExampleSort = el("#example-sort");
 const jsortExampleSort = new JSort(elExampleSort);
@@ -36,11 +48,4 @@ elExampleSortSelect.addEventListener("input", () => {
     });
 });
 
-els("pre > code").forEach((el) => {
-    hljs.highlightElement(el);
-});
 
-// Random background colors
-els(".grid > *, .list > *").forEach((el) => {
-    el.style.backgroundColor = `hsl(${~~(Math.random() * 200 + 80)} 56% 65%)`;
-});
