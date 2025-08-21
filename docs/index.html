@@ -97,7 +97,7 @@ const jsortGrid = new JSort(elGrid, {/* Options */});
             <div class="sm-row">
                 <h2>Groups</h2>
                 <p>
-                    Group multiple containers using the <b>data-jsort</b> attribute:
+                    Group multiple containers using the <code>group: "name"`</code> Option, or with the <b>data-jsort</b> attribute:
                     <code>data-jsort="group: name"</code> <br>
                 </p>
                 <details>
@@ -137,7 +137,7 @@ document.querySelectorAll(".shared").forEach((el) =&gt; new JSort(el, { group: "
             <div class="sm-row">
                 <h2>Nested</h2>
                 <p>
-                    Add a <code>group: "name"</code> to Options, or use <code>data-jsort="group: name"</code> to your nested elements.
+                    Just like <b>Groups</b>, you get nesting out of the box.
                 </p>
                 <details>
                     <summary>View code</summary>
@@ -208,7 +208,7 @@ document.querySelectorAll(".swap").forEach((el) =&gt; new JSort(el));
             <div class="row" id="swap">
                 <div>
                     <h3>Substitutes</h3>
-                    <ul class="example-swap list" data-jsort="group:b; swap:true">
+                    <ul class="example-swap list" data-jsort="group:swap; swap:true">
                         <li>Player 8</li>
                         <li>Player 14</li>
                         <li>Player 12</li>
@@ -217,7 +217,7 @@ document.querySelectorAll(".swap").forEach((el) =&gt; new JSort(el));
                 </div>
                 <div>
                     <h3>Team</h3>
-                    <ul class="example-swap list" data-jsort="group:b; swap:false">
+                    <ul class="example-swap list" data-jsort="group:swap; swap:true">
                         <li>Player 9</li>
                         <li>Player 10</li>
                         <li>Player 7</li>
@@ -240,7 +240,7 @@ document.querySelectorAll(".swap").forEach((el) =&gt; new JSort(el));
 import JSort from "@rbuljan/jsort";
 const myJSort = new JSort(document.querySelector(".jsort"));
 // Your custom sorting logic:
-const sortLogic = (a, b) => a.textContent.localeCompare(b.textContent, "en", { numeric: true });
+const sortLogic = (a, b) =&gt; a.textContent.localeCompare(b.textContent, "en", { numeric: true });
 // Sort:
 myJSort.sort(sortLogic);</code></pre>
                 </details>
@@ -314,8 +314,8 @@ myJSort.sort(sortLogic);</code></pre>
                 <details>
                     <summary>On mobile (touch) how to make sortable items immediately draggable?</summary>
                     <div class="answer">
-                        By default, on mobile (touch) there's a slight timeout to register scroll-intent, so that large sortable items would not get in the way of a user trying to actually scroll the page/app.<br>
-                        Being aware of this, if instead you want your sortable items to be immediately, seamlessly draggable, you can set the <code>grabTimeout</code> option to <code>0</code>
+                        By default, on mobile (touch) there's an intentional slight timeout before the drag can start to help register scroll-intent, so that large sortable items would not get in the way of a user trying to actually scroll the page/app.<br>
+                        If instead you want your items to be immediately draggable, you can set in Options: <code>grabTimeout: 0</code>
                     </div>
                 </details>
                 <details>
@@ -324,8 +324,8 @@ myJSort.sort(sortLogic);</code></pre>
                         As explained in the <a href="https://github.com/rokobuljan/jsort?tab=readme-ov-file#options">JSort docs</a>, use the several <code>on*</code> callback options, one being <code>onDrop()</code> and see all the available `data` Object values.
                         <br><br>
                         <pre><code>
-myJSort(Element, {
-  onDrop(data) => {
+new JSort(Element, {
+  onDrop(data) =&gt; {
     console.log(data)
     console.log(data.indexGrab, data.indexDrop);
     console.log(this); // if you need even more info

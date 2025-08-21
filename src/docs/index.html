@@ -207,7 +207,7 @@ document.querySelectorAll(".swap").forEach((el) =&gt; new JSort(el));
             <div class="row" id="swap">
                 <div>
                     <h3>Substitutes</h3>
-                    <ul class="example-swap list" data-jsort="group:b; swap:true">
+                    <ul class="example-swap list" data-jsort="group:swap; swap:true">
                         <li>Player 8</li>
                         <li>Player 14</li>
                         <li>Player 12</li>
@@ -216,7 +216,7 @@ document.querySelectorAll(".swap").forEach((el) =&gt; new JSort(el));
                 </div>
                 <div>
                     <h3>Team</h3>
-                    <ul class="example-swap list" data-jsort="group:b; swap:false">
+                    <ul class="example-swap list" data-jsort="group:swap; swap:true">
                         <li>Player 9</li>
                         <li>Player 10</li>
                         <li>Player 7</li>
@@ -323,7 +323,7 @@ myJSort.sort(sortLogic);</code></pre>
                         As explained in the <a href="https://github.com/rokobuljan/jsort?tab=readme-ov-file#options">JSort docs</a>, use the several <code>on*</code> callback options, one being <code>onDrop()</code> and see all the available `data` Object values.
                         <br><br>
                         <pre><code>
-myJSort(Element, {
+new JSort(Element, {
   onDrop(data) =&gt; {
     console.log(data)
     console.log(data.indexGrab, data.indexDrop);
