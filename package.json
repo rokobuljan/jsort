@@ -18,10 +18,10 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:lib && npm run build:docs",
+    "build": "npm run test && npm run build:lib && npm run build:docs",
     "build:docs": "vite build",
     "build:lib": "vite build --config vite.config.lib.js",
-    "build:types": "tsc",
+    "test": "tsc --noEmit",
     "preview": "vite preview --outDir ../../docs",
     "prepublishOnly": "npm run build:lib"
   },

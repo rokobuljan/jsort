@@ -31,7 +31,7 @@ els(".example-groups").forEach((elGroup) => new JSort(elGroup, { group: "shared"
 els(".example-nested").forEach((elGroup) => new JSort(elGroup, { group: "nested" }));
 
 // Example swap
-els(".example-swap").forEach((elGroup) => new JSort(elGroup, { group: "swap" }));
+els(".example-swap").forEach((elGroup) => new JSort(elGroup, { group: "swap", swap: true }));
 
 // Example inplace sort
 const elExampleSortSelect = el("#example-sort-select");
