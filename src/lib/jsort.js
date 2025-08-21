@@ -1,3 +1,5 @@
+import Selekt from "./selekt.js";
+
 /**
  * Small yet powerful drag and drop sortable library with touch support, smooth animations, for a great UX.
  * @class JSort
@@ -54,10 +56,6 @@ class JSort {
     ghostRect = null;
     /** @type {object[]} */
     affectedElementsData = [];
-    /** @type {HTMLElement | null} */
-    static elSelectedLast = null;
-    /** @type {HTMLElement[]} */
-    static selected = [];
 
     /**
      * @constructor
@@ -100,7 +98,6 @@ class JSort {
      * @param {function} [options.onBeforeDrop=(data) => {}] Callback function called before drop (return false to cancel drop)
      * @param {function} [options.onDrop=(data) => {}] Callback function called after drop
      * @param {function} [options.onAnimationEnd=() => {}] Callback function called when animation ends
-     * @param {function} [options.onSelect=(data) => {}] Callback function called when item is selected
      */
     constructor(el, options = {}) {
         this.elGrabParent = el;
@@ -207,8 +204,8 @@ class JSort {
         });
         this.elGhost.classList.remove(this.classActive, this.classTarget, this.classSelected);
         this.elGhost.classList.add(this.classGhost);
-        if (JSort.selected.length > 1) {
-            this.elGhost.dataset.jsortSelected = `${JSort.selected.length}`;
+        if (this.selekt.selected.length > 1) {
+            this.elGhost.dataset.jsortSelected = `${this.selekt.selected.length}`;
         }
         this.elGhost.animate([
             { scale: this.scale }
@@ -522,7 +519,7 @@ class JSort {
         // 4. Animate other elements
         this.affectedElementsData.forEach((data) => {
             // We'll animate the grabbed items later
-            if (JSort.selected.includes(data.el)) return;
+            if (this.selekt.selected.includes(data.el)) return;
             // Animate all other items
             this.animateItem(data);
         });
@@ -530,14 +527,14 @@ class JSort {
         // 5. Animate the grabbed items
         if (this.ghostRect) {
             let anim;
-            JSort.selected.forEach((elGrab, i) => {
+            this.selekt.selected.forEach((elGrab, i) => {
                 elGrab.classList.add(`${this.classAnimatedDrop}`);
                 anim = this.animateItem({ el: elGrab, x: this.ghostRect.left, y: this.ghostRect.top });
                 if (anim) {
                     anim.addEventListener("finish", () => {
                         elGrab.classList.remove(`${this.classAnimatedDrop}`);
                         // Notify only once on animation end
-                        if (i === JSort.selected.length - 1) {
+                        if (i === this.selekt.selected.length - 1) {
                             this.onAnimationEnd?.call(this);
                         }
                     });
@@ -548,109 +545,6 @@ class JSort {
         }
 
         return true;
-    }
-
-    getSelectControls(/** @type {PointerEvent} */ ev) {
-        const isCtrl = this.ctrlOn || ev.ctrlKey || ev.metaKey;
-        const isShift = ev.shiftKey;
-        return {
-            isCtrl,
-            isShift,
-            isAny: isCtrl || isShift,
-            isNone: !isCtrl && !isShift
-        };
-    }
-
-    unselekt() {
-        JSort.selected.forEach(el => el.classList.remove(this.classSelected));
-        JSort.selected = [];
-    }
-
-    toggleSelect(state) {
-        this.ctrlOn = state ?? !this.ctrlOn;
-    }
-
-    selekt(/** @type {PointerEvent} */ ev) {
-        console.log(ev.type);
-
-        const evTarget = /** @type {HTMLElement} */ (ev.target);
-        const elItem = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItemsFull}`));
-        if (!elItem) return;
-
-        const selCtrl = this.getSelectControls(ev);
-
-        if (selCtrl.isAny) {
-            ev.preventDefault();
-        }
-
-        const isSelected = elItem.matches(`.${this.classSelected}`);
-        const notOfSameParent = !JSort.elSelectedLast ? false : JSort.elSelectedLast.closest(`${this.selectorParent}`) !== this.elGrabParent;
-        console.log(notOfSameParent);
-
-
-        // Prevent toggle on single (unless Ctrl key is pressed)
-        if (JSort.selected.length === 1 && isSelected && !selCtrl.isCtrl) {
-            return;
-        }
-
-        // Prevent deselect on contextmenu
-        if (ev.button === 2 && JSort.selected.length > 1 && isSelected) {
-            return;
-        }
-
-        // First selection flag
-        const isFirstSelect = !isSelected && (selCtrl.isNone || JSort.selected.length === 0);
-
-
-        // Only the first selection should be on pointerdown
-        // Multiple selections are rescheduled for pointerup,
-        // that way we can drag multiple items at the same time without losing selection.
-        if (ev.type === "pointerdown" && !isFirstSelect) {
-            console.log("PASSING TO PUP");
-
-            return; // We'll handle multi-selekt on pointerup
-        }
-        if (ev.type === "pointerdown" && isFirstSelect) {
-            this.unselekt();
-        }
-
-        JSort.selected.forEach(el => el.classList.remove(this.classSelected));
-        const siblings = this.getChildren(elItem.parentElement);
-
-        if (this.multiple) {
-            let ti = siblings.indexOf(elItem); // target index
-            let li = siblings.indexOf(JSort.elSelectedLast); // last known index
-            let ai = JSort.selected.indexOf(elItem); // indexes array
-            if (selCtrl.isCtrl) {
-                if (ai > -1) JSort.selected.splice(ai, 1); // Unselect
-                else JSort.selected.push(elItem); // Select
-            }
-            if (selCtrl.isShift && JSort.selected.length > 0) {
-                var selectDirectionUp = ti < li;
-                if (ti > li) ti = [li, li = ti][0];
-                JSort.selected = siblings.slice(ti, li + 1);
-                if (selectDirectionUp) {
-                    JSort.selected = JSort.selected.reverse(); // Reverse in order to preserve user selection direction
-                }
-            }
-            if (selCtrl.isNone) {
-                JSort.selected = ai < 0 || JSort.selected.length > 1 ? [elItem] : [];
-            }
-            JSort.elSelectedLast = elItem;
-        } else {
-            JSort.elSelectedLast = elItem;
-            JSort.selected = [elItem];
-        }
-
-        // Filter out not allowed (ignore) items
-        JSort.selected = JSort.selected.filter((el) => !el.matches(this.selectorItemsIgnore));
-        JSort.selected.forEach(el => el.classList.add(this.classSelected));
-
-        // CALLBACK:
-        this.onSelect?.call(this, {
-            selected: JSort.selected,
-            elSelectedLast: JSort.elSelectedLast
-        });
     }
 
     /**
@@ -664,7 +558,6 @@ class JSort {
             return;
         }
 
-        const selCtrl = this.getSelectControls(ev);
         const evTarget = /** @type {Element} */ (ev.target);
         const elClosestItem = /** @type {HTMLElement} */ (evTarget.closest(`${this.selectorItemsFull}`));
         const isElIgnored = Boolean(
@@ -691,7 +584,7 @@ class JSort {
         const hasHandler = Boolean(foundHandler);
         const elHandler = evTarget?.closest(this.selectorHandler);
 
-        if (hasHandler && isHandlerVisible && !elHandler && !selCtrl.isAny) {
+        if (hasHandler && isHandlerVisible && !elHandler) {
             return;
         }
         const { clientX, clientY } = ev;
@@ -709,7 +602,6 @@ class JSort {
 
         if (isUserValidated) {
             ev.preventDefault(); // prevent i.e: links drag and other browser defaults
-            this.selekt(ev);
             this.elGrab.classList.add(this.classActive);
             this.elGrab.style.cursor = "move";
             this.elGrab.style.userSelect = "none";
@@ -790,7 +682,7 @@ class JSort {
         if (!this.elGrab) {
             return;
         }
-        const selCtrl = this.getSelectControls(ev);
+
         this.stopEdgeScroll();
         this.isScrollPrevented = false;
         this.elGrab.style.removeProperty("user-select");
@@ -798,10 +690,8 @@ class JSort {
         this.elGrab.classList.remove(this.classActive, this.classGrab, this.classTouch);
         this.elTarget?.classList.remove(this.classTarget);
 
-        if (!this.hasPointerMoved && this.multiple && (JSort.selected.length || !JSort.selected.length && selCtrl.isAny)) {
-            // Handle selection
-            this.selekt(ev);
-        } else {
+        if (this.hasPointerMoved) {
+
             const { clientX, clientY } = ev;
             const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
             // INSERT
@@ -809,8 +699,8 @@ class JSort {
 
             let isInserted = false;
 
-            if (JSort.selected.length) {
-                isInserted = this.insert(JSort.selected, elFromPoint);
+            if (this.selekt.selected.length) {
+                isInserted = this.insert(this.selekt.selected, elFromPoint);
             } else {
                 isInserted = this.insert([this.elGrab], elFromPoint);
             }
@@ -920,6 +810,11 @@ class JSort {
         this.isSignificantMove = false;
     }
 
+    handleSelect = (data = {}) => {
+        console.log(data);
+        this.onSelect.call(this, data);
+    }
+
     /**
      * Initialize: pass user options or data attr to constructor, and attach events
      * @param {Object} options
@@ -940,6 +835,13 @@ class JSort {
             this.elGrabParent.addEventListener("pointercancel", this.drop);
             if (this.multiple) this.elGrabParent.classList.add(this.classMultiple);
             if (this.group !== "") this.elGrabParent.dataset.jsortGroup = this.group;
+            this.selekt = new Selekt(this.elGrabParent, {
+                onSelect: this.handleSelect,
+                selectorIgnore: this.selectorItemsIgnore,
+                classSelected: this.classSelected,
+                ctrlOn: this.ctrlOn,
+                isMultiple: this.multiple
+            });
         }
     }
 
@@ -957,6 +859,7 @@ class JSort {
             this.elGrabParent.removeEventListener("pointercancel", this.drop);
             this.elGrabParent.classList.remove(this.classMultiple);
             if (this.group !== "") delete this.elGrabParent.dataset.jsortGroup;
+            this.selekt?.destroy();
         }
     }
 }
