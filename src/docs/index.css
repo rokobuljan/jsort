@@ -353,6 +353,10 @@ code {
     outline: 0.25rem solid red;
 }
 
+.is-jsort-animated-drop {
+    z-index: 1;
+}
+
 [data-jsort-selected]::after {
     content: attr(data-jsort-selected);
     position: absolute;

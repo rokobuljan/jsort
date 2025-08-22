@@ -1,6 +1,7 @@
 class Selekt {
-    #_isHandled = false;
-    #_elItem = null;
+    #isHandled = false;
+    #elItem = null;
+    #isEnabled = true;
     elSelectedPivot = null;
     elSelectedLast = null;
     isTouch = false;
@@ -18,6 +19,17 @@ class Selekt {
         this.handleClear = this.handleClear.bind(this);
 
         this.init(options);
+    }
+
+    disable() {
+        this.#isEnabled = false;
+    }
+
+    enable() {
+        // RAF is helpful here for a drag-and-drop action to terminate, before re-enabling selection
+        requestAnimationFrame(() => {
+            this.#isEnabled = true;
+        });
     }
 
     /**
@@ -67,27 +79,34 @@ class Selekt {
     }
 
     handleSelect(/** @type {PointerEvent} */ ev) {
-        const elItem = this.getImmediateChild(/** @type {HTMLElement} */(ev.target));
-        if (!elItem) return;
+        if (!this.#isEnabled) {
+            return;
+        }
 
+        const elItem = this.getImmediateChild(/** @type {HTMLElement} */(ev.target));
         const isDown = ev.type === "pointerdown";
 
+        if (isDown && !elItem) {
+            this.deselect();
+            return;
+        }
+
         // The pointerup event must match the item that initiated it
-        if (!isDown && this.#_elItem !== elItem) {
+        if (!isDown && this.#elItem !== elItem) {
             return;
         } else {
-            this.#_elItem = elItem; // Store for later use
+            this.#elItem = elItem; // Store for later use
         }
 
         const controls = this.getControls(ev);
         if (controls.isAny) ev.preventDefault();
 
-        const isFirstSelect = controls.isNone; // First selection flag
+        const isFirstSelect = isDown && controls.isNone; // First selection flag
         const isSelected = elItem.matches(`.${this.classSelected}`);
 
-        if (!isDown && this.#_isHandled) {
+        if (!isDown && this.#isHandled) {
             // PASS: Already handled by pointerDown, ignore pointerup
-            this.#_isHandled = false;
+            this.#isHandled = false;
             return;
         }
 
@@ -156,7 +175,7 @@ class Selekt {
             addEventListener("pointerup", this.handleClear);
         }
 
-        this.#_isHandled = true; // Mark as handled to prevent further processing
+        this.#isHandled = true; // Mark as handled to prevent further processing
 
         // CALLBACK:
         this.onSelect?.call(this, {

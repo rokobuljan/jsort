@@ -113,7 +113,7 @@ class JSort {
         this.scrollThreshold = 8;
         this.edgeThreshold = 50;
         this.scrollSpeed = 10;
-        this.zIndex = 2147483647 // 0x7FFFFFFF;
+        this.zIndex = 2147483647; // 0x7FFFFFFF
         this.multiple = true;
         this.ctrlOn = false;
         this.selectorParent = ".jsort";
@@ -485,9 +485,14 @@ class JSort {
                     affectedElements.add(this.elDrop);
                 }
                 else if (isSameParent) {
-                    const indexMin = isDroppedOntoParent ? this.indexGrab : Math.min(this.indexDrop, this.indexGrab);
-                    const indexMax = isDroppedOntoParent ? grabSiblings.length : Math.max(this.indexDrop, this.indexGrab);
-                    grabSiblings.slice(indexMin, indexMax).forEach((el) => affectedElements.add(el));
+                    if (this.multiple) {
+                        // @TODO not ideal to animate every single item
+                        grabSiblings.forEach((el) => affectedElements.add(el));
+                    } else {
+                        const indexMin = isDroppedOntoParent ? this.indexGrab : Math.min(this.indexDrop, this.indexGrab);
+                        const indexMax = isDroppedOntoParent ? grabSiblings.length : Math.max(this.indexDrop, this.indexGrab);
+                        grabSiblings.slice(indexMin, indexMax).forEach((el) => affectedElements.add(el));
+                    }
                 }
                 else {
                     [...grabSiblings.slice(this.indexGrab), ...dropChildren.slice(this.indexDrop)].forEach((el) => affectedElements.add(el));
@@ -518,17 +523,20 @@ class JSort {
 
         // 4. Animate other elements
         this.affectedElementsData.forEach((data) => {
+            console.log(data.el.id)
+
             // We'll animate the grabbed items later
-            if (this.selekt.selected.includes(data.el)) return;
-            // Animate all other items
-            this.animateItem(data);
+            if (!this.selekt.selected.includes(data.el)) {
+                // Animate all other items
+                this.animateItem(data);
+            }
         });
 
         // 5. Animate the grabbed items
         if (this.ghostRect) {
             let anim;
             this.selekt.selected.forEach((elGrab, i) => {
-                elGrab.classList.add(`${this.classAnimatedDrop}`);
+                // elGrab.classList.add(`${this.classAnimatedDrop}`);
                 anim = this.animateItem({ el: elGrab, x: this.ghostRect.left, y: this.ghostRect.top });
                 if (anim) {
                     anim.addEventListener("finish", () => {
@@ -628,7 +636,8 @@ class JSort {
             !this.isPointerDown ||
             !this.elGrab ||
             !this.isScrollPrevented ||
-            this.hasPointerMoved && !this.elGrab?.hasPointerCapture(ev.pointerId)
+            this.hasPointerMoved && !this.elGrab?.hasPointerCapture(ev.pointerId) ||
+            (this.multiple && (ev.metaKey || ev.ctrlKey || ev.shiftKey))
         ) return;
 
         this.isSignificantMove = this.checkSignificantMove(this.pointerGrab, ev, this.moveThreshold);
@@ -639,6 +648,7 @@ class JSort {
             this.elGrab.classList.add(this.classGrab);
             // INSERT GHOST!
             this.insertGhost();
+            this.selekt.disable();
         }
 
         const { clientX, clientY } = ev;
@@ -718,6 +728,7 @@ class JSort {
             }
         }
 
+        this.selekt.enable();
         this.reset();
     }
 
@@ -811,7 +822,6 @@ class JSort {
     }
 
     handleSelect = (data = {}) => {
-        console.log(data);
         this.onSelect.call(this, data);
     }
 
