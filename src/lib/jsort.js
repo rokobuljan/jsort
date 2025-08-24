@@ -749,10 +749,8 @@ class JSort {
             }
         }
 
-        requestAnimationFrame(() => {
-            console.log("enabling selekt");
-            this.selekt.enable();
-        });
+        this.selekt.enable(true);
+
         this.reset();
     }
 

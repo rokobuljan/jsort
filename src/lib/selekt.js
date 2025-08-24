@@ -1,11 +1,23 @@
 class Selekt {
-    static previousInstance = null;
     static selected = [];
+    static previousInstance = null;
+    static isClearInit = false;
     static isBusy = false;
+    static handleClear(/** @type {PointerEvent} */ ev) {
+        if (!Selekt.previousInstance || !Selekt.selected.length) return;
+        const targetParent = Selekt.previousInstance.closest(
+            /** @type {HTMLElement} */(ev.target),
+            Selekt.previousInstance.elParent
+        );
+        if (!targetParent) {
+            Selekt.previousInstance.clear();
+            Selekt.previousInstance = null;
+        }
+    }
+
     #elPivot = null;
     elItem = null;
     isTouch = false;
-    static globalClear = false;
 
     constructor(/** @type {HTMLElement} */ elParent, options = {}) {
         this.elParent = elParent;
@@ -22,22 +34,21 @@ class Selekt {
 
         this.init(options);
 
-        if (!Selekt.globalClear) {
-            Selekt.globalClear = true;
-            addEventListener("pointerup", Selekt.handleClear);
+        if (!Selekt.isClearInit) {
+            Selekt.isClearInit = true;
+            addEventListener("pointerdown", Selekt.handleClear);
         }
     }
 
-    static handleClear(/** @type {PointerEvent} */ ev) {
-        if (!Selekt.previousInstance || !Selekt.selected.length) return;
-        const targetParent = Selekt.previousInstance.closest(
-            /** @type {HTMLElement} */(ev.target),
-            Selekt.previousInstance.elParent
-        );
-        if (!targetParent) {
-            console.log("SELEKT: Clearing selection");
-            Selekt.previousInstance.clear();
-        }
+    init(options = {}) {
+        Object.assign(this, options);
+        this.elParent.addEventListener("pointerdown", this.handleDown);
+        this.elParent.addEventListener("touchstart", this.handleTouchstart);
+    }
+
+    destroy() {
+        this.elParent.removeEventListener("pointerdown", this.handleDown);
+        this.elParent.removeEventListener("touchstart", this.handleTouchstart);
     }
 
     disable() {
@@ -45,8 +56,8 @@ class Selekt {
         return this;
     }
 
-    enable(isImmediate = true) {
-        if (isImmediate) {
+    enable(onNextTick = false) {
+        if (!onNextTick) {
             this.isEnabled = true;
         } else {
             // RAF is helpful here for a drag-and-drop action to terminate, before re-enabling selection
@@ -110,34 +121,33 @@ class Selekt {
     selectLogic(/** @type {PointerEvent} */ ev) {
         if (this.isMultiple) {
             const controls = this.getControls(ev);
+            const siblings = this.getAllowedChildren();
+            let oi = siblings.indexOf(this.elItem); // Target's original index
             // SINGLE
             if (controls.isNone) {
                 const ai = Selekt.selected.indexOf(this.elItem); // Selected index in array
                 this.#elPivot = this.elItem; // Set pivot element (for shift selection)
-                if (ai === -1 || Selekt.selected.length > 1) this.clear().add(this.elItem); // Select
+                if (ai === -1 || Selekt.selected.length > 1) this.clear().add(this.elItem, oi); // Select
                 else this.clear(); // Deselect 
             }
             // CTRL
             else if (controls.isCtrl) {
                 const ai = Selekt.selected.indexOf(this.elItem); // Selected index in array
                 this.#elPivot = this.elItem;  // Set pivot element (for shift selection)
-                if (ai === -1) this.add(this.elItem); // Select
+                if (ai === -1) this.add(this.elItem, oi); // Select
                 else this.remove(this.elItem); // Deselect 
             }
             // SHIFT
             else if (controls.isShift && Selekt.selected.length > 0) {
-                const siblings = this.getAllowedChildren();
-                let ti = siblings.indexOf(this.elItem); // Target index
                 let pi = siblings.indexOf(this.#elPivot); // Pivot index
-                if (ti > pi) [ti, pi] = [pi, ti];
-                this.clear().add(siblings.slice(ti, pi + 1));
+                if (oi > pi) [oi, pi] = [pi, oi];
+                this.clear().add(siblings.slice(oi, pi + 1), oi);
             }
         } else {
             this.clear().add(this.elItem);
         }
 
-        // CALLBACK:
-        this.onSelect?.call(this, { selected: Selekt.selected });
+        this.onSelect?.call(this, { selected: this.get() });
     }
 
     handleDown(/** @type {PointerEvent} */ ev) {
@@ -166,7 +176,7 @@ class Selekt {
 
         // Determine if to handle on pointerdown or reschedule for pointerup
         const isSelected = this.elItem.matches(`.${this.classSelected}`); // Was already selected?
-        
+
         if (
             (isSelected && Selekt.selected.length > 0 && controls.isNone) || // Handle already selected items on pointerup
             (isSelected && Selekt.selected.length === 1 && !controls.isCtrl) || // Prevent toggle on single (unless Ctrl key is pressed)
@@ -183,14 +193,18 @@ class Selekt {
         this.selectLogic(ev);
     }
 
-    add(elItem, index) {
+    handleTouchstart() {
+        this.ctrlOn = true;
+    }
+
+    add(elItem, index = 0) {
         if (Array.isArray(elItem)) {
-            elItem.forEach((el, i) => index ? this.add(el, index + i) : this.add(el));
+            elItem.forEach((el) => this.add(el, index++));
             return;
         }
-        index ??= Selekt.selected.length;
-        Selekt.selected.splice(index, 0, elItem);
         elItem.classList.add(this.classSelected);
+        elItem.dataset.selektIndex = index;
+        Selekt.selected.push(elItem);
         return this;
     }
 
@@ -201,36 +215,25 @@ class Selekt {
         }
         const index = Selekt.selected.indexOf(elItem);
         if (index > -1) {
-            Selekt.selected.splice(index, 1);
             elItem.classList.remove(this.classSelected);
+            elItem.removeAttribute("data-selekt-index");
+            Selekt.selected.splice(index, 1);
         }
         return this;
     }
 
     /** @returns {HTMLElement[]} Get current selected elements */
     get() {
-        return Selekt.selected;
+        return Selekt.selected.sort((a, b) => Number(a.dataset.selektIndex) - Number(b.dataset.selektIndex));
     }
 
     clear() {
-        Selekt.selected.forEach(el => el.classList.remove(this.classSelected));
+        Selekt.selected.forEach((el) => {
+            el.classList.remove(this.classSelected);
+            el.removeAttribute("data-selekt-index");
+        });
         Selekt.selected = [];
         return this;
-    }
-
-    handleTouchstart(/** @type {TouchEvent} */ ev) {
-        this.ctrlOn = true;
-    }
-
-    init(options = {}) {
-        Object.assign(this, options);
-        this.elParent.addEventListener("pointerdown", this.handleDown);
-        this.elParent.addEventListener("touchstart", this.handleTouchstart);
-    }
-
-    destroy() {
-        this.elParent.removeEventListener("pointerdown", this.handleDown);
-        this.elParent.removeEventListener("touchstart", this.handleTouchstart);
     }
 }
 
