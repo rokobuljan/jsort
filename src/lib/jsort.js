@@ -8,6 +8,7 @@ import Selekt from "./selekt.js";
  * @see {@link https://github.com/rokobuljan/jsort}
  */
 class JSort {
+    static instances = new Set();
     /** @type {string} */
     static version = "__APP_VERSION__";
     /** @type {string} selectorParent + selectorItems*/
@@ -141,6 +142,12 @@ class JSort {
         this.onSelect = () => { };
 
         this.init(options);
+
+        JSort.instances.add(this);
+    }
+
+    getInstanceByElParent(elParent) {
+        return [...JSort.instances].find(inst => inst.elGrabParent === elParent);
     }
 
     /**
@@ -204,8 +211,9 @@ class JSort {
         });
         this.elGhost.classList.remove(this.classActive, this.classTarget, this.classSelected);
         this.elGhost.classList.add(this.classGhost);
-        if (this.selekt.selected.length > 1) {
-            this.elGhost.dataset.jsortSelected = `${this.selekt.selected.length}`;
+        const selectedItems = this.selekt.get();
+        if (selectedItems.length > 1) {
+            this.elGhost.dataset.jsortSelected = `${selectedItems.length}`;
         }
         this.elGhost.animate([
             { scale: this.scale }
@@ -523,10 +531,8 @@ class JSort {
 
         // 4. Animate other elements
         this.affectedElementsData.forEach((data) => {
-            console.log(data.el.id)
-
             // We'll animate the grabbed items later
-            if (!this.selekt.selected.includes(data.el)) {
+            if (!this.selekt.get().includes(data.el)) {
                 // Animate all other items
                 this.animateItem(data);
             }
@@ -535,14 +541,15 @@ class JSort {
         // 5. Animate the grabbed items
         if (this.ghostRect) {
             let anim;
-            this.selekt.selected.forEach((elGrab, i) => {
+            const selectedItems = this.selekt.get();
+            selectedItems.forEach((elGrab, i) => {
                 // elGrab.classList.add(`${this.classAnimatedDrop}`);
                 anim = this.animateItem({ el: elGrab, x: this.ghostRect.left, y: this.ghostRect.top });
                 if (anim) {
                     anim.addEventListener("finish", () => {
                         elGrab.classList.remove(`${this.classAnimatedDrop}`);
                         // Notify only once on animation end
-                        if (i === this.selekt.selected.length - 1) {
+                        if (i === selectedItems.length - 1) {
                             this.onAnimationEnd?.call(this);
                         }
                     });
@@ -637,7 +644,7 @@ class JSort {
             !this.elGrab ||
             !this.isScrollPrevented ||
             this.hasPointerMoved && !this.elGrab?.hasPointerCapture(ev.pointerId) ||
-            (this.multiple && (ev.metaKey || ev.ctrlKey || ev.shiftKey))
+            (this.multiple && (ev.metaKey || ev.ctrlKey || ev.shiftKey)) // ongoing multiple select
         ) return;
 
         this.isSignificantMove = this.checkSignificantMove(this.pointerGrab, ev, this.moveThreshold);
@@ -649,6 +656,8 @@ class JSort {
             // INSERT GHOST!
             this.insertGhost();
             this.selekt.disable();
+            console.log("disabling selekt");
+
         }
 
         const { clientX, clientY } = ev;
@@ -701,7 +710,7 @@ class JSort {
         this.elTarget?.classList.remove(this.classTarget);
 
         if (this.hasPointerMoved) {
-
+            const isSameParent = this.elGrabParent === this.elDropParent;
             const { clientX, clientY } = ev;
             const elFromPoint = /** @type {HTMLElement} */ (document.elementFromPoint(clientX, clientY));
             // INSERT
@@ -709,13 +718,25 @@ class JSort {
 
             let isInserted = false;
 
-            if (this.selekt.selected.length) {
-                isInserted = this.insert(this.selekt.selected, elFromPoint);
+            const selectedItems = [...this.selekt.get()];
+            console.log(selectedItems);
+
+            if (selectedItems.length) {
+                isInserted = this.insert(selectedItems, elFromPoint);
             } else {
                 isInserted = this.insert([this.elGrab], elFromPoint);
             }
 
             if (isInserted) {
+                const isSameParent = this.elDropParent === this.elGrabParent;
+                if (!isSameParent) {
+                    const dropInstance = this.getInstanceByElParent(this.elDropParent);
+                    requestAnimationFrame(() => {
+                        dropInstance.selekt.add(selectedItems);
+                        this.selekt.clear();
+                    });
+                }
+
                 this.onDrop?.call(this, {
                     elGrab: this.elGrab,
                     elGrabParent: this.elGrabParent,
@@ -728,7 +749,10 @@ class JSort {
             }
         }
 
-        this.selekt.enable();
+        requestAnimationFrame(() => {
+            console.log("enabling selekt");
+            this.selekt.enable();
+        });
         this.reset();
     }
 
@@ -870,6 +894,7 @@ class JSort {
             this.elGrabParent.classList.remove(this.classMultiple);
             if (this.group !== "") delete this.elGrabParent.dataset.jsortGroup;
             this.selekt?.destroy();
+            JSort.instances.delete(this);
         }
     }
 }

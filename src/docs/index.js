@@ -12,18 +12,20 @@ el("#version").textContent = `${JSort.version}`;
 console.log(`Running JSort version: ${JSort.version}`);
 
 els(`.jsort:not([id^="example-"])`).forEach((el) => {
-    // Make sortable
     new JSort(el, {
-        // duration: 3500,
         selectorItems: ":not(.ignore)",
         onDrop(data) {
             // console.log(data);
             // console.log(`Dropped "${this.elGrabbed.textContent}" from index ${this.indexGrab} into index ${this.indexDrop} Parents:`, this.elGrabParent, this.elDropParent);
+        },
+        onSelect(data) {
+            console.log(data.selected);
+
         }
     });
 });
 
-els(".jsort > *").forEach((el, i) => el.id = `item-${i+1}`);
+els(".jsort > *").forEach((el, i) => el.id = `item-${i + 1}`);
 
 const elExampleSortSelect = el("#example-sort-select");
 const elExampleSort = el("#example-sort");
